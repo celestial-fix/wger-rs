@@ -86,7 +86,13 @@ async fn ingredient_page(state: &AppState, uri: &Uri, headers: &HeaderMap, metho
             Err(err) => return httpx::db_error(err),
         }
     } else {
-        match sqlx::query("SELECT COUNT(*) FROM nutrition_ingredient").fetch_one(&state.pool).await {
+        // Match Django ApproximateCountManager: pg_class.reltuples (can be -1).
+        match sqlx::query(
+            "SELECT COALESCE((SELECT reltuples::bigint FROM pg_class WHERE oid = 'nutrition_ingredient'::regclass), -1)",
+        )
+        .fetch_one(&state.pool)
+        .await
+        {
             Ok(row) => row.get(0),
             Err(err) => return httpx::db_error(err),
         }

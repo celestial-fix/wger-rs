@@ -145,7 +145,10 @@ async fn exercises(State(state): State<AppState>, uri: Uri, headers: HeaderMap, 
     head_or_json(&method, paginated(&uri, &headers, &state, count, &page, results))
 }
 
-async fn exercise_one(State(state): State<AppState>, headers: HeaderMap, Path(id): Path<i32>, method: Method) -> Response {
+async fn exercise_one(State(state): State<AppState>, headers: HeaderMap, Path(raw): Path<String>, method: Method) -> Response {
+    let Ok(id) = raw.parse::<i32>() else {
+        return httpx::not_found();
+    };
     let auth = match httpx::authenticate(&state, &headers).await {
         Ok(user) => user,
         Err(resp) => return resp,

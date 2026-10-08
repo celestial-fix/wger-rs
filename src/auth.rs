@@ -54,13 +54,14 @@ pub fn load_keys(private_b64: &str, public_b64: &str) -> Result<JwtKeys, String>
         vec![BigUint::from_bytes_be(&p), BigUint::from_bytes_be(&q)],
     )
     .map_err(|err| format!("JWT private key: {err}"))?;
-    // CRT coefficients are required for a valid PKCS8 encoding that jsonwebtoken accepts.
+    // CRT coefficients are required; prefer PEM — from_rsa_der rejects some DER shapes.
     key.precompute()
         .map_err(|err| format!("JWT precompute: {err}"))?;
-    let der = key
-        .to_pkcs8_der()
-        .map_err(|err| format!("JWT PKCS8: {err}"))?;
-    let encode_key = EncodingKey::from_rsa_der(der.as_bytes());
+    let pem = key
+        .to_pkcs8_pem(rsa::pkcs8::LineEnding::LF)
+        .map_err(|err| format!("JWT PKCS8 PEM: {err}"))?;
+    let encode_key = EncodingKey::from_rsa_pem(pem.as_bytes())
+        .map_err(|err| format!("JWT EncodingKey: {err}"))?;
     let n_str = private_json
         .get("n")
         .and_then(|v| v.as_str())

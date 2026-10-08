@@ -1,0 +1,29 @@
+# Drop-in for the wger `web` container. No host ports are published.
+# PowerSync fetches JWKS at http://web:8000/api/v2/powersync-keys, so this
+# service keeps the `web` alias and listens on 8000 inside the network.
+services:
+  web:
+    build: ..
+    image: wger-rs:m1
+    networks:
+      default:
+        aliases:
+          - web
+    expose:
+      - "8000"
+    environment:
+      BIND: 0.0.0.0:8000
+      DATABASE_URL: postgres://wger:wger@db:5432/wger
+      SITE_URL: https://fitness.heavenly.cl
+      TIME_ZONE: America/Santiago
+      MEDIA_ROOT: /media
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      POWERSYNC_URL: ${POWERSYNC_URL:-}
+      POWERSYNC_URL_PATH: ps
+    volumes:
+      - wger-media:/media:ro
+    restart: unless-stopped
+
+volumes:
+  wger-media:

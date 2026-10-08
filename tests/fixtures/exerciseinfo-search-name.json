@@ -1,0 +1,706 @@
+{
+  "name": "exerciseinfo-search-name",
+  "request": {
+    "method": "GET",
+    "path": "/api/v2/exerciseinfo/?name__search=bench%20press&language__code=en&limit=3",
+    "auth": "force_authenticate(admin)"
+  },
+  "status_code": 200,
+  "content_type": "application/json",
+  "body": {
+    "count": 30,
+    "next": "https://fitness.heavenly.cl/api/v2/exerciseinfo/?language__code=en&limit=3&name__search=bench+press&offset=3",
+    "previous": null,
+    "results": [
+      {
+        "id": 73,
+        "uuid": "3717d144-7815-4a97-9a56-956fb889c996",
+        "created": "2023-08-06T04:17:17.422900-04:00",
+        "last_update": "2026-10-03T15:19:04.869789-03:00",
+        "last_update_global": "2026-10-05T06:07:24.860566-03:00",
+        "category": {
+          "id": 11,
+          "name": "Chest"
+        },
+        "muscles": [
+          {
+            "id": 4,
+            "name": "Pectoralis major",
+            "name_en": "Chest",
+            "is_front": true,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-4.c9fa9a228bc8.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-4.955e74ea6083.svg"
+          }
+        ],
+        "muscles_secondary": [
+          {
+            "id": 2,
+            "name": "Anterior deltoid",
+            "name_en": "Shoulders",
+            "is_front": true,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-2.e1e1205a3202.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-2.74ea636ad97b.svg"
+          },
+          {
+            "id": 5,
+            "name": "Triceps brachii",
+            "name_en": "Triceps",
+            "is_front": false,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-5.8a2b934b5486.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-5.68eb84d675a5.svg"
+          }
+        ],
+        "equipment": [
+          {
+            "id": 1,
+            "name": "Barbell"
+          },
+          {
+            "id": 8,
+            "name": "Bench"
+          }
+        ],
+        "license": {
+          "id": 1,
+          "full_name": " Creative Commons Attribution Share Alike 3",
+          "short_name": "CC-BY-SA 3",
+          "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+        },
+        "license_author": "sistab2",
+        "images": [
+          {
+            "id": 15,
+            "uuid": "08517378-bc36-4f6b-9952-1f45a02d936e",
+            "exercise": 73,
+            "exercise_uuid": "3717d144-7815-4a97-9a56-956fb889c996",
+            "image": "https://fitness.heavenly.cl/media/exercise-images/73/08517378-bc36-4f6b-9952-1f45a02d936e.png",
+            "thumbnails": {
+              "small": "https://fitness.heavenly.cl/media/exercise-images/73/08517378-bc36-4f6b-9952-1f45a02d936e.png.200x200_q85.png",
+              "medium": "https://fitness.heavenly.cl/media/exercise-images/73/08517378-bc36-4f6b-9952-1f45a02d936e.png.400x400_q85.png"
+            },
+            "is_main": true,
+            "style": "1",
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "Everkinetic",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "Everkinetic"
+            ],
+            "is_ai_generated": false
+          },
+          {
+            "id": 265,
+            "uuid": "41e5c58e-0325-4620-8d96-7372cc4dae8c",
+            "exercise": 73,
+            "exercise_uuid": "3717d144-7815-4a97-9a56-956fb889c996",
+            "image": "https://fitness.heavenly.cl/media/exercise-images/73/41e5c58e-0325-4620-8d96-7372cc4dae8c.png",
+            "thumbnails": {
+              "small": "https://fitness.heavenly.cl/media/exercise-images/73/41e5c58e-0325-4620-8d96-7372cc4dae8c.png.200x200_q85.png",
+              "medium": "https://fitness.heavenly.cl/media/exercise-images/73/41e5c58e-0325-4620-8d96-7372cc4dae8c.png.400x400_q85.png"
+            },
+            "is_main": false,
+            "style": "1",
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "Everkinetic",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "Everkinetic"
+            ],
+            "is_ai_generated": false
+          }
+        ],
+        "translations": [
+          {
+            "id": 15,
+            "uuid": "198dcb2e-e35f-4b69-ae8b-e1124d438eae",
+            "name": "Bankdrücken LH",
+            "exercise": 73,
+            "description": "<p>Lege dich auf die Bank, die Stange direkt über die Augen, die Knie etwas angewinkelt und die Füße fest auf dem Boden. Greife die Stange breit und lasse sie langsam und kontrolliert runter, dabei sollte die Stange kurz auf Brustwarzenhöhe den Körper berühren. Dann das Gewicht wieder hochdrücken bis die Arme durchgestreckt sind.</p>\n<p>Bei hohem Gewicht, empfielt sich natürlich einen <em>Spotter</em> zu haben, der einen hilft falls man die Stange nicht alleine hochdrücken kann.</p>\n<p>Mit der Breite des Griffs kann außerdem kontrolliert werden, welcher Bereich der Brust stärker belastet wird:</p>\n<ul>\n<li>breiter Griff: äußere Brustmuskeln</li>\n<li>enger Griff: innere Brustmuskeln und Trizeps</li>\n</ul>\n",
+            "description_source": "Lege dich auf die Bank, die Stange direkt über die Augen, die Knie etwas angewinkelt und die Füße fest auf dem Boden. Greife die Stange breit und lasse sie langsam und kontrolliert runter, dabei sollte die Stange kurz auf Brustwarzenhöhe den Körper berühren. Dann das Gewicht wieder hochdrücken bis die Arme durchgestreckt sind.\n\nBei hohem Gewicht, empfielt sich natürlich einen *Spotter* zu haben, der einen hilft falls man die Stange nicht alleine hochdrücken kann.\n\nMit der Breite des Griffs kann außerdem kontrolliert werden, welcher Bereich der Brust stärker belastet wird:\n\n* breiter Griff: äußere Brustmuskeln\n* enger Griff: innere Brustmuskeln und Trizeps",
+            "created": "2023-08-06T04:17:17.349000-04:00",
+            "language": 1,
+            "aliases": [],
+            "notes": [
+              {
+                "id": 319,
+                "uuid": "63249b59-b87a-47c5-986c-47334ed46538",
+                "translation": 15,
+                "comment": "Arme oben nicht ganz ausstrecken"
+              },
+              {
+                "id": 320,
+                "uuid": "f409ff91-3fb5-45bc-9b8a-167b095f7203",
+                "translation": 15,
+                "comment": "Handgelenke möglichst gerade halten"
+              }
+            ],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "sistab2",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "sistab2"
+            ]
+          },
+          {
+            "id": 192,
+            "uuid": "5da6340b-22ec-4c1b-a443-eef2f59f92f0",
+            "name": "Bench Press",
+            "exercise": 73,
+            "description": "<p>Lay down on a bench, the bar should be directly above your eyes, the knees are somewhat angled and the feet are firmly on the floor. Concentrate, breath deeply and grab the bar more than shoulder wide. Bring it slowly down till it briefly touches your chest at the height of your nipples. Push the bar up.</p>\n<p>If you train with a high weight it is advisable to have a <em>spotter</em> that can help you up if you can't lift the weight on your own.</p>\n<p>With the width of the grip you can also control which part of the chest is trained more:</p>\n<ul>\n<li>wide grip: outer chest muscles</li>\n<li>narrow grip: inner chest muscles and triceps</li>\n</ul>\n",
+            "description_source": "Lay down on a bench, the bar should be directly above your eyes, the knees are somewhat angled and the feet are firmly on the floor. Concentrate, breath deeply and grab the bar more than shoulder wide. Bring it slowly down till it briefly touches your chest at the height of your nipples. Push the bar up.\n\nIf you train with a high weight it is advisable to have a *spotter* that can help you up if you can't lift the weight on your own.\n\nWith the width of the grip you can also control which part of the chest is trained more:\n\n* wide grip: outer chest muscles\n* narrow grip: inner chest muscles and triceps",
+            "created": "2023-08-06T04:17:17.349000-04:00",
+            "language": 2,
+            "aliases": [],
+            "notes": [
+              {
+                "id": 321,
+                "uuid": "db48a16f-0b54-4abe-a82b-aa802a3b3e86",
+                "translation": 192,
+                "comment": "Don't stretch your arms completly"
+              }
+            ],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "sistab2",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "sistab2"
+            ]
+          },
+          {
+            "id": 1164,
+            "uuid": "92fd2bf0-9cf8-40fc-8a69-e5e16136327d",
+            "name": "Distensione Panca Piana con Bilanciere",
+            "exercise": 73,
+            "description": "<p>Distensione Panca Piana con BilanciereDistensione Panca Piana con Bilanciere</p>\n",
+            "description_source": "Distensione Panca Piana con BilanciereDistensione Panca Piana con Bilanciere",
+            "created": "2023-08-06T04:17:17.349000-04:00",
+            "language": 13,
+            "aliases": [],
+            "notes": [],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "sistab2",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "sistab2"
+            ]
+          },
+          {
+            "id": 3097,
+            "uuid": "2fe8917e-21c2-40c2-8171-1c28406a138c",
+            "name": "Développé couché",
+            "exercise": 73,
+            "description": "<p>Allongez-vous sur un banc, la barre doit se trouver directement au-dessus de vos yeux, les genoux légèrement fléchis et les pieds fermement posés au sol. Concentrez-vous, respirez profondément et saisissez la barre un peu plus large que la largeur des épaules. Descendez-la lentement jusqu'à ce qu'elle effleure brièvement votre poitrine à la hauteur des tétons. Poussez la barre vers le haut.</p>\n<p>Si vous vous entraînez avec une charge élevée, il est conseillé d'avoir un <em>pareur</em> qui peut vous aider à relever la barre si vous ne parvenez pas à la soulever seul.</p>\n<p>Avec la largeur de la prise, vous pouvez aussi contrôler quelle partie des pectoraux est davantage sollicitée :</p>\n<ul>\n<li>prise large : muscles externes des pectoraux</li>\n<li>prise serrée : muscles internes des pectoraux et triceps</li>\n</ul>\n",
+            "description_source": "Allongez-vous sur un banc, la barre doit se trouver directement au-dessus de vos yeux, les genoux légèrement fléchis et les pieds fermement posés au sol. Concentrez-vous, respirez profondément et saisissez la barre un peu plus large que la largeur des épaules. Descendez-la lentement jusqu'à ce qu'elle effleure brièvement votre poitrine à la hauteur des tétons. Poussez la barre vers le haut.\n\nSi vous vous entraînez avec une charge élevée, il est conseillé d'avoir un *pareur* qui peut vous aider à relever la barre si vous ne parvenez pas à la soulever seul.\n\nAvec la largeur de la prise, vous pouvez aussi contrôler quelle partie des pectoraux est davantage sollicitée :\n\n* prise large : muscles externes des pectoraux\n* prise serrée : muscles internes des pectoraux et triceps",
+            "created": "2026-08-24T03:13:10.180506-04:00",
+            "language": 12,
+            "aliases": [],
+            "notes": [],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "sistab2",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "sistab2"
+            ]
+          },
+          {
+            "id": 2547,
+            "uuid": "2b7f6743-ebc7-4519-ac37-1afb211e350f",
+            "name": "Press de Banca",
+            "exercise": 73,
+            "description": "<p>Acuéstate en un banco plano. La barra debe estar directamente sobre tus ojos, las rodillas deben estar ligeramente flexionadas y los pies firmemente apoyados en el suelo. Concéntrate, respira profundamente y agarra la barra con una apertura mayor a la anchura de tus hombros. Bájala lentamente hasta que toque brevemente tu pecho a la altura de los pezones. Empuja la barra hacia arriba.</p>\n<p>Si entrenas con un peso elevado, es aconsejable tener un ayudante (<em>spotter</em>) que pueda asistirte si no puedes levantar el peso por ti mismo.</p>\n<p>Con la anchura del agarre también puedes controlar qué parte del pecho se trabaja más:</p>\n<ul>\n<li><strong>Agarre ancho:</strong> musculatura externa del pecho.</li>\n<li><strong>Agarre cerrado:</strong> musculatura interna del pecho y tríceps.</li>\n</ul>\n",
+            "description_source": "Acuéstate en un banco plano. La barra debe estar directamente sobre tus ojos, las rodillas deben estar ligeramente flexionadas y los pies firmemente apoyados en el suelo. Concéntrate, respira profundamente y agarra la barra con una apertura mayor a la anchura de tus hombros. Bájala lentamente hasta que toque brevemente tu pecho a la altura de los pezones. Empuja la barra hacia arriba.\n\nSi entrenas con un peso elevado, es aconsejable tener un ayudante (*spotter*) que pueda asistirte si no puedes levantar el peso por ti mismo.\n\nCon la anchura del agarre también puedes controlar qué parte del pecho se trabaja más:\n\n* **Agarre ancho:** musculatura externa del pecho.\n* **Agarre cerrado:** musculatura interna del pecho y tríceps.",
+            "created": "2025-08-18T00:35:03.259000-04:00",
+            "language": 4,
+            "aliases": [],
+            "notes": [],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "sistab2",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "sistab2"
+            ]
+          },
+          {
+            "id": 2326,
+            "uuid": "d075b73c-42cb-41b9-b2bf-fb3046a72105",
+            "name": "Wyciskanie leżąc",
+            "exercise": 73,
+            "description": "<p>Połóż się na ławce, sztanga powinna znajdować się bezpośrednio nad twoimi oczami, kolana są ugięte, nogi w lekkim rozkroku a stopy mocno oparte na podłodze. Skoncentruj się, oddychaj prawidłowo i chwyć drążek szerzej niż na szerokość barków. Opuść go powoli, aż na chwilę dotknie klatki piersiowej na wysokości sutków. Popchnij sztangę&nbsp;do góry.\nJeśli trenujesz z dużymi ciężarami, wskazane jest posiadanie asekuranta, który pomoże Ci podnieść sztangę, jeśli nie jesteś w stanie samodzielnie unieść ciężaru.\nDzięki szerokości chwytu możesz także kontrolować, która część klatki piersiowej jest bardziej trenowana:</p>\n<ul>\n<li>szeroki chwyt: zewnętrzne mięśnie klatki piersiowej</li>\n<li>wąski chwyt: wewnętrzne mięśnie klatki piersiowej i triceps</li>\n</ul>\n",
+            "description_source": "Połóż się na ławce, sztanga powinna znajdować się bezpośrednio nad twoimi oczami, kolana są ugięte, nogi w lekkim rozkroku a stopy mocno oparte na podłodze. Skoncentruj się, oddychaj prawidłowo i chwyć drążek szerzej niż na szerokość barków. Opuść go powoli, aż na chwilę dotknie klatki piersiowej na wysokości sutków. Popchnij sztangę do góry.\nJeśli trenujesz z dużymi ciężarami, wskazane jest posiadanie asekuranta, który pomoże Ci podnieść sztangę, jeśli nie jesteś w stanie samodzielnie unieść ciężaru.\nDzięki szerokości chwytu możesz także kontrolować, która część klatki piersiowej jest bardziej trenowana:\n\n* szeroki chwyt: zewnętrzne mięśnie klatki piersiowej\n* wąski chwyt: wewnętrzne mięśnie klatki piersiowej i triceps",
+            "created": "2024-08-08T08:36:51.407000-04:00",
+            "language": 14,
+            "aliases": [],
+            "notes": [],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "sistab2",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "sistab2"
+            ]
+          }
+        ],
+        "variation_group": "f45f135e-4cd3-4023-a82a-83fca2078656",
+        "videos": [
+          {
+            "id": 20,
+            "uuid": "2bdb390c-312c-4497-a722-5eed2c823e5a",
+            "exercise": 73,
+            "video": "https://fitness.heavenly.cl/media/exercise-video/73/2bdb390c-312c-4497-a722-5eed2c823e5a.MOV",
+            "is_main": false,
+            "size": 1108545,
+            "duration": "15.93",
+            "width": 640,
+            "height": 352,
+            "codec": "h264",
+            "codec_long": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+            "license": 2,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "Goulart",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "Goulart"
+            ]
+          },
+          {
+            "id": 21,
+            "uuid": "255b3509-e454-48a6-bf66-c7ca482be21a",
+            "exercise": 73,
+            "video": "https://fitness.heavenly.cl/media/exercise-video/73/255b3509-e454-48a6-bf66-c7ca482be21a.MOV",
+            "is_main": false,
+            "size": 1422312,
+            "duration": "20.78",
+            "width": 640,
+            "height": 352,
+            "codec": "h264",
+            "codec_long": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+            "license": 2,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "Goulart",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "Goulart"
+            ]
+          },
+          {
+            "id": 22,
+            "uuid": "cfb72002-898f-443a-a124-a0bce8a2e6ad",
+            "exercise": 73,
+            "video": "https://fitness.heavenly.cl/media/exercise-video/73/cfb72002-898f-443a-a124-a0bce8a2e6ad.MP4",
+            "is_main": false,
+            "size": 7222857,
+            "duration": "21.04",
+            "width": 1920,
+            "height": 1080,
+            "codec": "h264",
+            "codec_long": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+            "license": 2,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "Goulart",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "Goulart"
+            ]
+          }
+        ],
+        "author_history": [
+          "sistab2"
+        ],
+        "total_authors_history": [
+          "sistab2",
+          "Goulart",
+          "Everkinetic"
+        ]
+      },
+      {
+        "id": 2010,
+        "uuid": "20d8df5a-c9d6-4c69-bdf2-d97af68ac83f",
+        "created": "2026-09-01T03:11:05.174863-04:00",
+        "last_update": "2026-10-03T15:20:56.288271-03:00",
+        "last_update_global": "2026-10-03T15:20:56.304560-03:00",
+        "category": {
+          "id": 11,
+          "name": "Chest"
+        },
+        "muscles": [
+          {
+            "id": 2,
+            "name": "Anterior deltoid",
+            "name_en": "Shoulders",
+            "is_front": true,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-2.e1e1205a3202.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-2.74ea636ad97b.svg"
+          },
+          {
+            "id": 4,
+            "name": "Pectoralis major",
+            "name_en": "Chest",
+            "is_front": true,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-4.c9fa9a228bc8.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-4.955e74ea6083.svg"
+          },
+          {
+            "id": 5,
+            "name": "Triceps brachii",
+            "name_en": "Triceps",
+            "is_front": false,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-5.8a2b934b5486.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-5.68eb84d675a5.svg"
+          }
+        ],
+        "muscles_secondary": [
+          {
+            "id": 14,
+            "name": "Obliquus externus abdominis",
+            "name_en": "",
+            "is_front": true,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-14.153978038d0b.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-14.afd582849ae9.svg"
+          },
+          {
+            "id": 6,
+            "name": "Rectus abdominis",
+            "name_en": "Abs",
+            "is_front": true,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-6.592f938fa8c7.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-6.370f77c2860e.svg"
+          },
+          {
+            "id": 3,
+            "name": "Serratus anterior",
+            "name_en": "",
+            "is_front": true,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-3.356ffc861a30.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-3.4c09bf907827.svg"
+          }
+        ],
+        "equipment": [
+          {
+            "id": 1,
+            "name": "Barbell"
+          },
+          {
+            "id": 8,
+            "name": "Bench"
+          }
+        ],
+        "license": {
+          "id": 2,
+          "full_name": "Creative Commons Attribution Share Alike 4",
+          "short_name": "CC-BY-SA 4",
+          "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+        },
+        "license_author": "",
+        "images": [],
+        "translations": [
+          {
+            "id": 4493,
+            "uuid": "118e0342-b2a7-4526-bb80-8d3e489faf20",
+            "name": "Bench Press Isometric",
+            "exercise": 2010,
+            "description": "<p>A bench press isometric hold is a static strength exercise where you pause and hold a barbell or dumbbells either at your chest, mid-press, or at lockout without moving for a set time</p>\n",
+            "description_source": "A bench press isometric hold is a static strength exercise where you pause and hold a barbell or dumbbells either at your chest, mid-press, or at lockout without moving for a set time",
+            "created": "2026-09-07T03:13:57.094726-03:00",
+            "language": 2,
+            "aliases": [],
+            "notes": [],
+            "license": 2,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "HexoctusEngineering",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "HexoctusEngineering"
+            ]
+          }
+        ],
+        "variation_group": null,
+        "videos": [],
+        "author_history": [],
+        "total_authors_history": [
+          "HexoctusEngineering"
+        ]
+      },
+      {
+        "id": 76,
+        "uuid": "3db63138-a047-4a4d-b616-1a0b7dfca105",
+        "created": "2023-08-06T04:17:17.422900-04:00",
+        "last_update": "2026-10-03T15:19:05.188079-03:00",
+        "last_update_global": "2026-10-05T06:07:24.467326-03:00",
+        "category": {
+          "id": 8,
+          "name": "Arms"
+        },
+        "muscles": [
+          {
+            "id": 5,
+            "name": "Triceps brachii",
+            "name_en": "Triceps",
+            "is_front": false,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-5.8a2b934b5486.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-5.68eb84d675a5.svg"
+          }
+        ],
+        "muscles_secondary": [
+          {
+            "id": 2,
+            "name": "Anterior deltoid",
+            "name_en": "Shoulders",
+            "is_front": true,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-2.e1e1205a3202.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-2.74ea636ad97b.svg"
+          },
+          {
+            "id": 4,
+            "name": "Pectoralis major",
+            "name_en": "Chest",
+            "is_front": true,
+            "image_url_main": "https://fitness.heavenly.cl/static/images/muscles/main/muscle-4.c9fa9a228bc8.svg",
+            "image_url_secondary": "https://fitness.heavenly.cl/static/images/muscles/secondary/muscle-4.955e74ea6083.svg"
+          }
+        ],
+        "equipment": [
+          {
+            "id": 1,
+            "name": "Barbell"
+          },
+          {
+            "id": 8,
+            "name": "Bench"
+          }
+        ],
+        "license": {
+          "id": 1,
+          "full_name": " Creative Commons Attribution Share Alike 3",
+          "short_name": "CC-BY-SA 3",
+          "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+        },
+        "license_author": "wger.de",
+        "images": [
+          {
+            "id": 209,
+            "uuid": "9abec4e4-90ba-44f9-9e6e-5e35f7273078",
+            "exercise": 76,
+            "exercise_uuid": "3db63138-a047-4a4d-b616-1a0b7dfca105",
+            "image": "https://fitness.heavenly.cl/media/exercise-images/76/9abec4e4-90ba-44f9-9e6e-5e35f7273078.png",
+            "thumbnails": {
+              "small": "https://fitness.heavenly.cl/media/exercise-images/76/9abec4e4-90ba-44f9-9e6e-5e35f7273078.png.200x200_q85.png",
+              "medium": "https://fitness.heavenly.cl/media/exercise-images/76/9abec4e4-90ba-44f9-9e6e-5e35f7273078.png.400x400_q85.png"
+            },
+            "is_main": true,
+            "style": "4",
+            "license": 2,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "nishant0712",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "nishant0712"
+            ],
+            "is_ai_generated": false
+          },
+          {
+            "id": 4,
+            "uuid": "1c37e4e1-5144-4a50-8294-16180a9bc767",
+            "exercise": 76,
+            "exercise_uuid": "3db63138-a047-4a4d-b616-1a0b7dfca105",
+            "image": "https://fitness.heavenly.cl/media/exercise-images/76/1c37e4e1-5144-4a50-8294-16180a9bc767.png",
+            "thumbnails": {
+              "small": "https://fitness.heavenly.cl/media/exercise-images/76/1c37e4e1-5144-4a50-8294-16180a9bc767.png.200x200_q85.png",
+              "medium": "https://fitness.heavenly.cl/media/exercise-images/76/1c37e4e1-5144-4a50-8294-16180a9bc767.png.400x400_q85.png"
+            },
+            "is_main": false,
+            "style": "1",
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "Everkinetic",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "Everkinetic"
+            ],
+            "is_ai_generated": false
+          },
+          {
+            "id": 254,
+            "uuid": "4b3c5bf6-ea2a-4fa4-a3cb-98979c1f380a",
+            "exercise": 76,
+            "exercise_uuid": "3db63138-a047-4a4d-b616-1a0b7dfca105",
+            "image": "https://fitness.heavenly.cl/media/exercise-images/76/4b3c5bf6-ea2a-4fa4-a3cb-98979c1f380a.png",
+            "thumbnails": {
+              "small": "https://fitness.heavenly.cl/media/exercise-images/76/4b3c5bf6-ea2a-4fa4-a3cb-98979c1f380a.png.200x200_q85.png",
+              "medium": "https://fitness.heavenly.cl/media/exercise-images/76/4b3c5bf6-ea2a-4fa4-a3cb-98979c1f380a.png.400x400_q85.png"
+            },
+            "is_main": false,
+            "style": "1",
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "Everkinetic",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "Everkinetic"
+            ],
+            "is_ai_generated": false
+          }
+        ],
+        "translations": [
+          {
+            "id": 38,
+            "uuid": "4def60e7-ed8d-4a9d-bf76-ceb15ecf9779",
+            "name": "Bankdrücken Eng",
+            "exercise": 76,
+            "description": "<ul>\n<li><strong>Aufbau:</strong> Lege dich flach auf die Bank und greife die Stange schulterbreit (enger als beim normalen Bankdrücken).</li>\n<li><strong>Abwärtsbewegung:</strong> Senke die Stange kontrolliert zu deiner unteren Brust.</li>\n<li><strong>Technik:</strong> Halte deine Ellbogen eng am Oberkörper, lass sie nicht nach außen wandern.</li>\n<li><strong>Aufwärtsbewegung:</strong> Drücke die Stange gerade nach oben und spanne oben deinen Trizeps an.</li>\n</ul>\n",
+            "description_source": "- **Aufbau:** Lege dich flach auf die Bank und greife die Stange schulterbreit (enger als beim normalen Bankdrücken).\n- **Abwärtsbewegung:** Senke die Stange kontrolliert zu deiner unteren Brust.\n- **Technik:** Halte deine Ellbogen eng am Oberkörper, lass sie nicht nach außen wandern.\n- **Aufwärtsbewegung:** Drücke die Stange gerade nach oben und spanne oben deinen Trizeps an.",
+            "created": "2023-08-06T04:17:17.349000-04:00",
+            "language": 1,
+            "aliases": [],
+            "notes": [],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "wger.de",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "wger.de"
+            ]
+          },
+          {
+            "id": 88,
+            "uuid": "03d821e7-e1ac-4026-903b-d406381cbf76",
+            "name": "Bench Press Narrow Grip",
+            "exercise": 76,
+            "description": "<ul>\n<li><strong>Setup:</strong> Lie flat on the bench and grip the bar at shoulder-width (closer than a standard bench press).</li>\n<li><strong>Descent:</strong> Lower the bar with control to your lower chest.</li>\n<li><strong>Form:</strong> Keep your elbows tucked in tight against your torso—do not let them flare out.</li>\n<li><strong>Ascent:</strong> Press the bar straight back up, squeezing your triceps at the top.</li>\n</ul>\n",
+            "description_source": "- **Setup:** Lie flat on the bench and grip the bar at shoulder-width (closer than a standard bench press).\n- **Descent:** Lower the bar with control to your lower chest.\n- **Form:** Keep your elbows tucked in tight against your torso—do not let them flare out.\n- **Ascent:** Press the bar straight back up, squeezing your triceps at the top.",
+            "created": "2023-08-06T04:17:17.349000-04:00",
+            "language": 2,
+            "aliases": [
+              {
+                "id": 1746,
+                "uuid": "d585d189-a9df-4efb-8cf1-fad716b074f5",
+                "alias": "Close-Grip Bench Press"
+              }
+            ],
+            "notes": [],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "wger.de",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "wger.de"
+            ]
+          },
+          {
+            "id": 3098,
+            "uuid": "bdcebd91-19f1-4b16-89e3-fd63c1114381",
+            "name": "Développé couché prise serrée",
+            "exercise": 76,
+            "description": "<ul>\n<li><strong>Mise en place :</strong> Allongez-vous à plat sur le banc et saisissez la barre à la largeur des épaules (plus serré qu'un développé couché classique).</li>\n<li><strong>Descente :</strong> Abaissez la barre de façon contrôlée vers le bas de la poitrine.</li>\n<li><strong>Technique :</strong> Gardez les coudes bien serrés contre le torse, ne les laissez pas s'écarter.</li>\n<li><strong>Montée :</strong> Poussez la barre droit vers le haut en contractant vos triceps en fin de mouvement.</li>\n</ul>\n",
+            "description_source": "- **Mise en place :** Allongez-vous à plat sur le banc et saisissez la barre à la largeur des épaules (plus serré qu'un développé couché classique).\n- **Descente :** Abaissez la barre de façon contrôlée vers le bas de la poitrine.\n- **Technique :** Gardez les coudes bien serrés contre le torse, ne les laissez pas s'écarter.\n- **Montée :** Poussez la barre droit vers le haut en contractant vos triceps en fin de mouvement.",
+            "created": "2026-08-24T03:13:10.474434-04:00",
+            "language": 12,
+            "aliases": [],
+            "notes": [],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "wger.de",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "wger.de"
+            ]
+          },
+          {
+            "id": 2226,
+            "uuid": "9c9eed56-0ff6-4ddf-8afd-f682be0bf1e6",
+            "name": "Panca piana con presa srtetta",
+            "exercise": 76,
+            "description": "<p>Sdraiatevi su una panca, il bilanciere è direttamente sopra gli occhi, le ginocchia formano un leggero angolo e i piedi sono ben saldi a terra. Impugnare la sbarra con una presa stretta (circa 20 cm). Portare il peso lentamente verso il basso fino a quando le braccia sono parallele al pavimento (gomito: angolo retto), premere poi il bilanciere verso l'alto. Quando si porta il bilanciere verso il basso, non farlo scendere sui capezzoli come nel normale esercizio di panca, ma un po' più in basso.</p>\n",
+            "description_source": "Sdraiatevi su una panca, il bilanciere è direttamente sopra gli occhi, le ginocchia formano un leggero angolo e i piedi sono ben saldi a terra. Impugnare la sbarra con una presa stretta (circa 20 cm). Portare il peso lentamente verso il basso fino a quando le braccia sono parallele al pavimento (gomito: angolo retto), premere poi il bilanciere verso l'alto. Quando si porta il bilanciere verso il basso, non farlo scendere sui capezzoli come nel normale esercizio di panca, ma un po' più in basso.",
+            "created": "2024-04-03T12:13:14.959000-03:00",
+            "language": 13,
+            "aliases": [],
+            "notes": [],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "wger.de",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "wger.de"
+            ]
+          },
+          {
+            "id": 2671,
+            "uuid": "ac6b23a7-c997-4b48-a029-4d8f8f337899",
+            "name": "Press de Banca con Agarre Cerrado",
+            "exercise": 76,
+            "description": "<p>Esta variante del press de banca pone un mayor énfasis en los tríceps y la parte interna del pecho. La posición inicial en el banco es la misma que en un press normal, pero con estas diferencias clave:</p>\n<ol>\n<li><strong>Agarre:</strong> Sujeta la barra con un agarre cerrado, aproximadamente al ancho de los hombros (unos 20-30 cm de separación entre las manos).</li>\n<li><strong>Movimiento:</strong> Baja la barra de forma controlada hacia la parte baja de tu pecho o el esternón (más abajo que en el press convencional), manteniendo los codos cerca de tu cuerpo. Desde ahí, empuja con fuerza hacia arriba hasta extender los brazos, enfocándote en la contracción de los tríceps.</li>\n</ol>\n",
+            "description_source": "Esta variante del press de banca pone un mayor énfasis en los tríceps y la parte interna del pecho. La posición inicial en el banco es la misma que en un press normal, pero con estas diferencias clave:\n\n1. **Agarre:** Sujeta la barra con un agarre cerrado, aproximadamente al ancho de los hombros (unos 20-30 cm de separación entre las manos).\n2. **Movimiento:** Baja la barra de forma controlada hacia la parte baja de tu pecho o el esternón (más abajo que en el press convencional), manteniendo los codos cerca de tu cuerpo. Desde ahí, empuja con fuerza hacia arriba hasta extender los brazos, enfocándote en la contracción de los tríceps.",
+            "created": "2025-09-15T21:57:42.010000-03:00",
+            "language": 4,
+            "aliases": [],
+            "notes": [],
+            "license": 1,
+            "license_title": "",
+            "license_object_url": "",
+            "license_author": "wger.de",
+            "license_author_url": "",
+            "license_derivative_source_url": "",
+            "author_history": [
+              "wger.de"
+            ]
+          }
+        ],
+        "variation_group": "f45f135e-4cd3-4023-a82a-83fca2078656",
+        "videos": [],
+        "author_history": [
+          "wger.de"
+        ],
+        "total_authors_history": [
+          "wger.de",
+          "Everkinetic",
+          "nishant0712"
+        ]
+      }
+    ]
+  }
+}

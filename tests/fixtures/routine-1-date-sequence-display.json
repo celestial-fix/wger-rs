@@ -1,0 +1,2287 @@
+{
+  "name": "routine-1-date-sequence-display",
+  "request": {
+    "method": "GET",
+    "path": "/api/v2/routine/1/date-sequence-display/",
+    "auth": "force_authenticate(admin)"
+  },
+  "status_code": 200,
+  "content_type": "application/json",
+  "body": [
+    {
+      "iteration": 1,
+      "date": "2026-09-27",
+      "label": null,
+      "day": {
+        "id": 2,
+        "routine": 1,
+        "order": 1,
+        "name": "Upper A (Strength)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": [
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            73
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 1,
+              "exercise": 73,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "45",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "15",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "warmup",
+              "text_repr": "2 Sets, 15 × 45 kg",
+              "comment": ""
+            },
+            {
+              "slot_entry_id": 2,
+              "exercise": 73,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "55",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "5",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 5 × 55 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            537
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 3,
+              "exercise": 537,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            83
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 4,
+              "exercise": 83,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "50",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 50 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            1893
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 5,
+              "exercise": 1893,
+              "sets": 8,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "8 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            355
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 6,
+              "exercise": 355,
+              "sets": 3,
+              "max_sets": null,
+              "weight": "60",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "3 Sets, 10 × 60 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            91
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 7,
+              "exercise": 91,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            246
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 8,
+              "exercise": 246,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "date": "2026-09-28",
+      "label": null,
+      "day": {
+        "id": 4,
+        "routine": 1,
+        "order": 2,
+        "name": "LOWER A (STRENGTH)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 1,
+      "date": "2026-09-29",
+      "label": null,
+      "day": {
+        "id": 3,
+        "routine": 1,
+        "order": 3,
+        "name": "REST DAY",
+        "description": "",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 1,
+      "date": "2026-09-30",
+      "label": null,
+      "day": {
+        "id": 5,
+        "routine": 1,
+        "order": 4,
+        "name": "UPPER B (Hyptertrop)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 1,
+      "date": "2026-10-01",
+      "label": null,
+      "day": {
+        "id": 6,
+        "routine": 1,
+        "order": 5,
+        "name": "LOWER B (Hypertroph)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 2,
+      "date": "2026-10-02",
+      "label": null,
+      "day": {
+        "id": 2,
+        "routine": 1,
+        "order": 1,
+        "name": "Upper A (Strength)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": [
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            73
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 1,
+              "exercise": 73,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "45",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "15",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "warmup",
+              "text_repr": "2 Sets, 15 × 45 kg",
+              "comment": ""
+            },
+            {
+              "slot_entry_id": 2,
+              "exercise": 73,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "55",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "5",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 5 × 55 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            537
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 3,
+              "exercise": 537,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            83
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 4,
+              "exercise": 83,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "50",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 50 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            1893
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 5,
+              "exercise": 1893,
+              "sets": 8,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "8 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            355
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 6,
+              "exercise": 355,
+              "sets": 3,
+              "max_sets": null,
+              "weight": "60",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "3 Sets, 10 × 60 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            91
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 7,
+              "exercise": 91,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            246
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 8,
+              "exercise": 246,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "date": "2026-10-03",
+      "label": null,
+      "day": {
+        "id": 4,
+        "routine": 1,
+        "order": 2,
+        "name": "LOWER A (STRENGTH)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 2,
+      "date": "2026-10-04",
+      "label": null,
+      "day": {
+        "id": 3,
+        "routine": 1,
+        "order": 3,
+        "name": "REST DAY",
+        "description": "",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 2,
+      "date": "2026-10-05",
+      "label": null,
+      "day": {
+        "id": 5,
+        "routine": 1,
+        "order": 4,
+        "name": "UPPER B (Hyptertrop)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 2,
+      "date": "2026-10-06",
+      "label": null,
+      "day": {
+        "id": 6,
+        "routine": 1,
+        "order": 5,
+        "name": "LOWER B (Hypertroph)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 3,
+      "date": "2026-10-07",
+      "label": null,
+      "day": {
+        "id": 2,
+        "routine": 1,
+        "order": 1,
+        "name": "Upper A (Strength)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": [
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            73
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 1,
+              "exercise": 73,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "45",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "15",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "warmup",
+              "text_repr": "2 Sets, 15 × 45 kg",
+              "comment": ""
+            },
+            {
+              "slot_entry_id": 2,
+              "exercise": 73,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "55",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "5",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 5 × 55 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            537
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 3,
+              "exercise": 537,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            83
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 4,
+              "exercise": 83,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "50",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 50 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            1893
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 5,
+              "exercise": 1893,
+              "sets": 8,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "8 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            355
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 6,
+              "exercise": 355,
+              "sets": 3,
+              "max_sets": null,
+              "weight": "60",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "3 Sets, 10 × 60 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            91
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 7,
+              "exercise": 91,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            246
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 8,
+              "exercise": 246,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "date": "2026-10-08",
+      "label": null,
+      "day": {
+        "id": 4,
+        "routine": 1,
+        "order": 2,
+        "name": "LOWER A (STRENGTH)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 3,
+      "date": "2026-10-09",
+      "label": null,
+      "day": {
+        "id": 3,
+        "routine": 1,
+        "order": 3,
+        "name": "REST DAY",
+        "description": "",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 3,
+      "date": "2026-10-10",
+      "label": null,
+      "day": {
+        "id": 5,
+        "routine": 1,
+        "order": 4,
+        "name": "UPPER B (Hyptertrop)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 3,
+      "date": "2026-10-11",
+      "label": null,
+      "day": {
+        "id": 6,
+        "routine": 1,
+        "order": 5,
+        "name": "LOWER B (Hypertroph)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 4,
+      "date": "2026-10-12",
+      "label": null,
+      "day": {
+        "id": 2,
+        "routine": 1,
+        "order": 1,
+        "name": "Upper A (Strength)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": [
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            73
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 1,
+              "exercise": 73,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "45",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "15",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "warmup",
+              "text_repr": "2 Sets, 15 × 45 kg",
+              "comment": ""
+            },
+            {
+              "slot_entry_id": 2,
+              "exercise": 73,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "55",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "5",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 5 × 55 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            537
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 3,
+              "exercise": 537,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            83
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 4,
+              "exercise": 83,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "50",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 50 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            1893
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 5,
+              "exercise": 1893,
+              "sets": 8,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "8 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            355
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 6,
+              "exercise": 355,
+              "sets": 3,
+              "max_sets": null,
+              "weight": "60",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "3 Sets, 10 × 60 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            91
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 7,
+              "exercise": 91,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            246
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 8,
+              "exercise": 246,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "date": "2026-10-13",
+      "label": null,
+      "day": {
+        "id": 4,
+        "routine": 1,
+        "order": 2,
+        "name": "LOWER A (STRENGTH)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 4,
+      "date": "2026-10-14",
+      "label": null,
+      "day": {
+        "id": 3,
+        "routine": 1,
+        "order": 3,
+        "name": "REST DAY",
+        "description": "",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 4,
+      "date": "2026-10-15",
+      "label": null,
+      "day": {
+        "id": 5,
+        "routine": 1,
+        "order": 4,
+        "name": "UPPER B (Hyptertrop)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 4,
+      "date": "2026-10-16",
+      "label": null,
+      "day": {
+        "id": 6,
+        "routine": 1,
+        "order": 5,
+        "name": "LOWER B (Hypertroph)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 5,
+      "date": "2026-10-17",
+      "label": null,
+      "day": {
+        "id": 2,
+        "routine": 1,
+        "order": 1,
+        "name": "Upper A (Strength)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": [
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            73
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 1,
+              "exercise": 73,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "45",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "15",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "warmup",
+              "text_repr": "2 Sets, 15 × 45 kg",
+              "comment": ""
+            },
+            {
+              "slot_entry_id": 2,
+              "exercise": 73,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "55",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "5",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 5 × 55 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            537
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 3,
+              "exercise": 537,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            83
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 4,
+              "exercise": 83,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "50",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 50 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            1893
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 5,
+              "exercise": 1893,
+              "sets": 8,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "8 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            355
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 6,
+              "exercise": 355,
+              "sets": 3,
+              "max_sets": null,
+              "weight": "60",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "3 Sets, 10 × 60 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            91
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 7,
+              "exercise": 91,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            246
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 8,
+              "exercise": 246,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "iteration": 5,
+      "date": "2026-10-18",
+      "label": null,
+      "day": {
+        "id": 4,
+        "routine": 1,
+        "order": 2,
+        "name": "LOWER A (STRENGTH)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 5,
+      "date": "2026-10-19",
+      "label": null,
+      "day": {
+        "id": 3,
+        "routine": 1,
+        "order": 3,
+        "name": "REST DAY",
+        "description": "",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 5,
+      "date": "2026-10-20",
+      "label": null,
+      "day": {
+        "id": 5,
+        "routine": 1,
+        "order": 4,
+        "name": "UPPER B (Hyptertrop)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 5,
+      "date": "2026-10-21",
+      "label": null,
+      "day": {
+        "id": 6,
+        "routine": 1,
+        "order": 5,
+        "name": "LOWER B (Hypertroph)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 6,
+      "date": "2026-10-22",
+      "label": null,
+      "day": {
+        "id": 2,
+        "routine": 1,
+        "order": 1,
+        "name": "Upper A (Strength)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": [
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            73
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 1,
+              "exercise": 73,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "45",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "15",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "warmup",
+              "text_repr": "2 Sets, 15 × 45 kg",
+              "comment": ""
+            },
+            {
+              "slot_entry_id": 2,
+              "exercise": 73,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "55",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "5",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 5 × 55 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            537
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 3,
+              "exercise": 537,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            83
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 4,
+              "exercise": 83,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "50",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 50 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            1893
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 5,
+              "exercise": 1893,
+              "sets": 8,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "8 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            355
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 6,
+              "exercise": 355,
+              "sets": 3,
+              "max_sets": null,
+              "weight": "60",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "3 Sets, 10 × 60 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            91
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 7,
+              "exercise": 91,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            246
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 8,
+              "exercise": 246,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "iteration": 6,
+      "date": "2026-10-23",
+      "label": null,
+      "day": {
+        "id": 4,
+        "routine": 1,
+        "order": 2,
+        "name": "LOWER A (STRENGTH)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 6,
+      "date": "2026-10-24",
+      "label": null,
+      "day": {
+        "id": 3,
+        "routine": 1,
+        "order": 3,
+        "name": "REST DAY",
+        "description": "",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 6,
+      "date": "2026-10-25",
+      "label": null,
+      "day": {
+        "id": 5,
+        "routine": 1,
+        "order": 4,
+        "name": "UPPER B (Hyptertrop)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 6,
+      "date": "2026-10-26",
+      "label": null,
+      "day": {
+        "id": 6,
+        "routine": 1,
+        "order": 5,
+        "name": "LOWER B (Hypertroph)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 7,
+      "date": "2026-10-27",
+      "label": null,
+      "day": {
+        "id": 2,
+        "routine": 1,
+        "order": 1,
+        "name": "Upper A (Strength)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": [
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            73
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 1,
+              "exercise": 73,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "45",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "15",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "warmup",
+              "text_repr": "2 Sets, 15 × 45 kg",
+              "comment": ""
+            },
+            {
+              "slot_entry_id": 2,
+              "exercise": 73,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "55",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "5",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 5 × 55 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            537
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 3,
+              "exercise": 537,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            83
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 4,
+              "exercise": 83,
+              "sets": 4,
+              "max_sets": null,
+              "weight": "50",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "4 Sets, 8 × 50 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            1893
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 5,
+              "exercise": 1893,
+              "sets": 8,
+              "max_sets": null,
+              "weight": "35",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "8",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "8 Sets, 8 × 35 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            355
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 6,
+              "exercise": 355,
+              "sets": 3,
+              "max_sets": null,
+              "weight": "60",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "3 Sets, 10 × 60 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            91
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 7,
+              "exercise": 91,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "comment": "",
+          "is_superset": false,
+          "exercises": [
+            246
+          ],
+          "sets": [
+            {
+              "slot_entry_id": 8,
+              "exercise": 246,
+              "sets": 2,
+              "max_sets": null,
+              "weight": "25",
+              "max_weight": null,
+              "weight_unit": 1,
+              "weight_rounding": null,
+              "repetitions": "10",
+              "max_repetitions": null,
+              "repetitions_unit": 1,
+              "repetitions_rounding": null,
+              "rir": null,
+              "max_rir": null,
+              "rpe": null,
+              "rest": null,
+              "max_rest": null,
+              "type": "normal",
+              "text_repr": "2 Sets, 10 × 25 kg",
+              "comment": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "iteration": 7,
+      "date": "2026-10-28",
+      "label": null,
+      "day": {
+        "id": 4,
+        "routine": 1,
+        "order": 2,
+        "name": "LOWER A (STRENGTH)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 7,
+      "date": "2026-10-29",
+      "label": null,
+      "day": {
+        "id": 3,
+        "routine": 1,
+        "order": 3,
+        "name": "REST DAY",
+        "description": "",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 7,
+      "date": "2026-10-30",
+      "label": null,
+      "day": {
+        "id": 5,
+        "routine": 1,
+        "order": 4,
+        "name": "UPPER B (Hyptertrop)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    },
+    {
+      "iteration": 7,
+      "date": "2026-10-31",
+      "label": null,
+      "day": {
+        "id": 6,
+        "routine": 1,
+        "order": 5,
+        "name": "LOWER B (Hypertroph)",
+        "description": "",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null
+      },
+      "slots": []
+    }
+  ]
+}

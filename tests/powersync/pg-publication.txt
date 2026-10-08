@@ -1,0 +1,41 @@
+                          Publication powersync
+ Owner | All tables | Inserts | Updates | Deletes | Truncates | Via root 
+-------+------------+---------+---------+---------+-----------+----------
+ wger  | f          | t       | t       | t       | t         | f
+Tables:
+    "public.core_language"
+    "public.core_license"
+    "public.core_repetitionunit"
+    "public.core_userprofile"
+    "public.core_weightunit"
+    "public.exercises_alias"
+    "public.exercises_equipment"
+    "public.exercises_exercise"
+    "public.exercises_exercise_equipment"
+    "public.exercises_exercise_muscles"
+    "public.exercises_exercise_muscles_secondary"
+    "public.exercises_exercisecategory"
+    "public.exercises_exercisecomment"
+    "public.exercises_exerciseimage"
+    "public.exercises_exercisevideo"
+    "public.exercises_muscle"
+    "public.exercises_translation"
+    "public.gallery_image"
+    "public.manager_routine"
+    "public.manager_workoutlog"
+    "public.manager_workoutsession"
+    "public.measurements_category"
+    "public.measurements_measurement"
+    "public.nutrition_image"
+    "public.nutrition_ingredientweightunit"
+    "public.nutrition_logitem"
+    "public.nutrition_meal"
+    "public.nutrition_mealitem"
+    "public.nutrition_nutritionplan"
+    "public.nutrition_synced_ingredient"
+
+ wal_level 
+-----------
+ logical
+(1 row)
+

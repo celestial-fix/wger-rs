@@ -1,0 +1,14 @@
+{
+  "name": "powersync-token",
+  "request": {
+    "method": "GET",
+    "path": "/api/v2/powersync-token",
+    "auth": "force_authenticate(admin)"
+  },
+  "status_code": 200,
+  "content_type": "application/json",
+  "body": {
+    "token": "<REDACTED>",
+    "powersync_url": "https://fitness.heavenly.cl/ps/"
+  }
+}

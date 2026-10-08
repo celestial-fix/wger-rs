@@ -53,19 +53,19 @@ pub fn permission_denied() -> Response {
 }
 
 pub fn invalid_token() -> Response {
-    detail(StatusCode::UNAUTHORIZED, "Invalid token.")
+    detail(StatusCode::FORBIDDEN, "Invalid token.")
 }
 
 pub fn invalid_bearer() -> Response {
     json_response(
-        StatusCode::UNAUTHORIZED,
+        StatusCode::FORBIDDEN,
         json!({
             "detail": "Given token not valid for any token type",
             "code": "token_not_valid",
             "messages": [{
                 "token_class": "AccessToken",
                 "token_type": "access",
-                "message": "Token is invalid or expired"
+                "message": "Token is invalid"
             }]
         }),
     )
@@ -228,6 +228,9 @@ pub fn paginated(
     page: &Page,
     results: Vec<Value>,
 ) -> Value {
+    // DRF LimitOffsetPagination returns an empty page when offset > count
+    // (including Django's ApproximateCountManager reltuples of -1).
+    let results = if page.offset > count { Vec::new() } else { results };
     let next = if page.offset + page.limit < count {
         Some(page_url(uri, headers, state, page.limit, page.offset + page.limit))
     } else {

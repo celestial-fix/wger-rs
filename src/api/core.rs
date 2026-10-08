@@ -99,15 +99,24 @@ const API_ROOT: &[&str] = &[
     "user-statistics",
 ];
 
-async fn version(State(state): State<AppState>, method: Method) -> Response {
+async fn version(State(state): State<AppState>, headers: HeaderMap, method: Method) -> Response {
+    if let Err(resp) = httpx::authenticate(&state, &headers).await {
+        return resp;
+    }
     head_or_json(&method, Value::String(state.config.version.clone()))
 }
 
-async fn min_app(State(state): State<AppState>, method: Method) -> Response {
+async fn min_app(State(state): State<AppState>, headers: HeaderMap, method: Method) -> Response {
+    if let Err(resp) = httpx::authenticate(&state, &headers).await {
+        return resp;
+    }
     head_or_json(&method, Value::String(state.config.min_app_version.clone()))
 }
 
-async fn min_server(State(state): State<AppState>, method: Method) -> Response {
+async fn min_server(State(state): State<AppState>, headers: HeaderMap, method: Method) -> Response {
+    if let Err(resp) = httpx::authenticate(&state, &headers).await {
+        return resp;
+    }
     head_or_json(&method, Value::String(state.config.min_server_version.clone()))
 }
 
@@ -470,7 +479,7 @@ async fn rep_units(State(state): State<AppState>, uri: Uri, headers: HeaderMap, 
         &headers,
         &method,
         "SELECT id, name, unit_type, multiplier FROM core_repetitionunit",
-        "unit_type ASC, id ASC",
+        "unit_type ASC, name ASC",
         &["id", "name", "unit_type", "multiplier"],
         |row| {
             json!({

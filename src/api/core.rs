@@ -346,6 +346,7 @@ pub async fn login(State(state): State<AppState>, Json(body): Json<LoginBody>) -
         },
         "meta": {
             "is_authenticated": true,
+            "session_token": auth::new_sid(),
             "access_token": access,
             "refresh_token": refresh,
         }

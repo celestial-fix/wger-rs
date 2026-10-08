@@ -77,7 +77,7 @@ def redact_auth(body):
         return body
     meta = body.get("meta")
     if isinstance(meta, dict):
-        for key in ("access_token", "refresh_token"):
+        for key in ("access_token", "refresh_token", "session_token"):
             if key in meta:
                 meta[key] = "<token>"
     data = body.get("data")

@@ -2,9 +2,9 @@
 //!
 //! Access tokens follow allauth headless: `token_use=access`, `sub` is the user
 //! pk as a string, plus `iat`, `exp`, `sid`, `jti`. Refresh tokens are minted
-//! here (same shape, `token_use=refresh`) and do not depend on a Django
-//! session, so a phone that still holds a Django refresh token must log in
-//! once at cutover. PowerSync tokens are a separate claim set (`aud=powersync`,
+//! here (same shape, `token_use=refresh`). When the same RS256 key is shared
+//! with Django, Rust also accepts Django-issued refresh tokens at cutover
+//! (no phone re-login). If verification fails, phones must log in once. PowerSync tokens are a separate claim set (`aud=powersync`,
 //! no `token_use`) and must not authenticate API requests.
 
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -47,13 +47,16 @@ pub fn load_keys(private_b64: &str, public_b64: &str) -> Result<JwtKeys, String>
     let d = b64url_field(&private_json, "d")?;
     let p = b64url_field(&private_json, "p")?;
     let q = b64url_field(&private_json, "q")?;
-    let key = RsaPrivateKey::from_components(
+    let mut key = RsaPrivateKey::from_components(
         BigUint::from_bytes_be(&n),
         BigUint::from_bytes_be(&e),
         BigUint::from_bytes_be(&d),
         vec![BigUint::from_bytes_be(&p), BigUint::from_bytes_be(&q)],
     )
     .map_err(|err| format!("JWT private key: {err}"))?;
+    // CRT coefficients are required for a valid PKCS8 encoding that jsonwebtoken accepts.
+    key.precompute()
+        .map_err(|err| format!("JWT precompute: {err}"))?;
     let der = key
         .to_pkcs8_der()
         .map_err(|err| format!("JWT PKCS8: {err}"))?;

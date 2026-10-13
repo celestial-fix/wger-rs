@@ -336,7 +336,7 @@ def diary_measurement_checks():
     compare_validation("/api/v2/nutritiondiary/", "POST", {"plan": IDS["plan_id"], "amount": "1.234"}, "nutritiondiary missing ingredient + bad amount")
     compare_status_both("POST", "/api/v2/nutritiondiary/", {"plan": "00000000-0000-0000-0000-000000000000", "ingredient": IDS["ingredient_id"], "amount": 1}, name="write nutritiondiary foreign plan 403")
     # measurement
-    body = {"category": IDS["measurement_category_id"], "date": "2030-02-02T08:00:00Z", "value": "12.5", "notes": "h"}
+    body = {"category": IDS["measurement_category_id"], "date": "2030-02-02T08:00:00Z", "value": "55.5", "notes": "h"}
     l, r, _, _ = post_both("/api/v2/measurement/", body)
     if l and r:
         patch_both("/api/v2/measurement/", l, r, {"notes": "h2"})

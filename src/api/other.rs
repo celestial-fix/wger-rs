@@ -733,3 +733,11 @@ async fn gallery_one(State(state): State<AppState>, headers: HeaderMap, Path(id)
     };
     head_or_json(&method, gallery_json(&row, &origin))
 }
+
+pub(super) async fn render_measurement(state: &AppState, headers: &HeaderMap, id: String) -> Response {
+    measurement_one(State(state.clone()), headers.clone(), Path(id), Method::GET).await
+}
+
+pub(super) async fn render_weight(state: &AppState, headers: &HeaderMap, id: String) -> Response {
+    weight_one(State(state.clone()), headers.clone(), Path(id), Method::GET).await
+}

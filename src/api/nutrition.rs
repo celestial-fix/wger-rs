@@ -1081,3 +1081,7 @@ async fn diary_one(State(state): State<AppState>, headers: HeaderMap, Path(id): 
     };
     head_or_json(&method, diary_json(&row, user.tz))
 }
+
+pub(super) async fn render_diary(state: &AppState, headers: &HeaderMap, id: String) -> Response {
+    diary_one(State(state.clone()), headers.clone(), Path(id), Method::GET).await
+}

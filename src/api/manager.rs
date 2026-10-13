@@ -899,3 +899,34 @@ fn config_json(row: &PgRow, kind: ConfigKind) -> Value {
         "requirements": requirements.map(|j| j.0).unwrap_or(Value::Null),
     })
 }
+
+// ---- render hooks for REST writes (responses identical to detail GETs) ----
+pub(super) async fn render_routine(state: &AppState, headers: &HeaderMap, id: String) -> Response {
+    match id.parse::<i32>() {
+        Ok(id) => routine_one(state, headers, id, &Method::GET, false).await,
+        Err(_) => httpx::not_found(),
+    }
+}
+
+pub(super) async fn render_owned(state: &AppState, headers: &HeaderMap, kind: &str, id: String) -> Response {
+    let kind = match kind {
+        "day" => OwnedKind::Day,
+        "slot" => OwnedKind::Slot,
+        "entry" => OwnedKind::Entry,
+        "session" => OwnedKind::Session,
+        _ => OwnedKind::Log,
+    };
+    owned_one(state, headers, kind, &id, &Method::GET).await
+}
+
+pub(super) async fn render_config(state: &AppState, headers: &HeaderMap, table: &'static str, id: String) -> Response {
+    let kind = match table {
+        "manager_setsconfig" | "manager_maxsetsconfig" | "manager_restconfig" | "manager_maxrestconfig" => ConfigKind::Integer,
+        "manager_rirconfig" | "manager_maxrirconfig" => ConfigKind::Decimal(1),
+        _ => ConfigKind::Decimal(2),
+    };
+    match id.parse::<i32>() {
+        Ok(id) => config_one(state, headers, table, id, kind, &Method::GET).await,
+        Err(_) => httpx::not_found(),
+    }
+}

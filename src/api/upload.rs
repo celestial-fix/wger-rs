@@ -1035,6 +1035,14 @@ async fn handle_create(
     if let Err(resp) = create_side_checks(user_id, spec, &mut data).await {
         return resp;
     }
+    if spec.table == "manager_workoutlog" {
+        if let Err(resp) = workoutlog_clean(&data) {
+            return resp;
+        }
+        if let Err(resp) = prepare_workoutlog(&state.pool, user_id, &mut data).await {
+            return resp;
+        }
+    }
     let mut cells: Vec<(String, Cell)> = Vec::new();
     for col in spec.cols.iter().filter(|c| c.on_create) {
         if col.readonly {
@@ -1088,9 +1096,167 @@ async fn handle_create(
     }
     q.push(')');
     match q.build().execute(&state.pool).await {
-        Ok(_) => ok_status(),
+        Ok(_) => {
+            if spec.table == "manager_workoutlog" {
+                if let Err(err) = backfill_session_day(&state.pool, &data).await {
+                    return db_response(err);
+                }
+            }
+            ok_status()
+        }
         Err(err) => db_response(err),
     }
+}
+
+/// `WorkoutLog.clean()`: weight/reps presence and their units.
+fn workoutlog_clean(data: &Map<String, Value>) -> Result<(), Response> {
+    let present = |k: &str| data.get(k).map(|v| !v.is_null()).unwrap_or(false);
+    let msg = if !present("repetitions") && !present("weight") {
+        Some("Both repetitions and weight cannot be null at the same time.")
+    } else if present("repetitions") && !present("repetitions_unit") {
+        Some("Repetitions unit must be present if repetitions have a value.")
+    } else if present("weight") && !present("weight_unit") {
+        Some("Weight unit must be present if weight has a value.")
+    } else {
+        None
+    };
+    match msg {
+        Some(m) => Err(validation(json!({"non_field_errors": [m]}))),
+        None => Ok(()),
+    }
+}
+
+/// Max session length (`WGER_MAX_SESSION_LENGTH_HOURS`, default 5).
+fn max_session_hours() -> i32 {
+    std::env::var("WGER_MAX_SESSION_LENGTH_HOURS")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(5)
+}
+
+fn json_i32(v: Option<&Value>) -> Option<i32> {
+    match v {
+        Some(Value::Number(n)) => n.as_i64().map(|x| x as i32),
+        Some(Value::String(s)) => s.parse().ok(),
+        _ => None,
+    }
+}
+
+/// `WorkoutLog.save()` + `assign_session()`: drop a foreign session, then
+/// attach to a covering session, else the latest open session that started
+/// within the max session length before the log, else create one.
+pub(crate) async fn prepare_workoutlog(
+    pool: &PgPool,
+    user_id: i32,
+    data: &mut Map<String, Value>,
+) -> Result<(), Response> {
+    if let Some(Value::String(sid)) = data.get("session").cloned() {
+        if let Ok(sid) = Uuid::parse_str(&sid) {
+            let owner: Option<i32> =
+                sqlx::query_scalar("SELECT user_id FROM manager_workoutsession WHERE id = $1")
+                    .bind(sid)
+                    .fetch_optional(pool)
+                    .await
+                    .map_err(db_response)?;
+            if owner == Some(user_id) {
+                return Ok(());
+            }
+        }
+        data.insert("session".into(), Value::Null);
+    }
+    let Some(date_raw) = data.get("date").and_then(Value::as_str).map(str::to_string) else {
+        return Ok(());
+    };
+    let Ok(log_date) = parse_ts(&date_raw) else {
+        return Ok(());
+    };
+    let routine = json_i32(data.get("routine"));
+    let slot_entry = json_i32(data.get("slot_entry"));
+    let mut tx = pool.begin().await.map_err(db_response)?;
+    sqlx::query("SELECT id FROM auth_user WHERE id = $1 FOR UPDATE")
+        .bind(user_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(db_response)?;
+    let covering: Option<Uuid> = sqlx::query_scalar(
+        "SELECT id FROM manager_workoutsession WHERE user_id = $1 AND routine_id IS NOT DISTINCT FROM $2          AND datetime_start <= $3 AND datetime_end >= $3 ORDER BY datetime_start LIMIT 1",
+    )
+    .bind(user_id)
+    .bind(routine)
+    .bind(log_date)
+    .fetch_optional(&mut *tx)
+    .await
+    .map_err(db_response)?;
+    let session = match covering {
+        Some(id) => Some(id),
+        None => sqlx::query_scalar(
+            "SELECT id FROM manager_workoutsession WHERE user_id = $1 AND routine_id IS NOT DISTINCT FROM $2              AND datetime_end IS NULL AND datetime_start >= $3 - make_interval(hours => $4)              AND datetime_start <= $3 ORDER BY datetime_start DESC LIMIT 1",
+        )
+        .bind(user_id)
+        .bind(routine)
+        .bind(log_date)
+        .bind(max_session_hours())
+        .fetch_optional(&mut *tx)
+        .await
+        .map_err(db_response)?,
+    };
+    let session = match session {
+        Some(id) => id,
+        None => {
+            let mut day: Option<i32> = None;
+            if let (Some(entry), Some(r)) = (slot_entry, routine) {
+                day = sqlx::query_scalar(
+                    "SELECT d.id FROM manager_slotentry e JOIN manager_slot s ON s.id = e.slot_id                      JOIN manager_day d ON d.id = s.day_id WHERE e.id = $1 AND d.routine_id = $2",
+                )
+                .bind(entry)
+                .bind(r)
+                .fetch_optional(&mut *tx)
+                .await
+                .map_err(db_response)?;
+            }
+            let id = Uuid::now_v7();
+            sqlx::query(
+                "INSERT INTO manager_workoutsession (id, user_id, routine_id, day_id, datetime_start, notes, impression)                  VALUES ($1, $2, $3, $4, $5, NULL, '2')",
+            )
+            .bind(id)
+            .bind(user_id)
+            .bind(routine)
+            .bind(day)
+            .bind(log_date)
+            .execute(&mut *tx)
+            .await
+            .map_err(db_response)?;
+            id
+        }
+    };
+    tx.commit().await.map_err(db_response)?;
+    data.insert("session".into(), json!(session.to_string()));
+    Ok(())
+}
+
+/// Fill an empty session day when all its slot-entry logs agree on one day
+/// of the session routine (WorkoutLog.save tail).
+pub(crate) async fn backfill_session_day(
+    pool: &PgPool,
+    data: &Map<String, Value>,
+) -> Result<(), sqlx::Error> {
+    let Some(sid) = data
+        .get("session")
+        .and_then(Value::as_str)
+        .and_then(|s| Uuid::parse_str(s).ok())
+    else {
+        return Ok(());
+    };
+    if data.get("slot_entry").map(|v| v.is_null()).unwrap_or(true) {
+        return Ok(());
+    }
+    sqlx::query(
+        "UPDATE manager_workoutsession ws SET day_id = x.day_id FROM (            SELECT MIN(d.id) AS day_id, MIN(d.routine_id) AS routine_id, COUNT(DISTINCT d.id) AS n            FROM manager_workoutlog l JOIN manager_slotentry e ON e.id = l.slot_entry_id            JOIN manager_slot s ON s.id = e.slot_id JOIN manager_day d ON d.id = s.day_id            WHERE l.session_id = $1) x          WHERE ws.id = $1 AND ws.day_id IS NULL AND x.n = 1 AND ws.routine_id = x.routine_id",
+    )
+    .bind(sid)
+    .execute(pool)
+    .await?;
+    Ok(())
 }
 
 async fn create_side_checks(
@@ -1300,8 +1466,29 @@ async fn handle_delete(
     }
     let mut q = QueryBuilder::new(format!("DELETE FROM {} WHERE ", spec.table));
     push_owned_where(&mut q, spec, &id, user_id);
+    if spec.table == "gallery_image" {
+        q.push(" RETURNING image");
+        return match q.build().fetch_optional(&state.pool).await {
+            Ok(Some(r)) => {
+                let image: String = r.get("image");
+                remove_media_file(&state.config.media_root, &image).await;
+                ok_status()
+            }
+            Ok(None) => ok_status(),
+            Err(err) => db_response(err),
+        };
+    }
     match q.build().execute(&state.pool).await {
         Ok(_) => ok_status(),
         Err(err) => db_response(err),
     }
+}
+
+/// gallery `post_delete` signal: remove the stored file (path relative to
+/// MEDIA_ROOT). Refuses absolute paths and `..`; a missing file is ignored.
+pub(crate) async fn remove_media_file(root: &str, rel: &str) {
+    if rel.is_empty() || rel.starts_with('/') || rel.split('/').any(|p| p == "..") {
+        return;
+    }
+    let _ = tokio::fs::remove_file(std::path::Path::new(root).join(rel)).await;
 }

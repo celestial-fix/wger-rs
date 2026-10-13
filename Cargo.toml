@@ -33,7 +33,7 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal", "fs"
 tower-http = { version = "0.6", features = ["trace", "fs"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-uuid = { version = "1", features = ["v4", "v5", "serde"] }
+uuid = { version = "1", features = ["v4", "v5", "v7", "serde"] }
 
 [profile.release]
 lto = "thin"

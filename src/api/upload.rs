@@ -1032,7 +1032,7 @@ async fn handle_create(
     if let Err(resp) = check_fks(&state.pool, spec, &data, user_id).await {
         return resp;
     }
-    if let Err(resp) = create_side_checks(user_id, spec, &mut data).await {
+    if let Err(resp) = create_side_checks(&state.pool, user_id, spec, &mut data).await {
         return resp;
     }
     if spec.table == "manager_workoutlog" {
@@ -1264,6 +1264,7 @@ pub(crate) async fn backfill_session_day(
 }
 
 async fn create_side_checks(
+    pool: &sqlx::PgPool,
     user_id: i32,
     spec: &TableSpec,
     data: &mut Map<String, Value>,
@@ -1294,6 +1295,23 @@ async fn create_side_checks(
             }
         }
         "measurements_measurement" => {
+            // Same serializer as REST in Django: stamp body weight unit.
+            let cat = data.get("category").and_then(Value::as_str).and_then(|c| uuid::Uuid::parse_str(c).ok());
+            if let Some(cat) = cat {
+                let row: Option<(String, String)> = sqlx::query_as("SELECT metric_type, unit FROM measurements_category WHERE id = $1")
+                    .bind(cat).fetch_optional(pool).await.map_err(httpx::db_error)?;
+                if let Some((mt, unit)) = row {
+                    if mt == "body_weight" {
+                        let mut ed = match data.get("extra_data") {
+                            Some(Value::Object(m)) => m.clone(),
+                            Some(Value::String(t)) => match serde_json::from_str::<Value>(t) { Ok(Value::Object(m)) => m, _ => serde_json::Map::new() },
+                            _ => serde_json::Map::new(),
+                        };
+                        ed.entry("unit".to_string()).or_insert(json!(unit));
+                        data.insert("extra_data".to_string(), Value::Object(ed));
+                    }
+                }
+            }
             if let Some(value) = data.get("value") {
                 if let Ok(Bind::Dec(d)) = coerce(Ty::Dec, "value", value) {
                     if d.is_sign_negative() {

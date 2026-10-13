@@ -183,7 +183,7 @@ const MEASUREMENT_FIELDS: &[F] = &[
     f("date", "date", Ty::Ts, false, false, Some("now()")),
     f("value", "value", Ty::Dec(8, 2, Some(0), None), true, false, None),
     f("notes", "notes", Ty::Str(100, true), false, false, Some("''")),
-    f("source", "source", Ty::Choice(&["manual", "import", "health", "calculated"]), false, false, Some("'manual'")),
+    f("source", "source", Ty::Choice(&["user", "google", "apple", "calculated"]), false, false, Some("'user'")),
     f("external_id", "external_id", Ty::FkUuid("SELECT 1", None), false, true, Some("NULL")),
     f("extra_data", "extra_data", Ty::Json, false, false, Some("'{}'::jsonb")),
 ];
@@ -932,6 +932,26 @@ async fn create(st: &AppState, h: &HeaderMap, res: &'static Res, body: Bytes) ->
         return r;
     }
     let pk = if res.uuid_pk { B::U(Uuid::now_v7()) } else { B::Null };
+    if matches!(res.kind, Kind::Measurement) {
+        // Django 2.7 MeasurementSerializer.create: body weight entries are
+        // stamped with the category unit (setdefault on extra_data).
+        let cat = match get(&vals, "category") { Some(B::U(c)) => Some(*c), _ => None };
+        if let Some(cat) = cat {
+            let row: Option<(String, String)> = match sqlx::query_as("SELECT metric_type, unit FROM measurements_category WHERE id = $1")
+                .bind(cat).fetch_optional(&st.pool).await {
+                Ok(r) => r,
+                Err(e) => return httpx::db_error(e),
+            };
+            if let Some((mt, unit)) = row {
+                if mt == "body_weight" {
+                    let mut ed = match get(&vals, "extra_data") { Some(B::J(Value::Object(m))) => m.clone(), _ => Map::new() };
+                    ed.entry("unit".to_string()).or_insert(json!(unit));
+                    vals.retain(|(fl, _)| fl.name != "extra_data");
+                    vals.push((MEASUREMENT_FIELDS.iter().find(|fl| fl.name == "extra_data").unwrap(), B::J(Value::Object(ed))));
+                }
+            }
+        }
+    }
     let mut extra: Vec<(&str, B)> = Vec::new();
     match res.kind {
         Kind::Log => {
@@ -968,7 +988,7 @@ async fn create(st: &AppState, h: &HeaderMap, res: &'static Res, body: Bytes) ->
             extra.push(("category_id", B::U(cat)));
             extra.push(("extra_data", B::J(json!({"unit": unit}))));
             extra.push(("notes", B::S(String::new())));
-            extra.push(("source", B::S("manual".into())));
+            extra.push(("source", B::S("user".into())));
         }
         _ => {}
     }

@@ -325,6 +325,28 @@ if __name__ == "__main__":
     rest_write_checks()
 
 
+def get_own_both(path, pid_l, pid_r, name):
+    ds, draw, _ = fetch(DJANGO, "GET", f"{path}{pid_l}/", auth)
+    rs, rraw, _ = fetch(RUST, "GET", f"{path}{pid_r}/", auth)
+    if ds != rs or ds != 200:
+        record(name, False, f"django={ds} rust={rs}")
+        return
+    found = diff(_norm_remove_diffing_keys(rewrite(parse(draw))), _norm_remove_diffing_keys(rewrite(parse(rraw))))
+    record(name, not found, "\n".join(found[:12]))
+
+
+def upload_measurement_get_check():
+    import uuid
+    from compare import upload_send
+    now = "2030-02-03T08:00:00Z"
+    ids = {}
+    for side, base in (("l", DJANGO), ("r", RUST)):
+        ids[side] = str(uuid.uuid4())
+        upload_send(base, "PUT", "measurements_measurement",
+                    {"id": ids[side], "category": IDS["measurement_category_id"], "value": 66.5, "date": now, "notes": "u"})
+    get_own_both("/api/v2/measurement/", ids["l"], ids["r"], "write upload measurement get (source/extra_data)")
+
+
 def diary_measurement_checks():
     # nutrition diary (POST/PATCH/DELETE)
     body = {"plan": IDS["plan_id"], "ingredient": IDS["ingredient_id"], "amount": "120.50", "datetime": "2030-02-01T08:00:00Z"}
@@ -339,9 +361,11 @@ def diary_measurement_checks():
     body = {"category": IDS["measurement_category_id"], "date": "2030-02-02T08:00:00Z", "value": "55.5", "notes": "h"}
     l, r, _, _ = post_both("/api/v2/measurement/", body)
     if l and r:
+        get_own_both("/api/v2/measurement/", l["id"], r["id"], "write /api/v2/measurement/ get after post")
         patch_both("/api/v2/measurement/", l, r, {"notes": "h2"})
         delete_both("/api/v2/measurement/", l["id"], r["id"])
         delete_again_both("/api/v2/measurement/", l["id"], r["id"])
+    upload_measurement_get_check()
     compare_validation("/api/v2/measurement/", "POST", {"category": IDS["measurement_category_id"], "value": -1}, "measurement missing date + negative")
     # weightentry
     l, r, _, _ = post_both("/api/v2/weightentry/", {"date": "2030-02-03T08:00:00Z", "weight": "80.5"})

@@ -107,8 +107,10 @@ async fn ingredient_page(state: &AppState, uri: &Uri, headers: &HeaderMap, metho
     }
     data_q.push(" LIMIT ");
     data_q.push_bind(page.limit);
-    data_q.push(" OFFSET ");
-    data_q.push_bind(page.offset);
+    if page.offset > 0 {
+        data_q.push(" OFFSET ");
+        data_q.push_bind(page.offset);
+    }
     let rows = match data_q.build().fetch_all(&state.pool).await {
         Ok(rows) => rows,
         Err(err) => return httpx::db_error(err),
@@ -187,20 +189,38 @@ fn push_ingredient_filters(q: &mut QueryBuilder<sqlx::Postgres>, map: &HashMap<S
             q.push(" AND false");
         } else if term.chars().count() < 3 {
             q.push(" AND i.name ILIKE ");
-            q.push_bind(term.clone());
+            q.push_bind(like_escape(term));
         } else {
             push_name_search(q, term);
         }
     }
 }
 
+/// Django `connection.ops.prep_for_like_query`: escape \, % and _.
+fn like_escape(term: &str) -> String {
+    term.replace('\\', "\\\\").replace('%', "\\%").replace('_', "\\_")
+}
+
+/// Django `_has_literal_trigram`: three consecutive alphanumeric characters.
+fn has_literal_trigram(term: &str) -> bool {
+    let mut run = 0;
+    for c in term.chars() {
+        run = if c.is_alphanumeric() { run + 1 } else { 0 };
+        if run == 3 {
+            return true;
+        }
+    }
+    false
+}
+
 fn push_name_search(q: &mut QueryBuilder<sqlx::Postgres>, term: &str) {
-    let single = !term.split_whitespace().nth(1).is_some();
+    // Django: len(value.split(maxsplit=1)) == 1 and _has_literal_trigram(value)
+    let single = term.split_whitespace().nth(1).is_none() && has_literal_trigram(term);
     q.push(" AND (i.name % ");
     q.push_bind(term.to_string());
     if single {
         q.push(" OR i.name ILIKE ");
-        q.push_bind(format!("%{}%", term.replace('%', "\\%").replace('_', "\\_")));
+        q.push_bind(format!("%{}%", like_escape(term)));
     }
     q.push(")");
 }
@@ -211,8 +231,11 @@ fn ingredient_order(map: &HashMap<String, String>) -> String {
             return String::new();
         }
         let lit = term.replace('\'', "''");
+        let like = like_escape(term).replace('\'', "''");
+        // Django TrigramStrictWordSimilarity -> strict_word_similarity.
         return format!(
-            "CASE WHEN i.name ILIKE '{lit}' THEN 3 WHEN i.name ILIKE '{lit}%' THEN 2 WHEN word_similarity('{lit}', i.name) = 1 THEN 1 ELSE 0 END DESC, similarity(i.name, '{lit}') DESC, i.name ASC, i.id ASC"
+            "CASE WHEN i.name ILIKE E'{el}' THEN 3 WHEN i.name ILIKE E'{el}%' THEN 2 WHEN strict_word_similarity('{lit}', i.name) = 1 THEN 1 ELSE 0 END DESC, similarity(i.name, '{lit}') DESC, i.name ASC, i.id ASC",
+            el = like.replace('\\', "\\\\")
         );
     }
     if map.get("name__search").is_some() {
@@ -1009,8 +1032,10 @@ async fn diary(State(state): State<AppState>, uri: Uri, headers: HeaderMap, meth
     data_q.push(order);
     data_q.push(" LIMIT ");
     data_q.push_bind(page.limit);
-    data_q.push(" OFFSET ");
-    data_q.push_bind(page.offset);
+    if page.offset > 0 {
+        data_q.push(" OFFSET ");
+        data_q.push_bind(page.offset);
+    }
     let rows = match data_q.build().fetch_all(&state.pool).await {
         Ok(rows) => rows,
         Err(err) => return httpx::db_error(err),

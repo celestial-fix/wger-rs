@@ -186,10 +186,10 @@ const WORKOUTLOG_COLS: &[Col] = &[
     col!("slot_entry", "slot_entry_id", Ty::I32, true, true, true),
     col!("next_log", "next_log_id", Ty::Uuid, true, true, true),
     col!("exercise", "exercise_id", Ty::I32, true, true, false),
-    col!("repetitions_unit", "repetitions_unit_id", Ty::I32, true, true, true),
+    col!("repetitions_unit", "repetitions_unit_id", Ty::I32, true, true, true, "1"),
     col!("repetitions", "repetitions", Ty::Dec, true, true, true),
     col!("repetitions_target", "repetitions_target", Ty::Dec, true, true, true),
-    col!("weight_unit", "weight_unit_id", Ty::I32, true, true, true),
+    col!("weight_unit", "weight_unit_id", Ty::I32, true, true, true, "1"),
     col!("weight", "weight", Ty::Dec, true, true, true),
     col!("weight_target", "weight_target", Ty::Dec, true, true, true),
     col!("rir", "rir", Ty::Dec, true, true, true),
@@ -1110,7 +1110,11 @@ async fn handle_create(
 
 /// `WorkoutLog.clean()`: weight/reps presence and their units.
 fn workoutlog_clean(data: &Map<String, Value>) -> Result<(), Response> {
-    let present = |k: &str| data.get(k).map(|v| !v.is_null()).unwrap_or(false);
+    // absent units take the model defaults (repetitions / kg); explicit null stays null
+    let present = |k: &str| match data.get(k) {
+        Some(v) => !v.is_null(),
+        None => k == "repetitions_unit" || k == "weight_unit",
+    };
     let msg = if !present("repetitions") && !present("weight") {
         Some("Both repetitions and weight cannot be null at the same time.")
     } else if present("repetitions") && !present("repetitions_unit") {
@@ -1348,7 +1352,7 @@ async fn handle_update(
             }
             let existing_dynamic: String = row.get("dynamic_type");
             if let Some(Value::String(dynamic)) = data.get("dynamic_type") {
-                if existing_dynamic != "none" && *dynamic != existing_dynamic {
+                if !existing_dynamic.eq_ignore_ascii_case("none") && *dynamic != existing_dynamic {
                     return field_error("dynamic_type", "The calculation of a category cannot be changed");
                 }
             }

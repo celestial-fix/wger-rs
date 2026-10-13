@@ -159,10 +159,10 @@ const LOG_FIELDS: &[F] = &[
     f("slot_entry", "slot_entry_id", Ty::FkInt("SELECT 1 FROM manager_slotentry WHERE id = $1", Some(OWN_ENTRY)), false, true, Some("NULL")),
     f("next_log", "next_log_id", Ty::FkUuid("SELECT 1 FROM manager_workoutlog WHERE id = $1", Some(OWN_LOG)), false, true, Some("NULL")),
     f("exercise", "exercise_id", Ty::FkInt("SELECT 1 FROM exercises_exercise WHERE id = $1", None), true, false, None),
-    f("repetitions_unit", "repetitions_unit_id", Ty::FkInt("SELECT 1 FROM core_repetitionunit WHERE id = $1", None), false, true, Some("NULL")),
+    f("repetitions_unit", "repetitions_unit_id", Ty::FkInt("SELECT 1 FROM core_repetitionunit WHERE id = $1", None), false, true, Some("1")),
     f("repetitions", "repetitions", Ty::Dec(6, 2, Some(0), None), false, true, Some("NULL")),
     f("repetitions_target", "repetitions_target", Ty::Dec(6, 2, Some(0), None), false, true, Some("NULL")),
-    f("weight_unit", "weight_unit_id", Ty::FkInt("SELECT 1 FROM core_weightunit WHERE id = $1", None), false, true, Some("NULL")),
+    f("weight_unit", "weight_unit_id", Ty::FkInt("SELECT 1 FROM core_weightunit WHERE id = $1", None), false, true, Some("1")),
     f("weight", "weight", Ty::Dec(6, 2, None, None), false, true, Some("NULL")),
     f("weight_target", "weight_target", Ty::Dec(6, 2, None, None), false, true, Some("NULL")),
     f("rir", "rir", Ty::Dec(2, 1, Some(0), None), false, true, Some("NULL")),
@@ -180,8 +180,8 @@ const DIARY_FIELDS: &[F] = &[
 ];
 const MEASUREMENT_FIELDS: &[F] = &[
     f("category", "category_id", Ty::FkUuid("SELECT 1 FROM measurements_category WHERE id = $1", Some(OWN_CATEGORY)), true, false, None),
-    f("date", "date", Ty::Ts, true, false, None),
-    f("value", "value", Ty::Dec(12, 4, Some(0), None), true, false, None),
+    f("date", "date", Ty::Ts, false, false, Some("now()")),
+    f("value", "value", Ty::Dec(8, 2, Some(0), None), true, false, None),
     f("notes", "notes", Ty::Str(100, true), false, false, Some("''")),
     f("source", "source", Ty::Choice(&["manual", "import", "health", "calculated"]), false, false, Some("'manual'")),
     f("external_id", "external_id", Ty::FkUuid("SELECT 1", None), false, true, Some("NULL")),
@@ -189,7 +189,7 @@ const MEASUREMENT_FIELDS: &[F] = &[
 ];
 const WEIGHT_FIELDS: &[F] = &[
     f("date", "date", Ty::Ts, true, false, None),
-    f("weight", "value", Ty::Dec(12, 4, None, None), true, false, None),
+    f("weight", "value", Ty::Dec(8, 2, None, None), true, false, None),
 ];
 
 const IN_OWN_ROUTINES: &str = "routine_id IN (SELECT id FROM manager_routine WHERE user_id = $U)";
@@ -230,20 +230,37 @@ config_res!(r_c_maxrest, "max-rest-config", "manager_maxrestconfig");
 config_res!(r_c_rir, "rir-config", "manager_rirconfig");
 config_res!(r_c_maxrir, "max-rir-config", "manager_maxrirconfig");
 
-const fn cfg_fields(int_value: bool, rir: bool) -> &'static [F] {
-    if int_value {
-        CONFIG_FIELDS_INT
-    } else if rir {
-        CONFIG_FIELDS_DEC
-    } else {
-        CONFIG_FIELDS_DEC
+macro_rules! cfg_set {
+    ($name:ident, $vty:expr) => {
+        const $name: &[F] = &[
+            f("slot_entry", "slot_entry_id", Ty::FkInt("SELECT 1 FROM manager_slotentry WHERE id = $1", Some(OWN_ENTRY)), true, false, None),
+            f("iteration", "iteration", PINT, true, false, None),
+            f("value", "value", $vty, true, false, None),
+            f("operation", "operation", Ty::Choice(OPS), false, false, Some("'r'")),
+            f("step", "step", Ty::Choice(STEPS), false, false, Some("'abs'")),
+            f("repeat", "repeat", Ty::Bool, false, false, Some("false")),
+            f("requirements", "requirements", Ty::Json, false, true, Some("NULL")),
+        ];
+    };
+}
+cfg_set!(CFG_SETS, Ty::Int(0, 50));
+cfg_set!(CFG_REST, Ty::Int(0, 1800));
+cfg_set!(CFG_MAXREST, Ty::Int(0, 600));
+cfg_set!(CFG_RIR, Ty::Dec(2, 1, Some(0), None));
+
+const fn cfg_fields(table: &str) -> &'static [F] {
+    match table.as_bytes() {
+        b"manager_setsconfig" | b"manager_maxsetsconfig" => CFG_SETS,
+        b"manager_restconfig" => CFG_REST,
+        b"manager_maxrestconfig" => CFG_MAXREST,
+        b"manager_rirconfig" | b"manager_maxrirconfig" => CFG_RIR,
+        _ => CONFIG_FIELDS_DEC,
     }
 }
-const CONFIG_FIELDS_INT: &[F] = CONFIG_FIELDS_DEC;
 
 macro_rules! cfg {
     ($path:literal, $table:literal, $render:ident) => {
-        Res { path: $path, table: $table, uuid_pk: false, fields: cfg_fields(false, false), owner: IN_OWN_ENTRIES, force_user: false, update: true, render: $render, kind: Kind::Config }
+        Res { path: $path, table: $table, uuid_pk: false, fields: cfg_fields($table), owner: IN_OWN_ENTRIES, force_user: false, update: true, render: $render, kind: Kind::Config }
     };
 }
 
@@ -418,6 +435,9 @@ pub(crate) fn parse_dt(s: &str) -> Option<DateTime<Utc>> {
             // Naive values are in the server zone; UTC matches TIME_ZONE handling of make_aware for a UTC server.
             return Some(n.and_utc());
         }
+    }
+    if let Ok(d) = NaiveDate::parse_from_str(s, "%Y-%m-%d") {
+        return Some(d.and_hms_opt(0, 0, 0).unwrap().and_utc());
     }
     for fmt in ["%Y-%m-%dT%H:%M:%S%.f%z", "%Y-%m-%dT%H:%M%z", "%Y-%m-%d %H:%M:%S%.f%z"] {
         if let Ok(d) = DateTime::parse_from_str(s, fmt) {
@@ -694,15 +714,43 @@ async fn object_validate(
                     return Err(bad(json!({"requirements": [msg]}).as_object().unwrap().clone()));
                 }
             }
-            // Integer configs (sets/rest) store an integer column; Django
-            // casts on save. Values with decimals are rounded the same way
-            // Python int() would truncate them through the DecimalField.
-            if matches!(res.table, "manager_setsconfig" | "manager_maxsetsconfig" | "manager_restconfig" | "manager_maxrestconfig") {
-                if let Some(slot) = vals.iter_mut().find(|(f, _)| f.name == "value") {
-                    if let B::D(d) = &slot.1 {
-                        slot.1 = B::D(d.trunc());
+            if matches!(res.table, "manager_rirconfig" | "manager_maxrirconfig") {
+                if let Some(B::D(d)) = get(vals, "value") {
+                    let ok = ["0", "0.5", "1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5"].iter().any(|o| Decimal::from_str(o).unwrap() == *d);
+                    if !ok {
+                        let mut q = *d;
+                        q.rescale(1);
+                        return Err(bad(json!({"value": [format!("{q} is not a valid RiR option: [None, 0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5]")]}).as_object().unwrap().clone()));
                     }
                 }
+            }
+            // AbstractChangeConfig.save(): iteration 1 forces replace, replace forces step na
+            let (mut it, mut op): (Option<i64>, Option<String>) = (None, None);
+            if let Some(pk) = pk {
+                let mut q = QueryBuilder::new(format!("SELECT iteration::bigint, operation FROM {} WHERE id = ", res.table));
+                push_b(&mut q, pk.clone());
+                if let Some((i, o)) = q.build_query_as::<(i64, String)>().fetch_optional(pool).await.map_err(httpx::db_error)? {
+                    it = Some(i);
+                    op = Some(o);
+                }
+            }
+            if let Some(B::I(i)) = get(vals, "iteration") {
+                it = Some(*i);
+            }
+            if let Some(B::S(o)) = get(vals, "operation") {
+                op = Some(o.clone());
+            }
+            let op = if it == Some(1) { "r".to_string() } else { op.unwrap_or_else(|| "r".into()) };
+            let fields = res.fields;
+            let set = |vals: &mut Vec<(&'static F, B)>, name: &str, v: B| {
+                vals.retain(|(f, _)| f.name != name);
+                vals.push((fields.iter().find(|f| f.name == name).unwrap(), v));
+            };
+            if it == Some(1) {
+                set(vals, "operation", B::S("r".into()));
+            }
+            if op == "r" {
+                set(vals, "step", B::S("na".into()));
             }
         }
         Kind::SlotEntry => {
@@ -748,6 +796,11 @@ async fn object_validate(
                     merged.insert(k.into(), if b { json!(1) } else { Value::Null });
                 }
             }
+            if pk.is_none() {
+                // model defaults: repetitions_unit=1 (repetitions), weight_unit=1 (kg)
+                merged.insert("repetitions_unit".into(), json!(1));
+                merged.insert("weight_unit".into(), json!(1));
+            }
             for (fl, b) in vals.iter() {
                 merged.insert(fl.name.into(), if matches!(b, B::Null) { Value::Null } else { json!(1) });
             }
@@ -762,7 +815,9 @@ async fn object_validate(
                 None
             };
             if let Some(m) = msg {
-                return Err(bad(json!({"non_field_errors": [m]}).as_object().unwrap().clone()));
+                // Django raises a model ValidationError inside save(): an
+                // unhandled 500 on REST (the upload path maps it to 200 error).
+                return Err(httpx::json_response(StatusCode::INTERNAL_SERVER_ERROR, json!({"detail": m})));
             }
         }
         Kind::Measurement => {
@@ -779,7 +834,7 @@ async fn object_validate(
                         Some("Measurements cannot be added to a category with subcategories".to_string())
                     } else if matches!(metric.as_str(), "blood_pressure") {
                         Some(format!("Measurements cannot be added to a {metric} category, they belong in its components"))
-                    } else if dynamic != "none" {
+                    } else if !dynamic.eq_ignore_ascii_case("none") {
                         Some("The entries of a calculated category are maintained by the server".to_string())
                     } else {
                         None
@@ -788,6 +843,9 @@ async fn object_validate(
                         return Err(bad(json!({"category": [m]}).as_object().unwrap().clone()));
                     }
                 }
+            }
+            if let Err(r) = measurement_range(pool, vals, pk).await {
+                return Err(r);
             }
             if let Some(B::J(extra)) = get(vals, "extra_data") {
                 if !extra.is_object() {
@@ -811,7 +869,7 @@ async fn object_validate(
                 .map_err(httpx::db_error)?
                 .unwrap_or_else(|| "kg".into());
             if let Some(B::D(w)) = get(vals, "weight") {
-                let (min, max) = if unit == "lb" { (Decimal::from(22), Decimal::from(770)) } else { (Decimal::from(10), Decimal::from(350)) };
+                let (min, max) = if unit == "lb" { (Decimal::from(44), Decimal::from(770)) } else { (Decimal::from(20), Decimal::from(350)) };
                 if *w < min || *w > max {
                     return Err(bad(json!({"weight": [format!("Weight must be between {min} and {max} {unit}")]}).as_object().unwrap().clone()));
                 }
@@ -1189,3 +1247,82 @@ async fn delete_cascade(pool: &PgPool, table: &str, pk: &B) -> Result<(), sqlx::
 
 #[allow(dead_code)]
 fn _unused(_: Method) {}
+
+/// `measurements.limits.METRIC_LIMITS` (hard min/max only).
+fn metric_limits(metric: &str, unit: Option<&str>) -> (Decimal, Decimal) {
+    let d = |v: i64| Decimal::from(v);
+    match metric {
+        "body_weight" => if unit == Some("lb") { (d(44), d(770)) } else { (d(20), d(350)) },
+        "body_fat" => (d(2), d(60)),
+        "lean_body_mass" => (d(10), d(250)),
+        "height" => (d(50), d(250)),
+        "blood_pressure_systolic" => (d(50), d(250)),
+        "blood_pressure_diastolic" => (d(30), d(150)),
+        "heart_rate" => (d(30), d(250)),
+        "resting_heart_rate" => (d(30), d(120)),
+        "blood_oxygen" => (d(50), d(100)),
+        "steps" => (d(0), d(100000)),
+        "distance" => (d(0), d(500)),
+        "energy" => (d(0), d(10000)),
+        "sleep_total" | "sleep_light" | "sleep_deep" | "sleep_rem" | "sleep_awake" => (d(0), d(1440)),
+        _ => (d(0), Decimal::from_str("999999.99").unwrap()),
+    }
+}
+
+/// `MeasurementSerializer._validate_value_range` (+ body weight unit rule).
+async fn measurement_range(pool: &PgPool, vals: &[(&'static F, B)], pk: Option<&B>) -> Result<(), Response> {
+    let mut cat = match get(vals, "category") { Some(B::U(u)) => Some(*u), _ => None };
+    let mut stored_unit: Option<String> = None;
+    let mut stored_value: Option<Decimal> = None;
+    let mut stored_cat: Option<Uuid> = None;
+    if let Some(pk) = pk {
+        let mut q = QueryBuilder::new("SELECT category_id, value, extra_data->>'unit' FROM measurements_measurement WHERE id = ");
+        push_b(&mut q, pk.clone());
+        if let Some((c, v, u)) = q.build_query_as::<(Uuid, Decimal, Option<String>)>().fetch_optional(pool).await.map_err(httpx::db_error)? {
+            stored_cat = Some(c);
+            stored_value = Some(v);
+            stored_unit = u;
+            cat = cat.or(Some(c));
+        }
+    }
+    let Some(cat) = cat else { return Ok(()) };
+    let unit = match get(vals, "extra_data") {
+        Some(B::J(e)) => e.get("unit").and_then(Value::as_str).map(str::to_string),
+        _ => stored_unit.clone(),
+    };
+    let row: Option<(String, String)> = sqlx::query_as("SELECT metric_type, unit FROM measurements_category WHERE id = $1")
+        .bind(cat)
+        .fetch_optional(pool)
+        .await
+        .map_err(httpx::db_error)?;
+    let Some((metric, cat_unit)) = row else { return Ok(()) };
+    let touches = get(vals, "extra_data").is_some() || get(vals, "category").is_some();
+    if touches && metric == "body_weight" {
+        if let Some(u) = &unit {
+            if u != "kg" && u != "lb" {
+                return Err(bad(json!({"extra_data": ["Body weight entries only support kg and lb as unit"]}).as_object().unwrap().clone()));
+            }
+        }
+    }
+    let limits = metric_limits(&metric, Some(unit.as_deref().unwrap_or(&cat_unit)));
+    let value = match get(vals, "value") {
+        Some(B::D(v)) => *v,
+        _ => {
+            let Some(v) = stored_value else { return Ok(()) };
+            // re-check stored value only when the bound changed
+            let old_metric: Option<String> = match stored_cat {
+                Some(c) => sqlx::query_scalar("SELECT metric_type FROM measurements_category WHERE id = $1").bind(c).fetch_optional(pool).await.map_err(httpx::db_error)?,
+                None => None,
+            };
+            let old = metric_limits(old_metric.as_deref().unwrap_or(&metric), Some(stored_unit.as_deref().unwrap_or(&cat_unit)));
+            if old == limits {
+                return Ok(());
+            }
+            v
+        }
+    };
+    if value < limits.0 || value > limits.1 {
+        return Err(bad(json!({"value": [format!("Value must be between {} and {}", limits.0, limits.1)]}).as_object().unwrap().clone()));
+    }
+    Ok(())
+}

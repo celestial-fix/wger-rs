@@ -654,6 +654,13 @@ def main():
         record("media range", False, f"{exc.code}")
 
     upload_checks()
+    # writes_checks imports `compare`; alias it to this running module so its
+    # records land in the same pass/fail lists.
+    sys.modules.setdefault("compare", sys.modules[__name__])
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from writes_checks import rest_write_checks
+
+    rest_write_checks()
     shape_check()
     print(f"PASS {len(passes)}  FAIL {len(fails)}")
     for name, detail in fails:

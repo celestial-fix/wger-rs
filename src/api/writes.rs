@@ -661,7 +661,7 @@ async fn object_validate(
                 if s > e {
                     return Err(bad(json!({"end": ["The end date cannot be before the start date."]}).as_object().unwrap().clone()));
                 }
-                let max_days: i64 = std::env::var("WGER_ROUTINE_MAX_DURATION_DAYS").ok().and_then(|v| v.parse().ok()).unwrap_or(112);
+                let max_days: i64 = std::env::var("WGER_ROUTINE_MAX_DURATION_DAYS").ok().and_then(|v| v.parse().ok()).unwrap_or(120);
                 if (e - s).num_days() > max_days {
                     return Err(bad(json!({"end": [format!("A routine cannot span more than {max_days} days.")]}).as_object().unwrap().clone()));
                 }

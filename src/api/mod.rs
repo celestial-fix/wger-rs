@@ -6,6 +6,7 @@ mod manager;
 mod nutrition;
 mod other;
 mod routine;
+mod upload;
 
 use axum::routing::{get, post};
 use axum::Router;
@@ -34,6 +35,9 @@ pub fn router() -> Router<AppState> {
         app = app.route(path, handler);
     }
     for (path, handler) in other::routes() {
+        app = app.route(path, handler);
+    }
+    for (path, handler) in upload::routes() {
         app = app.route(path, handler);
     }
     app

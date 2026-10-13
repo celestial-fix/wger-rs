@@ -1,5 +1,5 @@
 # Multi-stage build. The runtime image is bookworm-slim plus libssl and curl.
-FROM rust:1.88-bookworm AS build
+FROM rust:1.89-bookworm AS build
 WORKDIR /src
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src

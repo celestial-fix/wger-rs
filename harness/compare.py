@@ -20,7 +20,7 @@ from pathlib import Path
 
 DJANGO = os.environ.get("DJANGO_BASE", "http://127.0.0.1:8001")
 RUST = os.environ.get("RUST_BASE", "http://127.0.0.1:8002")
-IDS = json.loads(Path("/tmp/wger-harness-ids.json").read_text())
+IDS = json.loads(Path(os.environ.get("WGER_IDS", "/tmp/wger-harness-ids.json")).read_text())
 FIXTURES = Path(os.environ.get("WGER_FIXTURES", str(Path(__file__).resolve().parents[1] / "tests" / "fixtures")))
 
 passes = []
@@ -174,6 +174,276 @@ def jwt_claims(token):
     import jwt
 
     return jwt.decode(token, options={"verify_signature": False})
+
+
+UP = "/api/v2/upload-powersync-data"
+
+
+def upload_send(base, method, table, data, headers=None):
+    return fetch(base, method, UP, headers or token_header(), {"table": table, "data": data})
+
+
+def compare_upload(name, method, table, left_data, right_data=None):
+    """Same request shape to both sides; bodies may differ (distinct ids)."""
+    right_data = left_data if right_data is None else right_data
+    ds, draw, _ = upload_send(DJANGO, method, table, left_data)
+    rs, rraw, _ = upload_send(RUST, method, table, right_data)
+    ok = ds == rs
+    detail = f"status django={ds} rust={rs}"
+    if ok:
+        try:
+            found = diff(rewrite(parse(draw)), rewrite(parse(rraw)))
+        except json.JSONDecodeError as exc:
+            found = [f"json {exc}"]
+        if found:
+            ok = False
+            detail += "\n" + "\n".join(found[:8])
+        else:
+            detail += f" body={parse(draw)}"
+    else:
+        detail += f" django_body={draw[:200]!r} rust_body={rraw[:200]!r}"
+    record(f"upload {name}", ok, detail)
+    return ds, rs, parse(draw) if ds == 200 else None
+
+
+def upload_checks():
+    import uuid as _uuid
+
+    def uid():
+        return str(_uuid.uuid4())
+
+    now = "2026-10-09T12:00:00Z"
+    day = "2026-10-09"
+
+    # Stateless refusals (same body both sides)
+    ds, draw, _ = fetch(DJANGO, "PUT", UP, token_header(), {})
+    rs, rraw, _ = fetch(RUST, "PUT", UP, token_header(), {})
+    found = diff(rewrite(parse(draw)), rewrite(parse(rraw))) if ds == rs == 200 else [f"status {ds}/{rs}"]
+    record(
+        "upload missing fields",
+        not found and parse(draw) == {"error": "Missing required fields: table, data"},
+        f"django={ds} rust={rs} body={draw[:160]!r}",
+    )
+    for method, table, data in (
+        ("PUT", "no_such_table", {}),
+        ("PUT", "core_userprofile", {"id": IDS["user_id"], "height": 180}),
+        ("PUT", "manager_routine", {"id": 1, "name": "x"}),
+        ("PUT", "gallery_image", {"id": 1, "date": day}),
+    ):
+        compare_upload(f"{method} {table} refusal", method, table, data)
+
+    # Unauthenticated
+    ds, draw, _ = fetch(DJANGO, "PUT", UP, None, {"table": "nope", "data": {}})
+    rs, rraw, _ = fetch(RUST, "PUT", UP, None, {"table": "nope", "data": {}})
+    record("upload unauthenticated", ds == rs == 403, f"django={ds} rust={rs}")
+
+    # Profile PATCH (shared row; same values both sides)
+    compare_upload(
+        "profile patch",
+        "PATCH",
+        "core_userprofile",
+        {"id": IDS["user_id"], "height": 175, "workout_reminder_active": 1, "calories": None},
+    )
+
+    # Category: create / patch / delete with per-side ids
+    cat_l, cat_r = uid(), uid()
+    compare_upload(
+        "category create",
+        "PUT",
+        "measurements_category",
+        {"id": cat_l, "name": "harness-l", "unit": "kg"},
+        {"id": cat_r, "name": "harness-r", "unit": "kg", "chart_config": "{}"},
+    )
+    compare_upload(
+        "category patch",
+        "PATCH",
+        "measurements_category",
+        {"id": cat_l, "name": "harness-l2"},
+        {"id": cat_r, "name": "harness-r2"},
+    )
+    compare_upload(
+        "category metric_type immutable",
+        "PATCH",
+        "measurements_category",
+        {"id": cat_l, "metric_type": "height"},
+        {"id": cat_r, "metric_type": "height"},
+    )
+    compare_upload("category delete", "DELETE", "measurements_category", {"id": cat_l}, {"id": cat_r})
+    compare_upload("category delete missing", "DELETE", "measurements_category", {"id": cat_l}, {"id": cat_r})
+
+    # Measurement under the seeded category
+    m_l, m_r = uid(), uid()
+    compare_upload(
+        "measurement create",
+        "PUT",
+        "measurements_measurement",
+        {"id": m_l, "category": IDS["measurement_category_id"], "value": 81.5, "date": now},
+        {
+            "id": m_r,
+            "category": IDS["measurement_category_id"],
+            "value": 82.5,
+            "date": now,
+            "extra_data": "{}",
+        },
+    )
+    compare_upload(
+        "measurement patch",
+        "PATCH",
+        "measurements_measurement",
+        {"id": m_l, "value": 80.25, "notes": "x"},
+        {"id": m_r, "value": 83.25, "notes": "x"},
+    )
+    compare_upload(
+        "measurement negative value",
+        "PATCH",
+        "measurements_measurement",
+        {"id": m_l, "value": -1},
+        {"id": m_r, "value": -1},
+    )
+    compare_upload(
+        "measurement foreign category",
+        "PUT",
+        "measurements_measurement",
+        {"id": uid(), "category": uid(), "value": 1},
+    )
+    compare_upload("measurement delete", "DELETE", "measurements_measurement", {"id": m_l}, {"id": m_r})
+    compare_upload("measurement patch missing", "PATCH", "measurements_measurement", {"id": m_l, "value": 1})
+
+    # Idempotent create
+    dup_l, dup_r = uid(), uid()
+    body_l = {"id": dup_l, "category": IDS["measurement_category_id"], "value": 70}
+    body_r = {"id": dup_r, "category": IDS["measurement_category_id"], "value": 71}
+    compare_upload("measurement create (dup first)", "PUT", "measurements_measurement", body_l, body_r)
+    compare_upload("measurement create (dup second)", "PUT", "measurements_measurement", body_l, body_r)
+    compare_upload("measurement delete dup", "DELETE", "measurements_measurement", {"id": dup_l}, {"id": dup_r})
+
+    # Nutrition plan / meal / mealitem / logitem
+    plan_l, plan_r = uid(), uid()
+    compare_upload(
+        "plan create",
+        "PUT",
+        "nutrition_nutritionplan",
+        {"id": plan_l, "description": "harness"},
+        {"id": plan_r, "description": "harness"},
+    )
+    meal_l, meal_r = uid(), uid()
+    compare_upload(
+        "meal create",
+        "PUT",
+        "nutrition_meal",
+        {"id": meal_l, "plan": plan_l, "name": "breakfast", "time": "08:30:00"},
+        {"id": meal_r, "plan": plan_r, "name": "breakfast", "time": "08:30:00"},
+    )
+    compare_upload(
+        "meal patch",
+        "PATCH",
+        "nutrition_meal",
+        {"id": meal_l, "name": "brunch"},
+        {"id": meal_r, "name": "brunch"},
+    )
+    item_l, item_r = uid(), uid()
+    compare_upload(
+        "mealitem create",
+        "PUT",
+        "nutrition_mealitem",
+        {"id": item_l, "meal": meal_l, "ingredient": IDS["ingredient_id"], "amount": 100},
+        {"id": item_r, "meal": meal_r, "ingredient": IDS["ingredient_id"], "amount": 150},
+    )
+    compare_upload(
+        "mealitem patch",
+        "PATCH",
+        "nutrition_mealitem",
+        {"id": item_l, "amount": 120},
+        {"id": item_r, "amount": 170},
+    )
+    log_l, log_r = uid(), uid()
+    compare_upload(
+        "logitem create",
+        "PUT",
+        "nutrition_logitem",
+        {"id": log_l, "plan": plan_l, "ingredient": IDS["ingredient_id"], "amount": 90, "datetime": now},
+        {"id": log_r, "plan": plan_r, "ingredient": IDS["ingredient_id"], "amount": 95, "datetime": now},
+    )
+    compare_upload("mealitem delete", "DELETE", "nutrition_mealitem", {"id": item_l}, {"id": item_r})
+    compare_upload("logitem delete", "DELETE", "nutrition_logitem", {"id": log_l}, {"id": log_r})
+    compare_upload("meal delete", "DELETE", "nutrition_meal", {"id": meal_l}, {"id": meal_r})
+    compare_upload("plan delete", "DELETE", "nutrition_nutritionplan", {"id": plan_l}, {"id": plan_r})
+
+    # Manager session / log
+    sess_l, sess_r = uid(), uid()
+    compare_upload(
+        "session create",
+        "PUT",
+        "manager_workoutsession",
+        {"id": sess_l, "routine": IDS["routine_id"], "datetime_start": now, "impression": "2"},
+        {"id": sess_r, "routine": IDS["routine_id"], "datetime_start": now, "impression": "2"},
+    )
+    compare_upload(
+        "session bad impression",
+        "PATCH",
+        "manager_workoutsession",
+        {"id": sess_l, "impression": "9"},
+        {"id": sess_r, "impression": "9"},
+    )
+    compare_upload(
+        "session patch",
+        "PATCH",
+        "manager_workoutsession",
+        {"id": sess_l, "notes": "felt good"},
+        {"id": sess_r, "notes": "felt good"},
+    )
+    logl_l, logl_r = uid(), uid()
+    compare_upload(
+        "workoutlog create",
+        "PUT",
+        "manager_workoutlog",
+        {
+            "id": logl_l,
+            "date": now,
+            "exercise": IDS["exercise_id"],
+            "routine": IDS["routine_id"],
+            "session": sess_l,
+            "weight": 100,
+            "repetitions": 5,
+        },
+        {
+            "id": logl_r,
+            "date": now,
+            "exercise": IDS["exercise_id"],
+            "routine": IDS["routine_id"],
+            "session": sess_r,
+            "weight": 101,
+            "repetitions": 5,
+        },
+    )
+    compare_upload(
+        "workoutlog patch",
+        "PATCH",
+        "manager_workoutlog",
+        {"id": logl_l, "weight": 102.5},
+        {"id": logl_r, "weight": 103.5},
+    )
+    compare_upload(
+        "workoutlog missing exercise fk",
+        "PUT",
+        "manager_workoutlog",
+        {"id": uid(), "date": now, "exercise": 99999999},
+    )
+    compare_upload("workoutlog delete", "DELETE", "manager_workoutlog", {"id": logl_l}, {"id": logl_r})
+    compare_upload("session delete", "DELETE", "manager_workoutsession", {"id": sess_l}, {"id": sess_r})
+
+    # Routine PATCH on the seeded routine (restore value afterwards)
+    compare_upload("routine patch", "PATCH", "manager_routine", {"id": IDS["routine_id"], "name": "harness routine"})
+    compare_upload("routine create refusal", "PUT", "manager_routine", {"id": 999, "name": "x"})
+
+    # The upload suite must not disturb rows it did not create: the seeded
+    # meal and its items have to survive (guards against unscoped DELETEs).
+    status, raw, _ = fetch(RUST, "GET", f"/api/v2/meal/?plan={IDS['plan_id']}", token_header())
+    ok = status == 200 and any(m["id"] == IDS["meal_id"] for m in json.loads(raw).get("results", []))
+    record("upload suite left seeded meal intact", ok, f"status {status} {raw[:200]!r}")
+    status, raw, _ = fetch(RUST, "GET", f"/api/v2/mealitem/?meal={IDS['meal_id']}", token_header())
+    ok = status == 200 and any(m["id"] == IDS["mealitem_id"] for m in json.loads(raw).get("results", []))
+    record("upload suite left seeded mealitem intact", ok, f"status {status} {raw[:200]!r}")
 
 
 def check_login(base, name):
@@ -383,6 +653,7 @@ def main():
     except urllib.error.HTTPError as exc:
         record("media range", False, f"{exc.code}")
 
+    upload_checks()
     shape_check()
     print(f"PASS {len(passes)}  FAIL {len(fails)}")
     for name, detail in fails:

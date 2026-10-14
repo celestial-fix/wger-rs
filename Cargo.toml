@@ -1,0 +1,40 @@
+[package]
+name = "wger-rs"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "API-only Rust replacement for a self-hosted wger 2.7 server"
+publish = false
+
+[[bin]]
+name = "wger-rs"
+path = "src/main.rs"
+
+[dependencies]
+argon2 = "0.5"
+axum = { version = "0.7", features = ["macros"] }
+base64 = "0.22"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+chrono-tz = "0.10"
+hex = "0.4"
+jsonwebtoken = "9"
+pbkdf2 = { version = "0.12", default-features = false, features = ["hmac"] }
+rand = "0.8"
+rsa = { version = "0.9", default-features = false, features = ["std", "pem"] }
+rust_decimal = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_urlencoded = "0.7"
+sha2 = "0.10"
+sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "uuid", "chrono", "json", "rust_decimal"] }
+subtle = "2"
+thiserror = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal", "fs", "io-util"] }
+tower-http = { version = "0.6", features = ["trace", "fs"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

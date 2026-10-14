@@ -1,0 +1,11 @@
+{
+  "name": "min-app-version",
+  "request": {
+    "method": "GET",
+    "path": "/api/v2/min-app-version/",
+    "auth": "anonymous"
+  },
+  "status_code": 200,
+  "content_type": "application/json",
+  "body": "2.1.0"
+}

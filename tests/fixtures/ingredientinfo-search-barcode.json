@@ -1,0 +1,62 @@
+{
+  "name": "ingredientinfo-search-barcode",
+  "request": {
+    "method": "GET",
+    "path": "/api/v2/ingredientinfo/?code=9300633749033",
+    "auth": "force_authenticate(admin)"
+  },
+  "status_code": 200,
+  "content_type": "application/json",
+  "body": {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": 2,
+        "uuid": "40eee315-f597-4e02-9302-7cb0fd02decc",
+        "remote_id": "9300633749033",
+        "source_name": "Open Food Facts",
+        "source_url": "https://world.openfoodfacts.org/api/v2/product/9300633749033.json",
+        "code": "9300633749033",
+        "name": " Beef Madras",
+        "common_name": "Beef Madras",
+        "brand": "Woolworths",
+        "created": "2026-09-06T02:01:17.353319-03:00",
+        "last_update": "2026-09-25T17:07:23.847478-03:00",
+        "last_imported": "2026-09-06T02:01:17.353443-03:00",
+        "energy": 143,
+        "protein": "12.400",
+        "carbohydrates": "5.400",
+        "carbohydrates_sugar": "4.000",
+        "fat": "7.800",
+        "fat_saturated": "4.500",
+        "fiber": "1.200",
+        "sodium": "0.335",
+        "is_vegan": false,
+        "is_vegetarian": false,
+        "nutriscore": "c",
+        "weight_units": [],
+        "language": {
+          "id": 2,
+          "short_name": "en",
+          "full_name": "English",
+          "full_name_en": "English"
+        },
+        "license": {
+          "id": 5,
+          "full_name": "Open Data Commons Open Database License",
+          "short_name": "ODbL",
+          "url": "https://opendatacommons.org/licenses/odbl/"
+        },
+        "license_title": " Beef Madras",
+        "license_object_url": "https://world.openfoodfacts.org/product/9300633749033/",
+        "license_author": "packbot, clockwerx, foodorigins",
+        "license_author_url": "",
+        "license_derivative_source_url": "",
+        "image": null,
+        "thumbnails": null
+      }
+    ]
+  }
+}

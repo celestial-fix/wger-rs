@@ -1,0 +1,2287 @@
+{
+  "name": "routine-5-structure",
+  "request": {
+    "method": "GET",
+    "path": "/api/v2/routine/5/structure/",
+    "auth": "force_authenticate(admin)"
+  },
+  "status_code": 200,
+  "content_type": "application/json",
+  "body": {
+    "id": 5,
+    "name": "Hypertrophy/Strength 4day",
+    "description": "Effort: Heavy lifts (machine chest press, single-leg RDL, split squats) leave 2 reps in reserve, last set 1 RIR. Machine/cable hypertrophy work 1-2 RIR; only the final set of safe exercises (leg ext, curls, pulldowns, laterals, pushdowns) to 0 RIR. Never go to failure on single-leg RDLs or split squats. Rest: strength days 2-3 min; hypertrophy days 90s-2 min on compounds, 60-90s on isolation. Progression: double progression; when you hit the top of the rep range on all sets at target RIR, add the smallest weight jump. Week 1: use weights that feel like 3 RIR to learn the machines. Deload every 5-6 weeks with about half the sets. Cable laterals and pushdowns assume the multi-gym has low and high pulleys. Optional conditioning: rower intervals after Day 1, steady rower 15 min after Day 3. Posture: chin tucks 10 slow reps 2x/day; desk screen top at eye level; stand up every 30-45 min.",
+    "created": "2026-09-28T10:59:30.524050-03:00",
+    "start": "2026-09-28",
+    "end": "2026-12-20",
+    "fit_in_week": false,
+    "days": [
+      {
+        "id": 7,
+        "routine": 5,
+        "order": 1,
+        "name": "Strength Upper",
+        "description": "Monday",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null,
+        "slots": [
+          {
+            "id": 30,
+            "day": 7,
+            "order": 1,
+            "comment": "",
+            "entries": [
+              {
+                "id": 29,
+                "slot": 30,
+                "exercise": 828,
+                "order": 1,
+                "comment": "Warm-up, posture. Use light plates, or bodyweight prone Y-T raises on the bench",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 29,
+                    "slot_entry": 29,
+                    "iteration": 1,
+                    "value": "15.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 29,
+                    "slot_entry": 29,
+                    "iteration": 1,
+                    "value": 2,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [],
+                "max_rir_configs": [],
+                "rest_configs": [],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 10,
+            "day": 7,
+            "order": 2,
+            "comment": "",
+            "entries": [
+              {
+                "id": 9,
+                "slot": 10,
+                "exercise": 2036,
+                "order": 1,
+                "comment": "Life Fitness chest press (log plate number). RIR 2, last set RIR 1.",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 9,
+                    "slot_entry": 9,
+                    "iteration": 1,
+                    "value": "5.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 9,
+                    "slot_entry": 9,
+                    "iteration": 1,
+                    "value": 4,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 1,
+                    "slot_entry": 9,
+                    "iteration": 1,
+                    "value": "2.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 1,
+                    "slot_entry": 9,
+                    "iteration": 1,
+                    "value": 180,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 11,
+            "day": 7,
+            "order": 3,
+            "comment": "",
+            "entries": [
+              {
+                "id": 10,
+                "slot": 11,
+                "exercise": 355,
+                "order": 1,
+                "comment": "",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 10,
+                    "slot_entry": 10,
+                    "iteration": 1,
+                    "value": "6.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 10,
+                    "slot_entry": 10,
+                    "iteration": 1,
+                    "value": 4,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 2,
+                    "slot_entry": 10,
+                    "iteration": 1,
+                    "value": "1.5",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 2,
+                    "slot_entry": 10,
+                    "iteration": 1,
+                    "value": 150,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 12,
+            "day": 7,
+            "order": 4,
+            "comment": "",
+            "entries": [
+              {
+                "id": 11,
+                "slot": 12,
+                "exercise": 543,
+                "order": 1,
+                "comment": "",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 11,
+                    "slot_entry": 11,
+                    "iteration": 1,
+                    "value": "6.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 11,
+                    "slot_entry": 11,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 3,
+                    "slot_entry": 11,
+                    "iteration": 1,
+                    "value": "2.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 3,
+                    "slot_entry": 11,
+                    "iteration": 1,
+                    "value": 150,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 13,
+            "day": 7,
+            "order": 5,
+            "comment": "",
+            "entries": [
+              {
+                "id": 12,
+                "slot": 13,
+                "exercise": 1117,
+                "order": 1,
+                "comment": "Seated cable / low row",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 12,
+                    "slot_entry": 12,
+                    "iteration": 1,
+                    "value": "6.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 12,
+                    "slot_entry": 12,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 4,
+                    "slot_entry": 12,
+                    "iteration": 1,
+                    "value": "1.5",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 4,
+                    "slot_entry": 12,
+                    "iteration": 1,
+                    "value": 150,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 14,
+            "day": 7,
+            "order": 6,
+            "comment": "",
+            "entries": [
+              {
+                "id": 13,
+                "slot": 14,
+                "exercise": 178,
+                "order": 1,
+                "comment": "Slow, press lower back into floor",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 13,
+                    "slot_entry": 13,
+                    "iteration": 1,
+                    "value": "8.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 1,
+                    "slot_entry": 13,
+                    "iteration": 1,
+                    "value": "10.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 13,
+                    "slot_entry": 13,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [],
+                "max_rir_configs": [],
+                "rest_configs": [],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 31,
+            "day": 7,
+            "order": 7,
+            "comment": "",
+            "entries": [
+              {
+                "id": 30,
+                "slot": 31,
+                "exercise": 222,
+                "order": 1,
+                "comment": "Lat pulldown station: rope if available, else bar to face, wide overhand grip, elbows high",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 30,
+                    "slot_entry": 30,
+                    "iteration": 1,
+                    "value": "15.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 30,
+                    "slot_entry": 30,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 18,
+                    "slot_entry": 30,
+                    "iteration": 1,
+                    "value": "2.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 19,
+                    "slot_entry": 30,
+                    "iteration": 1,
+                    "value": 60,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 32,
+            "day": 7,
+            "order": 8,
+            "comment": "",
+            "entries": [
+              {
+                "id": 31,
+                "slot": 32,
+                "exercise": 1713,
+                "order": 1,
+                "comment": "30 s per side, also evenings",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 31,
+                    "slot_entry": 31,
+                    "iteration": 1,
+                    "value": 2,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [],
+                "max_rir_configs": [],
+                "rest_configs": [],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "routine": 5,
+        "order": 2,
+        "name": "Strength Lower",
+        "description": "Tuesday",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null,
+        "slots": [
+          {
+            "id": 15,
+            "day": 8,
+            "order": 1,
+            "comment": "Barbell 40 kg (or dumbbells), 3 s lowering, brief pause at bottom; fingertips on bench for balance if needed. Progress reps/tempo before load.",
+            "entries": [
+              {
+                "id": 14,
+                "slot": 15,
+                "exercise": 1388,
+                "order": 1,
+                "comment": "Reps per leg. 40 kg bar or DBs, 3 s down, pause at bottom. Progress reps/tempo before load.",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 14,
+                    "slot_entry": 14,
+                    "iteration": 1,
+                    "value": "6.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 19,
+                    "slot_entry": 14,
+                    "iteration": 1,
+                    "value": "10.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 14,
+                    "slot_entry": 14,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 5,
+                    "slot_entry": 14,
+                    "iteration": 1,
+                    "value": "2.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 5,
+                    "slot_entry": 14,
+                    "iteration": 1,
+                    "value": 180,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 16,
+            "day": 8,
+            "order": 2,
+            "comment": "",
+            "entries": [
+              {
+                "id": 15,
+                "slot": 16,
+                "exercise": 1706,
+                "order": 1,
+                "comment": "Reps are per leg (Bulgarian split squat)",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 15,
+                    "slot_entry": 15,
+                    "iteration": 1,
+                    "value": "6.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 2,
+                    "slot_entry": 15,
+                    "iteration": 1,
+                    "value": "8.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 15,
+                    "slot_entry": 15,
+                    "iteration": 1,
+                    "value": 4,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 6,
+                    "slot_entry": 15,
+                    "iteration": 1,
+                    "value": "2.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 6,
+                    "slot_entry": 15,
+                    "iteration": 1,
+                    "value": 150,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 17,
+            "day": 8,
+            "order": 3,
+            "comment": "",
+            "entries": [
+              {
+                "id": 16,
+                "slot": 17,
+                "exercise": 364,
+                "order": 1,
+                "comment": "",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 16,
+                    "slot_entry": 16,
+                    "iteration": 1,
+                    "value": "6.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 3,
+                    "slot_entry": 16,
+                    "iteration": 1,
+                    "value": "8.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 16,
+                    "slot_entry": 16,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 7,
+                    "slot_entry": 16,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 7,
+                    "slot_entry": 16,
+                    "iteration": 1,
+                    "value": 120,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 18,
+            "day": 8,
+            "order": 4,
+            "comment": "",
+            "entries": [
+              {
+                "id": 17,
+                "slot": 18,
+                "exercise": 369,
+                "order": 1,
+                "comment": "",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 17,
+                    "slot_entry": 17,
+                    "iteration": 1,
+                    "value": "8.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 4,
+                    "slot_entry": 17,
+                    "iteration": 1,
+                    "value": "10.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 17,
+                    "slot_entry": 17,
+                    "iteration": 1,
+                    "value": 2,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 8,
+                    "slot_entry": 17,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 8,
+                    "slot_entry": 17,
+                    "iteration": 1,
+                    "value": 120,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 37,
+            "day": 8,
+            "order": 6,
+            "comment": "",
+            "entries": [
+              {
+                "id": 36,
+                "slot": 37,
+                "exercise": 301,
+                "order": 1,
+                "comment": "Lighter than Day 4 volume",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 34,
+                    "slot_entry": 36,
+                    "iteration": 1,
+                    "value": "8.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 16,
+                    "slot_entry": 36,
+                    "iteration": 1,
+                    "value": "10.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 36,
+                    "slot_entry": 36,
+                    "iteration": 1,
+                    "value": 2,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 21,
+                    "slot_entry": 36,
+                    "iteration": 1,
+                    "value": "2.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 22,
+                    "slot_entry": 36,
+                    "iteration": 1,
+                    "value": 90,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "routine": 5,
+        "order": 3,
+        "name": "Rest (Wed)",
+        "description": "Wednesday",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null,
+        "slots": []
+      },
+      {
+        "id": 10,
+        "routine": 5,
+        "order": 4,
+        "name": "Hypertrophy Upper",
+        "description": "Thursday",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null,
+        "slots": [
+          {
+            "id": 33,
+            "day": 10,
+            "order": 1,
+            "comment": "",
+            "entries": [
+              {
+                "id": 32,
+                "slot": 33,
+                "exercise": 828,
+                "order": 1,
+                "comment": "Warm-up, posture. Use light plates, or bodyweight prone Y-T raises on the bench",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 31,
+                    "slot_entry": 32,
+                    "iteration": 1,
+                    "value": "15.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 32,
+                    "slot_entry": 32,
+                    "iteration": 1,
+                    "value": 2,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [],
+                "max_rir_configs": [],
+                "rest_configs": [],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 19,
+            "day": 10,
+            "order": 2,
+            "comment": "",
+            "entries": [
+              {
+                "id": 18,
+                "slot": 19,
+                "exercise": 2041,
+                "order": 1,
+                "comment": "RIR 1, last set to RIR 0",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 18,
+                    "slot_entry": 18,
+                    "iteration": 1,
+                    "value": "8.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 5,
+                    "slot_entry": 18,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 18,
+                    "slot_entry": 18,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 9,
+                    "slot_entry": 18,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 9,
+                    "slot_entry": 18,
+                    "iteration": 1,
+                    "value": 120,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 20,
+            "day": 10,
+            "order": 3,
+            "comment": "",
+            "entries": [
+              {
+                "id": 19,
+                "slot": 20,
+                "exercise": 355,
+                "order": 1,
+                "comment": "RIR 1, last set to RIR 0",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 19,
+                    "slot_entry": 19,
+                    "iteration": 1,
+                    "value": "10.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 6,
+                    "slot_entry": 19,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 19,
+                    "slot_entry": 19,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 10,
+                    "slot_entry": 19,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 10,
+                    "slot_entry": 19,
+                    "iteration": 1,
+                    "value": 90,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 21,
+            "day": 10,
+            "order": 4,
+            "comment": "",
+            "entries": [
+              {
+                "id": 20,
+                "slot": 21,
+                "exercise": 1117,
+                "order": 1,
+                "comment": "Low row",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 20,
+                    "slot_entry": 20,
+                    "iteration": 1,
+                    "value": "10.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 7,
+                    "slot_entry": 20,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 20,
+                    "slot_entry": 20,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 11,
+                    "slot_entry": 20,
+                    "iteration": 1,
+                    "value": "1.5",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 11,
+                    "slot_entry": 20,
+                    "iteration": 1,
+                    "value": 90,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 22,
+            "day": 10,
+            "order": 5,
+            "comment": "",
+            "entries": [
+              {
+                "id": 21,
+                "slot": 22,
+                "exercise": 1730,
+                "order": 1,
+                "comment": "RIR 1, last set to RIR 0",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 21,
+                    "slot_entry": 21,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 8,
+                    "slot_entry": 21,
+                    "iteration": 1,
+                    "value": "15.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 21,
+                    "slot_entry": 21,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 12,
+                    "slot_entry": 21,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 12,
+                    "slot_entry": 21,
+                    "iteration": 1,
+                    "value": 60,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 23,
+            "day": 10,
+            "order": 6,
+            "comment": "",
+            "entries": [
+              {
+                "id": 22,
+                "slot": 23,
+                "exercise": 1185,
+                "order": 1,
+                "comment": "",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 22,
+                    "slot_entry": 22,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 9,
+                    "slot_entry": 22,
+                    "iteration": 1,
+                    "value": "15.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 22,
+                    "slot_entry": 22,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 13,
+                    "slot_entry": 22,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 13,
+                    "slot_entry": 22,
+                    "iteration": 1,
+                    "value": 60,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 24,
+            "day": 10,
+            "order": 7,
+            "comment": "",
+            "entries": [
+              {
+                "id": 23,
+                "slot": 24,
+                "exercise": 91,
+                "order": 1,
+                "comment": "",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 23,
+                    "slot_entry": 23,
+                    "iteration": 1,
+                    "value": "10.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 10,
+                    "slot_entry": 23,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 23,
+                    "slot_entry": 23,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 14,
+                    "slot_entry": 23,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 14,
+                    "slot_entry": 23,
+                    "iteration": 1,
+                    "value": 60,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 34,
+            "day": 10,
+            "order": 8,
+            "comment": "",
+            "entries": [
+              {
+                "id": 33,
+                "slot": 34,
+                "exercise": 222,
+                "order": 1,
+                "comment": "Lat pulldown station: rope if available, else bar to face, wide overhand grip, elbows high",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 32,
+                    "slot_entry": 33,
+                    "iteration": 1,
+                    "value": "15.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 33,
+                    "slot_entry": 33,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 19,
+                    "slot_entry": 33,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 20,
+                    "slot_entry": 33,
+                    "iteration": 1,
+                    "value": 60,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 35,
+            "day": 10,
+            "order": 9,
+            "comment": "",
+            "entries": [
+              {
+                "id": 34,
+                "slot": 35,
+                "exercise": 1713,
+                "order": 1,
+                "comment": "30 s per side, also evenings",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 34,
+                    "slot_entry": 34,
+                    "iteration": 1,
+                    "value": 2,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [],
+                "max_rir_configs": [],
+                "rest_configs": [],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "routine": 5,
+        "order": 5,
+        "name": "Hypertrophy Lower",
+        "description": "Friday",
+        "is_rest": false,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null,
+        "slots": [
+          {
+            "id": 25,
+            "day": 11,
+            "order": 1,
+            "comment": "Heaviest dumbbell available, 3 s down, 1 s pause at bottom. If too easy, switch to heels-elevated or 1.5 reps.",
+            "entries": [
+              {
+                "id": 24,
+                "slot": 25,
+                "exercise": 203,
+                "order": 1,
+                "comment": "Heaviest DB, 3 s down, 1 s pause. Too easy: heels-elevated or 1.5 reps. RIR 1-2.",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 24,
+                    "slot_entry": 24,
+                    "iteration": 1,
+                    "value": "8.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 11,
+                    "slot_entry": 24,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 24,
+                    "slot_entry": 24,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 15,
+                    "slot_entry": 24,
+                    "iteration": 1,
+                    "value": "1.5",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 15,
+                    "slot_entry": 24,
+                    "iteration": 1,
+                    "value": 150,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 38,
+            "day": 11,
+            "order": 2,
+            "comment": "",
+            "entries": [
+              {
+                "id": 37,
+                "slot": 38,
+                "exercise": 1651,
+                "order": 1,
+                "comment": "Reps are per leg (reverse / rear lunges)",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 35,
+                    "slot_entry": 37,
+                    "iteration": 1,
+                    "value": "10.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 17,
+                    "slot_entry": 37,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 37,
+                    "slot_entry": 37,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 22,
+                    "slot_entry": 37,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 23,
+                    "slot_entry": 37,
+                    "iteration": 1,
+                    "value": 90,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 26,
+            "day": 11,
+            "order": 3,
+            "comment": "",
+            "entries": [
+              {
+                "id": 25,
+                "slot": 26,
+                "exercise": 369,
+                "order": 1,
+                "comment": "RIR 1, last set to RIR 0",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 25,
+                    "slot_entry": 25,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 12,
+                    "slot_entry": 25,
+                    "iteration": 1,
+                    "value": "15.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 25,
+                    "slot_entry": 25,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 16,
+                    "slot_entry": 25,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 16,
+                    "slot_entry": 25,
+                    "iteration": 1,
+                    "value": 75,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 27,
+            "day": 11,
+            "order": 4,
+            "comment": "",
+            "entries": [
+              {
+                "id": 26,
+                "slot": 27,
+                "exercise": 364,
+                "order": 1,
+                "comment": "RIR 1, last set to RIR 0",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 26,
+                    "slot_entry": 26,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 13,
+                    "slot_entry": 26,
+                    "iteration": 1,
+                    "value": "15.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 26,
+                    "slot_entry": 26,
+                    "iteration": 1,
+                    "value": 3,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [
+                  {
+                    "id": 17,
+                    "slot_entry": 26,
+                    "iteration": 1,
+                    "value": "1.0",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 17,
+                    "slot_entry": 26,
+                    "iteration": 1,
+                    "value": 75,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 28,
+            "day": 11,
+            "order": 5,
+            "comment": "",
+            "entries": [
+              {
+                "id": 27,
+                "slot": 28,
+                "exercise": 301,
+                "order": 1,
+                "comment": "Back extension",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 27,
+                    "slot_entry": 27,
+                    "iteration": 1,
+                    "value": "12.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [
+                  {
+                    "id": 14,
+                    "slot_entry": 27,
+                    "iteration": 1,
+                    "value": "15.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 27,
+                    "slot_entry": 27,
+                    "iteration": 1,
+                    "value": 2,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [],
+                "max_rir_configs": [],
+                "rest_configs": [
+                  {
+                    "id": 18,
+                    "slot_entry": 27,
+                    "iteration": 1,
+                    "value": 75,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          },
+          {
+            "id": 29,
+            "day": 11,
+            "order": 7,
+            "comment": "",
+            "entries": [
+              {
+                "id": 28,
+                "slot": 29,
+                "exercise": 178,
+                "order": 1,
+                "comment": "Slow, press lower back into floor",
+                "type": "normal",
+                "class_name": null,
+                "config": null,
+                "repetition_unit": 1,
+                "repetition_rounding": null,
+                "repetitions_configs": [
+                  {
+                    "id": 28,
+                    "slot_entry": 28,
+                    "iteration": 1,
+                    "value": "10.00",
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_repetitions_configs": [],
+                "weight_unit": 1,
+                "weight_rounding": null,
+                "weight_configs": [],
+                "max_weight_configs": [],
+                "set_nr_configs": [
+                  {
+                    "id": 28,
+                    "slot_entry": 28,
+                    "iteration": 1,
+                    "value": 2,
+                    "operation": "r",
+                    "step": "na",
+                    "repeat": false,
+                    "requirements": null
+                  }
+                ],
+                "max_set_nr_configs": [],
+                "rir_configs": [],
+                "max_rir_configs": [],
+                "rest_configs": [],
+                "max_rest_configs": []
+              }
+            ],
+            "config": null
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "routine": 5,
+        "order": 6,
+        "name": "Rest (Sat)",
+        "description": "Saturday",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null,
+        "slots": []
+      },
+      {
+        "id": 13,
+        "routine": 5,
+        "order": 7,
+        "name": "Rest (Sun)",
+        "description": "Sunday",
+        "is_rest": true,
+        "need_logs_to_advance": false,
+        "type": "custom",
+        "config": null,
+        "slots": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "version",
+  "request": {
+    "method": "GET",
+    "path": "/api/v2/version/",
+    "auth": "anonymous"
+  },
+  "status_code": 200,
+  "content_type": "application/json",
+  "body": "2.7.0"
+}

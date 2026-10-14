@@ -2,3 +2,5 @@
 .env
 *.log
 /wger-rs
+__pycache__/
+harness/runtime/.state/

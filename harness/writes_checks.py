@@ -4,6 +4,7 @@
 import json
 import os
 import random
+import subprocess
 import time
 from pathlib import Path
 
@@ -23,6 +24,30 @@ from compare import (
 # Use high IDs? Or just create in context. But easier to create both and compare.
 
 auth = token_header()
+
+
+def _pg_container():
+    container = os.environ.get("WGER_PG_CONTAINER")
+    if container:
+        return container
+    wanted = f"{os.environ.get('HARNESS_NAME', 'wger-rs-m2')}-pg"
+    try:
+        names = subprocess.run(
+            ["docker", "ps", "--format", "{{.Names}}"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True,
+        ).stdout.decode().split()
+    except Exception:
+        names = []
+    return wanted if wanted in names else "wger-rs-m2-pg"
+
+
+def _media_root():
+    root = os.environ.get("WGER_MEDIA_ROOT")
+    if root:
+        return Path(root)
+    return Path(__file__).resolve().parent / "runtime" / ".state" / "media-host"
 
 
 def _norm_remove_diffing_keys(obj, extra_keys=None):
@@ -280,10 +305,9 @@ def rest_write_checks():
 
     # Gallery delete via upload
     # insert row per side via psql, create file, then DELETE upload-powersync-data
-    import subprocess
     import uuid
 
-    pg = "docker exec -i wger-rs-m2-pg psql -U wger -d wger -t -A -c"
+    pg = f"docker exec -i {_pg_container()} psql -U wger -d wger -t -A -c"
     date = "2030-01-10"
     # insert
     try:
@@ -297,7 +321,7 @@ def rest_write_checks():
     except Exception as e:
         g_r = '0'
     # create files
-    media_host = Path("/opt/stacks/app-opencode/workspaces/wger-rs-m2/harness-runtime/media-host")
+    media_host = _media_root()
     (media_host / "gallery").mkdir(parents=True, exist_ok=True)
     try:
         (media_host / "gallery" / "harness-l.jpg").write_bytes(b"abc")

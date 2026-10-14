@@ -20,10 +20,13 @@ export HARNESS_JWT_ENV="$STATE/jwt.env"
 COMPOSE=(docker compose --project-directory "$DIR" -f "$DIR/docker-compose.yml" --project-name "${HARNESS_NAME}-harness")
 
 if [ "${1:-}" = "--down" ]; then
-  exec "$DIR/down.sh"
+  exec "$DIR/down.sh" --purge
 fi
 
 mkdir -p "$STATE/media-host"
+# throwaway test media only: django 2.7 image runs as uid 1000 and must write
+# seed files into this bind mount; the harness DB/data is disposable.
+chmod 0777 "$STATE/media-host"
 if [ ! -f "$STATE/jwt.env" ]; then
   python3 "$DIR/gen-jwt.py" "$STATE/jwt.env"
   chmod 600 "$STATE/jwt.env"

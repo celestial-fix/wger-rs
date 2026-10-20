@@ -3,6 +3,9 @@
 Contributions are welcome. Please open an issue or pull request with a concise
 description of the change and its tests.
 
+Open pull requests against `main` from a topic branch. Do not push directly to
+`main`; the repository CI and contract workflows run on pull requests.
+
 ## Before submitting
 
 - Run `cargo fmt --check` and `cargo test --lib`.

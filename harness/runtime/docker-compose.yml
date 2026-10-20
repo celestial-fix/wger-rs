@@ -1,8 +1,8 @@
-name: ${HARNESS_NAME:-wger-rs-contract}-harness
+name: "${HARNESS_NAME:-wger-rs-contract}-harness"
 services:
   pg:
     image: postgres:17-alpine
-      container_name: ${HARNESS_NAME:-wger-rs-contract}-pg
+    container_name: "${HARNESS_NAME:-wger-rs-contract}-pg"
     mem_limit: 256m
     environment:
       POSTGRES_DB: wger
@@ -22,7 +22,7 @@ services:
 
   django:
     image: wger/server:2.7
-    container_name: ${HARNESS_NAME:-wger-rs-contract}-django
+    container_name: "${HARNESS_NAME:-wger-rs-contract}-django"
     mem_limit: 512m
     depends_on:
       pg:
@@ -75,6 +75,6 @@ services:
 
 networks:
   harness:
-    name: ${HARNESS_NAME:-wger-rs-contract}-net
+    name: "${HARNESS_NAME:-wger-rs-contract}-net"
 volumes:
   pgdata:

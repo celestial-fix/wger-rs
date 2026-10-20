@@ -1,0 +1,5 @@
+# crt-static is target-scoped so proc-macros still build as host dylibs.
+# `RUSTFLAGS` would apply to those too and Alpine's musl host cannot
+# produce proc-macros when crt-static is on.
+[target.x86_64-unknown-linux-musl]
+rustflags = ["-C", "target-feature=+crt-static"]

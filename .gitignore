@@ -1,0 +1,11 @@
+/target/
+.env*
+!.env.example
+*.log
+/wger-rs
+__pycache__/
+harness/runtime/.state/
+*.pem
+*.key
+*.dump
+*.sql

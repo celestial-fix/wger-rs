@@ -1,0 +1,80 @@
+name: ${HARNESS_NAME:-wger-rs-contract}-harness
+services:
+  pg:
+    image: postgres:17-alpine
+      container_name: ${HARNESS_NAME:-wger-rs-contract}-pg
+    mem_limit: 256m
+    environment:
+      POSTGRES_DB: wger
+      POSTGRES_USER: wger
+      POSTGRES_PASSWORD: wger
+      TZ: America/Santiago
+    ports:
+      - "127.0.0.1:${HARNESS_PG_PORT:-55432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wger -d wger"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks: [harness]
+
+  django:
+    image: wger/server:2.7
+    container_name: ${HARNESS_NAME:-wger-rs-contract}-django
+    mem_limit: 512m
+    depends_on:
+      pg:
+        condition: service_healthy
+    env_file:
+      - path: ${HARNESS_JWT_ENV}
+        required: false
+    environment:
+      SECRET_KEY: contract-harness
+      DJANGO_DEBUG: "True"
+      DJANGO_PERFORM_MIGRATIONS: "False"
+      SITE_URL: http://127.0.0.1:${HARNESS_DJANGO_PORT:-8001}
+      TIME_ZONE: America/Santiago
+      TZ: America/Santiago
+      PS_DATABASE_URI: postgres://wger:wger@pg:5432/wger
+      DJANGO_DB_ENGINE: django.db.backends.postgresql
+      DJANGO_DB_DATABASE: wger
+      DJANGO_DB_USER: wger
+      DJANGO_DB_PASSWORD: wger
+      DJANGO_DB_HOST: pg
+      DJANGO_DB_PORT: "5432"
+      DJANGO_CACHE_BACKEND: django.core.cache.backends.locmem.LocMemCache
+      DJANGO_CACHE_LOCATION: harness
+      AXES_ENABLED: "False"
+      USE_CELERY: "False"
+      WGER_USE_GUNICORN: "False"
+      DJANGO_COLLECTSTATIC_ON_STARTUP: "False"
+      ALLOW_REGISTRATION: "False"
+      ALLOW_GUEST_USERS: "False"
+      MEDIA_ROOT: /tmp/wger-media
+      DJANGO_MEDIA_ROOT: /tmp/wger-media
+      HARNESS_PG_PORT: "${HARNESS_PG_PORT:-55432}"
+      HARNESS_RUST_PORT: "${HARNESS_RUST_PORT:-8012}"
+    volumes:
+      - ${HARNESS_MEDIA_HOST}:/tmp/wger-media
+      - ${HARNESS_SEED_RUNNER}:/tmp/seed_runner.py:ro
+      - ${HARNESS_SEED_PY}:/tmp/seed_orig.py:ro
+    ports:
+      - "127.0.0.1:${HARNESS_DJANGO_PORT:-8001}:8000"
+    networks: [harness]
+    command:
+      - bash
+      - -c
+      - |
+        set -e
+        cd /home/wger/src
+        python3 manage.py migrate --noinput
+        mkdir -p /tmp/wger-media
+        exec python3 manage.py runserver 0.0.0.0:8000
+
+networks:
+  harness:
+    name: ${HARNESS_NAME:-wger-rs-contract}-net
+volumes:
+  pgdata:

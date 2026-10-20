@@ -1,0 +1,32 @@
+# Standalone API service. Bound to loopback for use behind a local reverse proxy.
+# PowerSync fetches JWKS at http://web:8000/api/v2/powersync-keys, so this
+# service keeps the `web` alias and listens on 8000 inside the network.
+services:
+  web:
+    build: ..
+    image: wger-rs:local
+    user: "1000:1000"
+    networks:
+      default:
+        aliases:
+          - web
+    expose:
+      - "8000"
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      BIND: 0.0.0.0:8000
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL to an existing wger database}
+      SITE_URL: ${SITE_URL:?Set SITE_URL}
+      TIME_ZONE: ${TIME_ZONE:-Etc/UTC}
+      MEDIA_ROOT: /media
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      POWERSYNC_URL: ${POWERSYNC_URL:-}
+      POWERSYNC_URL_PATH: ps
+    volumes:
+      - wger-media:/media
+    restart: unless-stopped
+
+volumes:
+  wger-media:

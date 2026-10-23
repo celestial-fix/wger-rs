@@ -14,7 +14,8 @@ to run beside an existing wger deployment or against a compatible database.
   measurement, and workout resources
 - allauth-headless JWT login/refresh compatibility
 - PowerSync token/JWKS endpoints and upload handling
-- Shared read access to the existing media volume
+- `GET`/`HEAD` serving of the Django static build and uploaded media, so the
+  front-end reverse proxy does not need file-system access
 
 The contract harness compares behavior with `wger/server:2.7`. Compatibility is
 endpoint-by-endpoint; see the source routes and harness for current coverage.
@@ -40,8 +41,35 @@ should be supplied as a single-line JWK JSON value in the format accepted by
 the application; the public key must be the matching JWK. Use the same key pair
 as the wger deployment if existing clients need token compatibility.
 The example compose file binds the API to `127.0.0.1:8000` for a local reverse
-proxy. Its media volume is read-write and must be writable by UID 1000 when
-media-file deletion is used.
+proxy and mounts the static and media volumes read-only. Media-file deletion
+(`DELETE` of image records) writes to `MEDIA_ROOT`, so mount that volume
+read-write if you use it, and make it writable by the container user. The
+production compose file uses `user: "1000:1000"`, which works with the
+`scratch` runtime image.
+
+## Static and media files
+
+`wger-rs` serves the files a front-end nginx used to serve, so a shared reverse
+proxy such as `nginx-proxy` can route straight to this service:
+
+| Mount | Environment variable | Default | Cache-Control |
+| --- | --- | --- | --- |
+| `/static/*` | `STATIC_ROOT` | `/static` | `public, max-age=31536000, immutable` |
+| `/media/*` | `MEDIA_ROOT` | `/media` | `public, max-age=86400` |
+
+- Only `GET` and `HEAD` are served, without authentication and outside the JSON
+  API middleware.
+- `/static` also answers `Vary: Accept-Encoding` and uses precompressed
+  `.gz`/`.br` siblings when the client accepts them.
+- The cache headers match the nginx `location` blocks they replace, including
+  on a 404 for a missing file. They are not added to the API's own responses.
+- Directory indices are disabled, and paths outside the configured roots are
+  never served.
+- A missing or unmounted root only logs a startup warning; requests return 404.
+- The runtime image is built `FROM scratch`, with CA certificates copied from
+  the builder and the numeric user `65534:65534`. Because the image has no
+  `wget`, the Docker health check runs `wger-rs healthcheck`, which probes
+  `http://127.0.0.1:<port from BIND>/healthz`.
 
 ## Development and tests
 

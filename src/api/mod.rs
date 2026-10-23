@@ -13,13 +13,11 @@ use axum::routing::{get, post};
 use axum::Router;
 
 use crate::httpx::ping_db;
-use crate::media::serve_media;
 use crate::state::AppState;
 
 pub fn router() -> Router<AppState> {
     let mut app = Router::new()
         .route("/healthz", get(ping_db))
-        .route("/media/*path", get(serve_media))
         .route("/allauth/app/v1/auth/login", post(core::login))
         .route("/allauth/app/v1/tokens/refresh", post(core::refresh));
 

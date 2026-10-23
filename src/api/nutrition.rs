@@ -88,19 +88,15 @@ async fn ingredient_page(
     let mut count_q: QueryBuilder<sqlx::Postgres> =
         QueryBuilder::new("SELECT i.id FROM nutrition_ingredient i WHERE true");
     push_ingredient_filters(&mut count_q, &map, barcode_only);
-    let count_sql_prefix = if filtered {
-        "SELECT COUNT(*) FROM ("
-    } else {
-        "SELECT COUNT(*) FROM ("
-    };
+    let count_sql_prefix = "SELECT COUNT(*) FROM (";
     let cap = if filtered { " LIMIT 1000" } else { "" };
-    let wrapped = format!("{count_sql_prefix}");
+    let wrapped = count_sql_prefix.to_string();
     let _ = wrapped;
     // Rebuild with a cap by selecting ids.
     let mut id_q: QueryBuilder<sqlx::Postgres> =
         QueryBuilder::new("SELECT i.id FROM nutrition_ingredient i WHERE true");
     push_ingredient_filters(&mut id_q, &map, barcode_only);
-    if map.get("name__search").is_none() && map.get("ordering").is_none() {
+    if !map.contains_key("name__search") && !map.contains_key("ordering") {
         // Unfiltered lists have no default ORDER BY.
     }
     let count: i64 = if filtered {

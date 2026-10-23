@@ -537,13 +537,11 @@ async fn sequence_response(
     let owner: i32 = access.get("user_id");
     let is_template: bool = access.get("is_template");
     let is_public: bool = access.get("is_public");
-    if owner != user.id {
-        if !(is_public && is_template) {
-            if is_public {
-                return httpx::permission_denied();
-            }
-            return httpx::not_found();
+    if owner != user.id && !(is_public && is_template) {
+        if is_public {
+            return httpx::permission_denied();
         }
+        return httpx::not_found();
     }
     let routine = match load_routine(&state.pool, id, user.tz).await {
         Ok(Some(routine)) => routine,

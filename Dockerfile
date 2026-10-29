@@ -14,6 +14,10 @@ FROM scratch
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=build /src/target/x86_64-unknown-linux-musl/release/wger-rs /wger-rs
 # Numeric non-root user, so the image works without /etc/passwd in scratch.
+# The example compose file runs the container as 65534:65534 as well. The
+# static and media mounts are read-only, so serving needs no writable uid; an
+# operator who enables media deletion must override this to the uid that owns
+# the media volume (the wger image writes as 1000).
 USER 65534:65534
 ENV BIND=0.0.0.0:8000
 EXPOSE 8000

@@ -9,9 +9,11 @@ services:
   web:
     build: ..
     image: wger-rs:local
-    # The production compose file uses `user: "1000:1000"` so this service can
-    # write to MEDIA_ROOT; the scratch image supports that (numeric UID/GID).
-    user: "1000:1000"
+    # Matches the Dockerfile's `USER 65534:65534`. The static and media mounts
+    # are read-only, so the process needs no writable uid. If media-file
+    # deletion (DELETE of image records) is used, mount /media read-write and
+    # set this to the uid that owns the volume (the wger image writes as 1000).
+    user: "65534:65534"
     networks:
       default:
         aliases:
@@ -32,9 +34,11 @@ services:
       POWERSYNC_URL: ${POWERSYNC_URL:-}
       POWERSYNC_URL_PATH: ps
     volumes:
-      # Both mounts are read-only for serving. If media-file deletion (DELETE
-      # of image records) is used, mount the media volume read-write instead
-      # and make it writable by the container user.
+      # Both mounts are read-only by default: serving needs no write access.
+      # If media deletion (DELETE of image records) or uploads into the shared
+      # volume are used, mount the media volume read-write (`:rw`) instead and
+      # set `user` above to the uid that owns that volume (the wger image
+      # writes as 1000).
       - wger-static:/static:ro
       - wger-media:/media:ro
     restart: unless-stopped

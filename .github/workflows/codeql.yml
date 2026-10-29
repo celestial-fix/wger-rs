@@ -1,0 +1,30 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "23 5 * * 2"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  analyze:
+    # GitHub-hosted CodeQL scanning for private repositories requires GHAS.
+    # The workflow activates automatically once this repository is public.
+    if: github.event.repository.private == false
+    name: Analyze Rust
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: rust
+          build-mode: autobuild
+      - uses: github/codeql-action/analyze@v3

@@ -10,6 +10,7 @@ pub struct Config {
     pub bind: String,
     pub site_url: String,
     pub time_zone: Tz,
+    pub static_root: String,
     pub media_root: String,
     pub jwt_private_key: String,
     pub jwt_public_key: String,
@@ -46,6 +47,7 @@ impl Config {
             bind: env_or("BIND", "0.0.0.0:8000"),
             site_url,
             time_zone,
+            static_root: env_or("STATIC_ROOT", "/static"),
             media_root: env_or("MEDIA_ROOT", "/media"),
             jwt_private_key: env::var("JWT_PRIVATE_KEY")
                 .map_err(|_| "JWT_PRIVATE_KEY is required".to_string())?,

@@ -72,7 +72,7 @@ async fn exerciseinfo(
         Ok(row) => row.get::<i64, _>(0),
         Err(err) => return httpx::db_error(err),
     };
-    let order = if map.get("name__search").is_some() && map.get("ordering").is_none() {
+    let order = if map.contains_key("name__search") && !map.contains_key("ordering") {
         order_sql
     } else {
         httpx::ordering(
@@ -1282,6 +1282,9 @@ async fn alias_one(State(state): State<AppState>, Path(id): Path<i32>, method: M
     .await
 }
 
+// The list helpers take the paging inputs one by one; bundling them would
+// hide the SQL that each one builds.
+#[allow(clippy::too_many_arguments)]
 async fn flat_uuid<F>(
     state: &AppState,
     uri: &Uri,

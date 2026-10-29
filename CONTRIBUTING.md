@@ -8,7 +8,7 @@ Open pull requests against `main` from a topic branch. Do not push directly to
 
 ## Before submitting
 
-- Run `cargo fmt --check` and `cargo test --lib`.
+- Run `cargo fmt --check`, `cargo clippy -- -D warnings`, and `cargo test`.
 - For API behavior changes, run the contract harness against its disposable
   Django/PostgreSQL environment and include the `PASS`/`FAIL` summary.
 - Use only synthetic fixtures (`@example.com` addresses and fake credentials).

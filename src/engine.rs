@@ -532,8 +532,7 @@ fn fmt_display_number(d: Decimal) -> String {
     if d.fract().is_zero() {
         d.trunc().to_string()
     } else {
-        let s = d.normalize().to_string();
-        s
+        d.normalize().to_string()
     }
 }
 
@@ -831,9 +830,7 @@ pub fn date_sequence(routine: &Routine, today: NaiveDate, mode: SequenceMode) ->
         let mut current_day = &days[day_index];
         let previous_date = current_date.pred_opt().unwrap_or(current_date);
         let has_session = current_day.session_dates.contains(&previous_date);
-        let can_proceed = !current_day.need_logs_to_advance
-            || (current_day.need_logs_to_advance && has_session)
-            || current_date > today;
+        let can_proceed = !current_day.need_logs_to_advance || has_session || current_date > today;
         let mut wrapped = false;
         if can_proceed && !is_first {
             *iteration_counter.entry(current_day.id).or_insert(1) += 1;

@@ -176,31 +176,37 @@ pub fn mint_powersync(keys: &JwtKeys, user_id: i32, lifetime: i64) -> Result<Str
     encode(&header, &claims, &keys.encode).map_err(|err| format!("sign powersync: {err}"))
 }
 
-pub fn read_access(keys: &JwtKeys, token: &str) -> Result<AccessClaims, ()> {
+/// The token was absent, malformed, expired, or of the wrong `token_use`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct InvalidToken;
+
+pub fn read_access(keys: &JwtKeys, token: &str) -> Result<AccessClaims, InvalidToken> {
     let mut validation = Validation::new(jsonwebtoken::Algorithm::RS256);
     validation.validate_aud = false;
     validation.validate_exp = true;
     validation.leeway = 0;
     validation.set_required_spec_claims(&["exp"]);
-    let data = decode::<AccessClaims>(token, &keys.decode, &validation).map_err(|_| ())?;
+    let data =
+        decode::<AccessClaims>(token, &keys.decode, &validation).map_err(|_| InvalidToken)?;
     if data.claims.token_use != "access" {
-        return Err(());
+        return Err(InvalidToken);
     }
     if data.claims.sub.is_empty() || data.claims.jti.is_empty() || data.claims.sid.is_empty() {
-        return Err(());
+        return Err(InvalidToken);
     }
     Ok(data.claims)
 }
 
-pub fn read_refresh(keys: &JwtKeys, token: &str) -> Result<AccessClaims, ()> {
+pub fn read_refresh(keys: &JwtKeys, token: &str) -> Result<AccessClaims, InvalidToken> {
     let mut validation = Validation::new(jsonwebtoken::Algorithm::RS256);
     validation.validate_aud = false;
     validation.validate_exp = true;
     validation.leeway = 0;
     validation.set_required_spec_claims(&["exp"]);
-    let data = decode::<AccessClaims>(token, &keys.decode, &validation).map_err(|_| ())?;
+    let data =
+        decode::<AccessClaims>(token, &keys.decode, &validation).map_err(|_| InvalidToken)?;
     if data.claims.token_use != "refresh" {
-        return Err(());
+        return Err(InvalidToken);
     }
     Ok(data.claims)
 }

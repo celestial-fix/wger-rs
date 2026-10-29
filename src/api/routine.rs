@@ -375,8 +375,8 @@ fn group_configs<F, G>(
         };
     for row in &rows {
         let entry_id: i32 = row.get("slot_entry_id");
-        if current.is_some() && current != Some(entry_id) {
-            flush(into, current.unwrap(), std::mem::take(&mut buf), &slot);
+        if let Some(previous) = current.filter(|id| *id != entry_id) {
+            flush(into, previous, std::mem::take(&mut buf), &slot);
         }
         current = Some(entry_id);
         let (value, value_json) = value_of(row);

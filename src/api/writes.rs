@@ -88,9 +88,8 @@ pub(crate) struct Res {
     fields: &'static [F],
     /// SQL condition on alias-less table; `$U` replaced by user id bind.
     owner: &'static str,
+    /// The record carries its own `user_id` column, set to the requesting user.
     force_user: bool,
-    /// ModelViewSet allowed verbs on detail (PUT/PATCH/DELETE) and POST.
-    update: bool,
     render: Render,
     kind: Kind,
 }
@@ -601,9 +600,7 @@ macro_rules! render {
     };
 }
 
-render!(r_routine, |s, h, id| super::manager::render_routine(
-    s, h, id
-));
+render!(r_routine, super::manager::render_routine);
 render!(r_day, |s, h, id| super::manager::render_owned(
     s, h, "day", id
 ));
@@ -616,11 +613,9 @@ render!(r_entry, |s, h, id| super::manager::render_owned(
 render!(r_log, |s, h, id| super::manager::render_owned(
     s, h, "log", id
 ));
-render!(r_diary, |s, h, id| super::nutrition::render_diary(s, h, id));
-render!(r_measurement, |s, h, id| super::other::render_measurement(
-    s, h, id
-));
-render!(r_weight, |s, h, id| super::other::render_weight(s, h, id));
+render!(r_diary, super::nutrition::render_diary);
+render!(r_measurement, super::other::render_measurement);
+render!(r_weight, super::other::render_weight);
 
 macro_rules! config_res {
     ($fname:ident, $path:literal, $table:literal) => {
@@ -716,7 +711,6 @@ macro_rules! cfg {
             fields: cfg_fields($table),
             owner: IN_OWN_ENTRIES,
             force_user: false,
-            update: true,
             render: $render,
             kind: Kind::Config,
         }
@@ -724,10 +718,10 @@ macro_rules! cfg {
 }
 
 pub(crate) static RESOURCES: &[Res] = &[
-    Res { path: "routine", table: "manager_routine", uuid_pk: false, fields: ROUTINE_FIELDS, owner: "user_id = $U", force_user: true, update: true, render: r_routine, kind: Kind::Routine },
-    Res { path: "day", table: "manager_day", uuid_pk: false, fields: DAY_FIELDS, owner: IN_OWN_ROUTINES, force_user: false, update: true, render: r_day, kind: Kind::Plain },
-    Res { path: "slot", table: "manager_slot", uuid_pk: false, fields: SLOT_FIELDS, owner: IN_OWN_DAYS, force_user: false, update: true, render: r_slot, kind: Kind::Plain },
-    Res { path: "slot-entry", table: "manager_slotentry", uuid_pk: false, fields: ENTRY_FIELDS, owner: IN_OWN_SLOTS, force_user: false, update: true, render: r_entry, kind: Kind::SlotEntry },
+    Res { path: "routine", table: "manager_routine", uuid_pk: false, fields: ROUTINE_FIELDS, owner: "user_id = $U", force_user: true, render: r_routine, kind: Kind::Routine },
+    Res { path: "day", table: "manager_day", uuid_pk: false, fields: DAY_FIELDS, owner: IN_OWN_ROUTINES, force_user: false, render: r_day, kind: Kind::Plain },
+    Res { path: "slot", table: "manager_slot", uuid_pk: false, fields: SLOT_FIELDS, owner: IN_OWN_DAYS, force_user: false, render: r_slot, kind: Kind::Plain },
+    Res { path: "slot-entry", table: "manager_slotentry", uuid_pk: false, fields: ENTRY_FIELDS, owner: IN_OWN_SLOTS, force_user: false, render: r_entry, kind: Kind::SlotEntry },
     cfg!("weight-config", "manager_weightconfig", r_c_weight),
     cfg!("max-weight-config", "manager_maxweightconfig", r_c_maxweight),
     cfg!("repetitions-config", "manager_repetitionsconfig", r_c_reps),
@@ -738,10 +732,10 @@ pub(crate) static RESOURCES: &[Res] = &[
     cfg!("max-rest-config", "manager_maxrestconfig", r_c_maxrest),
     cfg!("rir-config", "manager_rirconfig", r_c_rir),
     cfg!("max-rir-config", "manager_maxrirconfig", r_c_maxrir),
-    Res { path: "workoutlog", table: "manager_workoutlog", uuid_pk: true, fields: LOG_FIELDS, owner: "user_id = $U", force_user: true, update: true, render: r_log, kind: Kind::Log },
-    Res { path: "nutritiondiary", table: "nutrition_logitem", uuid_pk: true, fields: DIARY_FIELDS, owner: "plan_id IN (SELECT id FROM nutrition_nutritionplan WHERE user_id = $U)", force_user: false, update: true, render: r_diary, kind: Kind::Diary },
-    Res { path: "measurement", table: "measurements_measurement", uuid_pk: true, fields: MEASUREMENT_FIELDS, owner: "category_id IN (SELECT id FROM measurements_category WHERE user_id = $U)", force_user: false, update: true, render: r_measurement, kind: Kind::Measurement },
-    Res { path: "weightentry", table: "measurements_measurement", uuid_pk: true, fields: WEIGHT_FIELDS, owner: "category_id IN (SELECT id FROM measurements_category WHERE user_id = $U AND is_official AND metric_type = 'body_weight')", force_user: false, update: true, render: r_weight, kind: Kind::Weight },
+    Res { path: "workoutlog", table: "manager_workoutlog", uuid_pk: true, fields: LOG_FIELDS, owner: "user_id = $U", force_user: true, render: r_log, kind: Kind::Log },
+    Res { path: "nutritiondiary", table: "nutrition_logitem", uuid_pk: true, fields: DIARY_FIELDS, owner: "plan_id IN (SELECT id FROM nutrition_nutritionplan WHERE user_id = $U)", force_user: false, render: r_diary, kind: Kind::Diary },
+    Res { path: "measurement", table: "measurements_measurement", uuid_pk: true, fields: MEASUREMENT_FIELDS, owner: "category_id IN (SELECT id FROM measurements_category WHERE user_id = $U)", force_user: false, render: r_measurement, kind: Kind::Measurement },
+    Res { path: "weightentry", table: "measurements_measurement", uuid_pk: true, fields: WEIGHT_FIELDS, owner: "category_id IN (SELECT id FROM measurements_category WHERE user_id = $U AND is_official AND metric_type = 'body_weight')", force_user: false, render: r_weight, kind: Kind::Weight },
 ];
 
 pub fn routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
@@ -1006,8 +1000,8 @@ async fn coerce(pool: &PgPool, fl: &F, v: &Value) -> Result<B, Result<String, Re
             let t = match v {
                 Value::Bool(b) => Some(*b),
                 Value::Number(n) => match n.as_f64() {
-                    Some(x) if x == 1.0 => Some(true),
-                    Some(x) if x == 0.0 => Some(false),
+                    Some(1.0) => Some(true),
+                    Some(0.0) => Some(false),
                     _ => None,
                 },
                 Value::String(s) => match s.as_str() {
@@ -1455,9 +1449,7 @@ async fn object_validate(
                     }
                 }
             }
-            if let Err(r) = measurement_range(pool, vals, pk).await {
-                return Err(r);
-            }
+            measurement_range(pool, vals, pk).await?;
             if let Some(B::J(extra)) = get(vals, "extra_data") {
                 if !extra.is_object() {
                     return Err(bad(

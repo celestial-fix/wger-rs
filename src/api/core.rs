@@ -561,6 +561,9 @@ async fn weight_units(
     .await
 }
 
+// The list helpers take the paging inputs one by one; bundling them would
+// hide the SQL that each one builds.
+#[allow(clippy::too_many_arguments)]
 async fn simple_list<F>(
     state: &AppState,
     uri: &Uri,

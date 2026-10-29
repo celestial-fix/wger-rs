@@ -784,7 +784,7 @@ const TABLES: &[TableSpec] = &[
 
 pub fn routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
     let h = upload;
-    let method = put(h.clone()).patch(h.clone()).delete(h);
+    let method = put(h).patch(h).delete(h);
     vec![
         ("/api/v2/upload-powersync-data", method.clone()),
         ("/api/v2/upload-powersync-data/", method),
@@ -818,9 +818,9 @@ async fn upload(
         }
     };
     match method.as_str() {
-        "PUT" => handle_create(&state, user.id, spec, &payload).await,
-        "PATCH" => handle_update(&state, user.id, spec, &payload).await,
-        "DELETE" => handle_delete(&state, user.id, spec, &payload).await,
+        "PUT" => handle_create(&state, user.id, spec, payload).await,
+        "PATCH" => handle_update(&state, user.id, spec, payload).await,
+        "DELETE" => handle_delete(&state, user.id, spec, payload).await,
         other => ok_json(json!({
             "error": "Method not allowed",
             "details": format!("Unsupported HTTP verb: {other}"),

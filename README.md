@@ -1,5 +1,8 @@
 # wger-rs
 
+[![CI](https://github.com/heavenly-tech/wger-rs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/heavenly-tech/wger-rs/actions/workflows/ci.yml)
+[![Contract](https://github.com/heavenly-tech/wger-rs/actions/workflows/contract.yml/badge.svg?branch=main)](https://github.com/heavenly-tech/wger-rs/actions/workflows/contract.yml)
+
 `wger-rs` is an independently implemented Rust API server that aims to be
 compatible with the REST and PowerSync contracts used by wger 2.7. It reads
 the existing wger PostgreSQL schema; Django remains the schema owner. This
@@ -62,6 +65,13 @@ harness/runtime/run-all.sh --down
 
 Never point the harness at a live database. Do not add real user data, API
 responses, credentials, keys, tokens, or production configuration to tests.
+
+GitHub Actions runs formatting checks, Rust tests, a container build, and the
+disposable contract harness. Dependabot updates Rust and Actions dependencies.
+CodeQL and dependency review activate when the repository is public; private
+repositories need an eligible GitHub Advanced Security plan for those scans.
+Tagged `vX.Y.Z` releases publish an amd64 image to GHCR and create a GitHub
+Release after validation passes.
 
 ## Relationship and licensing
 

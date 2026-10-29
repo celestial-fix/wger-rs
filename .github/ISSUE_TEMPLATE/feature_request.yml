@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest an API capability or improvement.
+title: "feature: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include personal data or private production API captures.
+  - type: textarea
+    id: need
+    attributes:
+      label: Problem to solve
+      description: Explain the use case and who benefits.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe an API-compatible solution, if you have one.
+    validations:
+      required: true
+  - type: checkboxes
+    id: compatibility
+    attributes:
+      label: Compatibility
+      options:
+        - label: This must preserve the existing wger database schema.
+          required: true

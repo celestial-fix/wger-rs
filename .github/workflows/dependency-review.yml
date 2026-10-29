@@ -1,0 +1,21 @@
+name: Dependency review
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    # Dependency Review is enabled when the repository is public; private
+    # repositories need an eligible GitHub Advanced Security plan.
+    if: github.event.repository.private == false
+    name: Review dependency changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high

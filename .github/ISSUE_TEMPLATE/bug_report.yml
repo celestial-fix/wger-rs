@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a reproducible bug in wger-rs.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include personal data, production captures, credentials, tokens, or database dumps.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include a minimal request using synthetic data.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: wger-rs and wger versions
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Redacted logs
+      description: Remove usernames, hostnames, tokens, and personal information.

@@ -13,7 +13,7 @@ permissions:
 jobs:
   rust:
     name: Rust checks and image build
-    runs-on: [self-hosted, linux, x64, heavenly]
+    runs-on: [self-hosted, heavenly]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable

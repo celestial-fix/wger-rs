@@ -10,7 +10,7 @@ permissions:
 jobs:
   validate:
     name: Validate release
-    runs-on: [self-hosted, linux, x64, heavenly]
+    runs-on: [self-hosted, heavenly]
     env:
       HARNESS_NAME: wger-rs-release-${{ github.run_id }}
       HARNESS_PG_PORT: "55432"
@@ -43,7 +43,7 @@ jobs:
   publish:
     name: Publish container and GitHub release
     needs: validate
-    runs-on: [self-hosted, linux, x64, heavenly]
+    runs-on: [self-hosted, heavenly]
     permissions:
       contents: write
       packages: write

@@ -13,7 +13,7 @@ permissions:
 jobs:
   api-contract:
     name: Django API compatibility
-    runs-on: [self-hosted, linux, x64, heavenly]
+    runs-on: [self-hosted, heavenly]
     env:
       HARNESS_NAME: wger-rs-ci-${{ github.run_id }}
       HARNESS_PG_PORT: "55432"

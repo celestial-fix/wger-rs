@@ -5,6 +5,7 @@ import json
 import os
 import random
 import subprocess
+import tempfile
 import time
 from pathlib import Path
 
@@ -48,6 +49,64 @@ def _media_root():
     if root:
         return Path(root)
     return Path(__file__).resolve().parent / "runtime" / ".state" / "media-host"
+
+
+def _django_container():
+    container = os.environ.get("WGER_DJANGO_CONTAINER")
+    if container:
+        return container
+    wanted = f"{os.environ.get('HARNESS_NAME', 'wger-rs-m2')}-django"
+    try:
+        names = subprocess.run(
+            ["docker", "ps", "--format", "{{.Names}}"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True,
+        ).stdout.decode().split()
+    except Exception:
+        names = []
+    return wanted if wanted in names else "wger-rs-m2-django"
+
+
+def _django_media_put(name, data):
+    """Write a file into the container's media volume.
+
+    The harness has no host bind mounts, so a file the host places in its own
+    media root is invisible to Django unless it is copied in.
+    """
+    container = _django_container()
+    parent = str(Path("/tmp/wger-media") / Path(name).parent)
+    subprocess.run(
+        ["docker", "exec", container, "mkdir", "-p", parent],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=True,
+    )
+    with tempfile.NamedTemporaryFile(prefix="harness-media-", delete=False) as handle:
+        handle.write(data)
+        local = handle.name
+    try:
+        subprocess.run(
+            ["docker", "cp", local, f"{container}:/tmp/wger-media/{name}"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True,
+        )
+    finally:
+        Path(local).unlink(missing_ok=True)
+
+
+def _django_media_exists(name):
+    try:
+        proc = subprocess.run(
+            ["docker", "exec", _django_container(), "test", "-e", f"/tmp/wger-media/{name}"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except Exception:
+        return True
+    # exit 0 -> present, 1 -> absent; anything else we cannot verify, fail closed
+    return proc.returncode != 1
 
 
 def _norm_remove_diffing_keys(obj, extra_keys=None):
@@ -320,12 +379,13 @@ def rest_write_checks():
         g_r = out.stdout.decode().strip().splitlines()[0].strip() if out.stdout else '0'
     except Exception as e:
         g_r = '0'
-    # create files
+    # create files: Django and Rust no longer share a media directory (the
+    # container uses a named volume), so each side gets its own file
     media_host = _media_root()
     (media_host / "gallery").mkdir(parents=True, exist_ok=True)
     try:
-        (media_host / "gallery" / "harness-l.jpg").write_bytes(b"abc")
         (media_host / "gallery" / "harness-r.jpg").write_bytes(b"abc")
+        _django_media_put("gallery/harness-l.jpg", b"abc")
     except Exception:
         pass
     # delete via upload-powersync-data
@@ -340,8 +400,11 @@ def rest_write_checks():
     except Exception:
         ok = False
     if ok:
-        # files removed on both
-        ok = (not (media_host / "gallery" / "harness-l.jpg").exists()) and (not (media_host / "gallery" / "harness-r.jpg").exists())
+        # files removed on both sides: Rust from the host media root, Django
+        # from its container media volume
+        ok = not (media_host / "gallery" / "harness-r.jpg").exists() and not _django_media_exists(
+            "gallery/harness-l.jpg"
+        )
     record("write gallery delete via upload", ok, f"django={ds} rust={rs}")
 
 

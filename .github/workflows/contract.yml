@@ -15,7 +15,7 @@ jobs:
     name: Django API compatibility
     runs-on: [self-hosted, heavenly]
     env:
-      HARNESS_NAME: wger-rs-ci-${{ github.run_id }}
+      HARNESS_NAME: wger-rs-ci-${{ github.run_id }}-${{ github.run_attempt }}
       WGER_RS_BIN: ${{ github.workspace }}/target/release/wger-rs
     steps:
       - uses: actions/checkout@v4

@@ -63,9 +63,13 @@ def _django_container():
             stderr=subprocess.PIPE,
             check=True,
         ).stdout.decode().split()
-    except Exception:
-        names = []
-    return wanted if wanted in names else "wger-rs-m2-django"
+    except Exception as exc:
+        raise RuntimeError(f"cannot list docker containers to find {wanted}: {exc}") from exc
+    if wanted not in names:
+        raise RuntimeError(
+            f"django container {wanted!r} is not running; set WGER_DJANGO_CONTAINER or HARNESS_NAME"
+        )
+    return wanted
 
 
 def _django_media_put(name, data):

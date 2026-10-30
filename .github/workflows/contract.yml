@@ -16,12 +16,20 @@ jobs:
     runs-on: [self-hosted, heavenly]
     env:
       HARNESS_NAME: wger-rs-ci-${{ github.run_id }}
-      HARNESS_PG_PORT: "55432"
-      HARNESS_DJANGO_PORT: "8001"
-      HARNESS_RUST_PORT: "8012"
       WGER_RS_BIN: ${{ github.workspace }}/target/release/wger-rs
     steps:
       - uses: actions/checkout@v4
+      - name: Allocate per-run loopback ports
+        run: |
+          python3 - >> "$GITHUB_ENV" <<PY
+          import socket
+          socks = []
+          for name in ("HARNESS_PG_PORT", "HARNESS_DJANGO_PORT", "HARNESS_RUST_PORT"):
+              s = socket.socket()
+              s.bind(("127.0.0.1", 0))
+              socks.append(s)
+              print(f"{name}={s.getsockname()[1]}")
+          PY
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - uses: actions/setup-python@v5

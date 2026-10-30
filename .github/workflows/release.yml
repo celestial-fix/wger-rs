@@ -43,7 +43,7 @@ jobs:
   publish:
     name: Publish container and GitHub release
     needs: validate
-    runs-on: [self-hosted, heavenly]
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write

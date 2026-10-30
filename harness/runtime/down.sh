@@ -13,10 +13,6 @@ PURGE=0
 [ "${1:-}" = "--purge" ] && PURGE=1
 
 export HARNESS_NAME HARNESS_PG_PORT HARNESS_DJANGO_PORT HARNESS_RUST_PORT
-export HARNESS_STATE_DIR="$STATE"
-export HARNESS_MEDIA_HOST="$STATE/media-host"
-export HARNESS_SEED_RUNNER="$DIR/seed_runner.py"
-export HARNESS_SEED_PY="$REPO/harness/seed.py"
 export HARNESS_JWT_ENV="$STATE/jwt.env"
 
 docker compose --project-directory "$DIR" -f "$DIR/docker-compose.yml" --project-name "${HARNESS_NAME}-harness" down -v --remove-orphans || true
@@ -27,10 +23,10 @@ if [ -f "$STATE/rust.pid" ]; then
 fi
 
 if [ "$PURGE" = 1 ]; then
-  # seed media is owned by the django image uid 1000; delete it as that user,
-  # then drop the throwaway state dir on the host. Harness containers only.
-  docker run --rm -v "$STATE/media-host:/m" wger/server:2.7 sh -c "rm -rf /m/* /m/.[!.]*" || true
-  rm -rf "$STATE"
+  # host media copy was produced by `docker cp` and is owned by the invoking
+  # user, so a plain recursive delete is enough. `down -v` already removed the
+  # named media volume. Harness containers only.
+  rm -rf "$STATE" || true
 fi
 
 echo "Harness torn down."

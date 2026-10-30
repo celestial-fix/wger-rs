@@ -57,9 +57,10 @@ services:
       HARNESS_PG_PORT: "${HARNESS_PG_PORT:-55432}"
       HARNESS_RUST_PORT: "${HARNESS_RUST_PORT:-8012}"
     volumes:
-      - ${HARNESS_MEDIA_HOST}:/tmp/wger-media
-      - ${HARNESS_SEED_RUNNER}:/tmp/seed_runner.py:ro
-      - ${HARNESS_SEED_PY}:/tmp/seed_orig.py:ro
+      # named volume only: the CI daemon resolves bind-mount sources on the
+      # host, where the runner work dir does not exist. Seed scripts are copied
+      # in with `docker cp` and media is copied out the same way.
+      - wger_media:/tmp/wger-media
     ports:
       - "127.0.0.1:${HARNESS_DJANGO_PORT:-8001}:8000"
     networks: [harness]
@@ -78,3 +79,4 @@ networks:
     name: "${HARNESS_NAME:-wger-rs-contract}-net"
 volumes:
   pgdata:
+  wger_media:

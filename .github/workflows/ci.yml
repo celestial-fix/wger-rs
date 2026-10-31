@@ -15,7 +15,7 @@ jobs:
     name: Rust checks and image build
     runs-on: [self-hosted, heavenly]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
@@ -24,9 +24,9 @@ jobs:
         run: cargo fmt --all --check
       - name: Run unit tests
         run: cargo test --locked --all-targets
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
       - name: Build container image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: false

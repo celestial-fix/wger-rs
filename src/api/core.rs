@@ -586,7 +586,10 @@ where
         default_order,
     );
     let count_sql = format!("SELECT COUNT(*) FROM ({select}) t");
-    let count: i64 = match sqlx::query(sqlx::AssertSqlSafe(count_sql.clone())).fetch_one(&state.pool).await {
+    let count: i64 = match sqlx::query(sqlx::AssertSqlSafe(count_sql.clone()))
+        .fetch_one(&state.pool)
+        .await
+    {
         Ok(row) => row.get(0),
         Err(err) => return httpx::db_error(err),
     };
@@ -594,7 +597,10 @@ where
         "{select} ORDER BY {order} LIMIT {} OFFSET {}",
         page.limit, page.offset
     );
-    let rows = match sqlx::query(sqlx::AssertSqlSafe(data_sql.clone())).fetch_all(&state.pool).await {
+    let rows = match sqlx::query(sqlx::AssertSqlSafe(data_sql.clone()))
+        .fetch_all(&state.pool)
+        .await
+    {
         Ok(rows) => rows,
         Err(err) => return httpx::db_error(err),
     };

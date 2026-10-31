@@ -1905,10 +1905,12 @@ async fn delete_cascade(pool: &PgPool, table: &str, pk: &B) -> Result<(), sqlx::
         "manager_slotentry" => entries.push(int_id),
         "manager_workoutlog" => logs.push(uuid_id),
         t if CONFIG_TABLES.contains(&t) => {
-            sqlx::query(sqlx::AssertSqlSafe(format!("DELETE FROM {t} WHERE id = $1")))
-                .bind(int_id)
-                .execute(&mut *tx)
-                .await?;
+            sqlx::query(sqlx::AssertSqlSafe(format!(
+                "DELETE FROM {t} WHERE id = $1"
+            )))
+            .bind(int_id)
+            .execute(&mut *tx)
+            .await?;
             return tx.commit().await;
         }
         t => {
@@ -1960,10 +1962,12 @@ async fn delete_cascade(pool: &PgPool, table: &str, pk: &B) -> Result<(), sqlx::
         .execute(&mut *tx)
         .await?;
     for t in CONFIG_TABLES {
-        sqlx::query(sqlx::AssertSqlSafe(format!("DELETE FROM {t} WHERE slot_entry_id = ANY($1)")))
-            .bind(ids(&entries))
-            .execute(&mut *tx)
-            .await?;
+        sqlx::query(sqlx::AssertSqlSafe(format!(
+            "DELETE FROM {t} WHERE slot_entry_id = ANY($1)"
+        )))
+        .bind(ids(&entries))
+        .execute(&mut *tx)
+        .await?;
     }
     sqlx::query("DELETE FROM manager_slotentry WHERE id = ANY($1)")
         .bind(ids(&entries))

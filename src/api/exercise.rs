@@ -68,7 +68,10 @@ async fn exerciseinfo(
     let (where_sql, _binds, order_sql) = exercise_filter(&map, true).await;
     let _english = english_id(&state.pool).await.unwrap_or(0);
     let count_sql = format!("SELECT COUNT(*) FROM exercises_exercise e WHERE {where_sql}");
-    let count = match sqlx::query(sqlx::AssertSqlSafe(count_sql.clone())).fetch_one(&state.pool).await {
+    let count = match sqlx::query(sqlx::AssertSqlSafe(count_sql.clone()))
+        .fetch_one(&state.pool)
+        .await
+    {
         Ok(row) => row.get::<i64, _>(0),
         Err(err) => return httpx::db_error(err),
     };
@@ -85,7 +88,10 @@ async fn exerciseinfo(
         "SELECT e.id FROM exercises_exercise e WHERE {where_sql} ORDER BY {order} LIMIT {} OFFSET {}",
         page.limit, page.offset
     );
-    let rows = match sqlx::query(sqlx::AssertSqlSafe(data_sql.clone())).fetch_all(&state.pool).await {
+    let rows = match sqlx::query(sqlx::AssertSqlSafe(data_sql.clone()))
+        .fetch_all(&state.pool)
+        .await
+    {
         Ok(rows) => rows,
         Err(err) => return httpx::db_error(err),
     };
@@ -968,10 +974,12 @@ async fn name_list(
 }
 
 async fn name_one(state: &AppState, table: &str, id: i32, method: &Method) -> Response {
-    let row = match sqlx::query(sqlx::AssertSqlSafe(format!("SELECT id, name FROM {table} WHERE id = $1")))
-        .bind(id)
-        .fetch_optional(&state.pool)
-        .await
+    let row = match sqlx::query(sqlx::AssertSqlSafe(format!(
+        "SELECT id, name FROM {table} WHERE id = $1"
+    )))
+    .bind(id)
+    .fetch_optional(&state.pool)
+    .await
     {
         Ok(row) => row,
         Err(err) => return httpx::db_error(err),
@@ -1335,10 +1343,12 @@ where
     } else {
         "id, uuid, translation_id, alias"
     };
-    let row = match sqlx::query(sqlx::AssertSqlSafe(format!("SELECT {cols} FROM {table} WHERE id = $1")))
-        .bind(id)
-        .fetch_optional(&state.pool)
-        .await
+    let row = match sqlx::query(sqlx::AssertSqlSafe(format!(
+        "SELECT {cols} FROM {table} WHERE id = $1"
+    )))
+    .bind(id)
+    .fetch_optional(&state.pool)
+    .await
     {
         Ok(row) => row,
         Err(err) => return httpx::db_error(err),

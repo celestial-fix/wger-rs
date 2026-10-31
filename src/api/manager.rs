@@ -24,7 +24,10 @@ pub fn routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
     let mut out = Vec::new();
     out.extend(get_both("/api/v2/routine", routines));
     out.extend(get_both("/api/v2/routine/{id}", routine_detail));
-    out.extend(get_both("/api/v2/routine/{id}/structure", routine_structure));
+    out.extend(get_both(
+        "/api/v2/routine/{id}/structure",
+        routine_structure,
+    ));
     out.extend(get_both(
         "/api/v2/routine/{id}/date-sequence-display",
         routine_display,
@@ -79,11 +82,17 @@ fn config_routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
     out.extend(get_both("/api/v2/sets-config", sets_config));
     out.extend(get_both("/api/v2/sets-config/{id}", sets_config_one));
     out.extend(get_both("/api/v2/max-sets-config", max_sets_config));
-    out.extend(get_both("/api/v2/max-sets-config/{id}", max_sets_config_one));
+    out.extend(get_both(
+        "/api/v2/max-sets-config/{id}",
+        max_sets_config_one,
+    ));
     out.extend(get_both("/api/v2/rest-config", rest_config));
     out.extend(get_both("/api/v2/rest-config/{id}", rest_config_one));
     out.extend(get_both("/api/v2/max-rest-config", max_rest_config));
-    out.extend(get_both("/api/v2/max-rest-config/{id}", max_rest_config_one));
+    out.extend(get_both(
+        "/api/v2/max-rest-config/{id}",
+        max_rest_config_one,
+    ));
     out.extend(get_both("/api/v2/rir-config", rir_config));
     out.extend(get_both("/api/v2/rir-config/{id}", rir_config_one));
     out.extend(get_both("/api/v2/max-rir-config", max_rir_config));

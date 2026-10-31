@@ -18,7 +18,7 @@ use tokio::net::{TcpListener, TcpStream};
 use tower::ServiceExt;
 use wger_rs::config::UpstreamUrl;
 use wger_rs::forwarded::{IpNet, TrustedProxies};
-use wger_rs::proxy::{self, Proxy};
+use wger_rs::proxy::{self, Proxy, Timeouts};
 
 const BODY_LIMIT: usize = 100 * 1024 * 1024;
 
@@ -268,8 +268,20 @@ fn test_app(
     powersync: Option<UpstreamUrl>,
     trusted: Vec<IpNet>,
 ) -> Router {
+    test_app_with_timeouts(django, powersync, trusted, Timeouts::default())
+}
+
+fn test_app_with_timeouts(
+    django: Option<UpstreamUrl>,
+    powersync: Option<UpstreamUrl>,
+    trusted: Vec<IpNet>,
+    timeouts: Timeouts,
+) -> Router {
     let trusted = Arc::new(TrustedProxies::from_networks(trusted));
-    proxy::app(local_router(), Proxy::new(django, powersync, trusted))
+    proxy::app(
+        local_router(),
+        Proxy::new(django, powersync, trusted).with_timeouts(timeouts),
+    )
 }
 
 fn request(method: Method, uri: &str, headers: &[(&str, &str)]) -> Request<Body> {
@@ -524,6 +536,29 @@ async fn trusted_peer_keeps_the_proxy_chain_and_untrusted_peer_is_overwritten() 
         seen[1].header("x-forwarded-host"),
         Some("fitness.example.test")
     );
+
+    // nginx-proxy appends the real client to any X-Forwarded-For the client
+    // sent. Walking from the right must ignore the spoofed 1.2.3.4.
+    let req = from_trusted(
+        request(
+            Method::GET,
+            "/dashboard/",
+            &[
+                ("host", "fitness.example.test"),
+                ("x-forwarded-for", "1.2.3.4, 203.0.113.9"),
+                ("x-forwarded-proto", "https"),
+            ],
+        ),
+        "127.0.0.1",
+    );
+    let response = app.oneshot(req).await.unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let seen = upstream.seen();
+    assert_eq!(
+        seen[2].header("x-forwarded-for"),
+        Some("1.2.3.4, 203.0.113.9, 127.0.0.1")
+    );
+    assert_eq!(seen[2].header("x-real-ip"), Some("203.0.113.9"));
 }
 
 #[tokio::test]
@@ -635,6 +670,43 @@ async fn streamed_overflow_is_413_on_a_proxied_route() {
     assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
 }
 
+struct Stalled;
+
+impl http_body::Body for Stalled {
+    type Data = Bytes;
+    type Error = std::convert::Infallible;
+
+    fn poll_frame(
+        self: std::pin::Pin<&mut Self>,
+        _cx: &mut Context<'_>,
+    ) -> Poll<Option<Result<Frame<Self::Data>, Self::Error>>> {
+        Poll::Pending
+    }
+}
+
+#[tokio::test]
+async fn stalled_request_body_is_timed_out() {
+    let upstream = fake_upstream(Reply::Sink).await;
+    let timeouts = Timeouts {
+        client_body: Duration::from_millis(100),
+        ..Timeouts::default()
+    };
+    let app = test_app_with_timeouts(Some(upstream.url()), None, Vec::new(), timeouts);
+
+    let request = Request::builder()
+        .method(Method::POST)
+        .uri("/dashboard/")
+        .header("content-length", "10")
+        .body(Body::new(Stalled))
+        .unwrap();
+
+    let response = tokio::time::timeout(Duration::from_secs(3), app.oneshot(request))
+        .await
+        .expect("client_body_timeout must abort the request")
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::BAD_GATEWAY);
+}
+
 #[tokio::test]
 async fn static_files_take_precedence_and_missing_files_are_not_proxied() {
     let root = std::env::temp_dir().join(format!(
@@ -678,15 +750,19 @@ async fn static_files_take_precedence_and_missing_files_are_not_proxied() {
 }
 
 async fn serve(app: Router) -> (SocketAddr, tokio::task::JoinHandle<()>) {
+    serve_with_header_timeout(app, wger_rs::server::CLIENT_HEADER_TIMEOUT).await
+}
+
+async fn serve_with_header_timeout(
+    app: Router,
+    header_timeout: Duration,
+) -> (SocketAddr, tokio::task::JoinHandle<()>) {
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
     let addr = listener.local_addr().unwrap();
     let handle = tokio::spawn(async move {
-        axum::serve(
-            listener,
-            app.into_make_service_with_connect_info::<SocketAddr>(),
-        )
-        .await
-        .unwrap();
+        wger_rs::server::serve(listener, app, header_timeout)
+            .await
+            .unwrap();
     });
     (addr, handle)
 }
@@ -732,6 +808,57 @@ async fn websocket_upgrade_passes_through_ps_and_django() {
         stream.read_exact(&mut echoed).await.unwrap();
         assert_eq!(&echoed, b"ping-through-proxy", "{path}");
     }
+
+    server.abort();
+}
+
+#[tokio::test]
+async fn slow_client_request_headers_are_closed() {
+    let app = test_app(None, None, Vec::new());
+    let (addr, server) = serve_with_header_timeout(app, Duration::from_millis(100)).await;
+
+    let mut stream = TcpStream::connect(addr).await.unwrap();
+    stream
+        .write_all(b"GET /healthz HTTP/1.1\r\nHost: localhost\r\n")
+        .await
+        .unwrap();
+
+    let mut buffer = Vec::new();
+    tokio::time::timeout(
+        Duration::from_secs(3),
+        stream.read_to_end(&mut buffer),
+    )
+    .await
+    .expect("client_header_timeout must close the connection")
+    .unwrap();
+    assert!(
+        !buffer.starts_with(b"HTTP/1.1 200"),
+        "a partial request must not be answered successfully"
+    );
+
+    server.abort();
+}
+
+#[tokio::test]
+async fn idle_websocket_tunnel_is_closed() {
+    let powersync = fake_upstream(Reply::Upgrade).await;
+    let timeouts = Timeouts {
+        tunnel_idle: Duration::from_millis(100),
+        ..Timeouts::default()
+    };
+    let app = test_app_with_timeouts(None, Some(powersync.url()), Vec::new(), timeouts);
+    let (addr, server) = serve(app).await;
+
+    let request = "GET /ps/sync/stream HTTP/1.1\r\nHost: localhost\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n";
+    let (head, _leftover, mut stream) = raw_request(addr, request).await;
+    assert!(head.starts_with("HTTP/1.1 101 Switching Protocols"), "{head}");
+
+    let mut buffer = [0u8; 16];
+    let read = tokio::time::timeout(Duration::from_secs(3), stream.read(&mut buffer))
+        .await
+        .expect("an idle WebSocket tunnel must be closed")
+        .unwrap();
+    assert_eq!(read, 0, "expected EOF from the closed tunnel");
 
     server.abort();
 }

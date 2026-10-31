@@ -119,11 +119,8 @@ async fn main() {
         }
     };
     tracing::info!(%bind, "listening");
-    if let Err(err) = axum::serve(
-        listener,
-        app.into_make_service_with_connect_info::<SocketAddr>(),
-    )
-    .await
+    if let Err(err) =
+        wger_rs::server::serve(listener, app, wger_rs::server::CLIENT_HEADER_TIMEOUT).await
     {
         eprintln!("server: {err}");
         std::process::exit(1);

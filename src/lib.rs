@@ -12,6 +12,7 @@ pub mod healthcheck;
 pub mod httpx;
 pub mod jsonutil;
 pub mod proxy;
+pub mod server;
 pub mod state;
 pub mod static_files;
 pub mod timefmt;

@@ -234,8 +234,10 @@ fn is_hostname(value: &str) -> bool {
 ///   `http` (this listener has no TLS), and both the forwarded chain and the
 ///   real IP are the peer address.
 /// * Trusted peer: keep the scheme it supplied (default `http`), append the
-///   peer to `X-Forwarded-For` (`$proxy_add_x_forwarded_for`), and use the
-///   left-most address in the incoming chain as the client IP.
+///   peer to `X-Forwarded-For` (`$proxy_add_x_forwarded_for`), and walk the
+///   resulting chain from the right, skipping trusted proxies. The first
+///   untrusted hop is the client, so a client-supplied prefix cannot spoof
+///   `X-Real-IP`. If every hop is trusted, the left-most address is used.
 ///
 /// `X-Forwarded-Host` is always derived from the actual `Host` header, never
 /// from a client-supplied `X-Forwarded-Host`.
@@ -253,18 +255,20 @@ pub fn normalize(headers: &mut HeaderMap, peer: Option<SocketAddr>, trusted: &Tr
 
     if trusted_peer {
         let peer_ip = peer.expect("trusted peer has an address").ip();
-        let client_ip = incoming_for
+        let mut chain: Vec<String> = incoming_for
             .as_deref()
-            .and_then(|value| value.split(',').next())
-            .map(str::trim)
-            .filter(|value| !value.is_empty())
-            .map(str::to_owned)
-            .unwrap_or_else(|| peer_ip.to_string());
-        let chain = match incoming_for.filter(|value| !value.is_empty()) {
-            Some(value) => format!("{value}, {peer_ip}"),
-            None => peer_ip.to_string(),
-        };
-        insert(headers, XFF, &chain);
+            .map(|value| {
+                value
+                    .split(',')
+                    .map(str::trim)
+                    .filter(|entry| !entry.is_empty())
+                    .map(str::to_owned)
+                    .collect()
+            })
+            .unwrap_or_default();
+        chain.push(peer_ip.to_string());
+        let client_ip = client_from_chain(&chain, trusted);
+        insert(headers, XFF, &chain.join(", "));
         insert(headers, XREAL, &client_ip);
         insert(
             headers,
@@ -292,6 +296,22 @@ fn header_text(value: Option<&HeaderValue>) -> Option<String> {
         .and_then(|value| value.to_str().ok())
         .map(|value| value.trim().to_owned())
         .filter(|value| !value.is_empty())
+}
+
+/// Walk a forwarding chain from right to left, skipping trusted proxies. The
+/// first untrusted hop is the client. If every hop is trusted, fall back to
+/// the left-most entry so a fully internal chain still yields an address.
+fn client_from_chain(chain: &[String], trusted: &TrustedProxies) -> String {
+    chain
+        .iter()
+        .rev()
+        .find(|entry| match entry.parse::<IpAddr>() {
+            Ok(ip) => !trusted.is_trusted(ip),
+            Err(_) => true,
+        })
+        .cloned()
+        .or_else(|| chain.first().cloned())
+        .unwrap_or_default()
 }
 
 fn insert(headers: &mut HeaderMap, name: HeaderName, value: &str) {
@@ -350,19 +370,53 @@ mod tests {
 
     #[test]
     fn trusted_peer_appends_to_the_chain_and_keeps_the_scheme() {
-        let trusted = TrustedProxies::from_networks(vec![IpNet::parse("127.0.0.1").unwrap()]);
+        let trusted = TrustedProxies::from_networks(vec![
+            IpNet::parse("127.0.0.1").unwrap(),
+            IpNet::parse("10.0.0.0/8").unwrap(),
+        ]);
         let mut map = headers(&[
-            ("x-forwarded-for", "203.0.113.9"),
+            ("x-forwarded-for", "1.2.3.4, 203.0.113.9, 10.0.0.7"),
             ("x-forwarded-proto", "https"),
             ("x-forwarded-host", "upstream.example"),
-            ("x-real-ip", "203.0.113.9"),
+            ("x-real-ip", "1.2.3.4"),
         ]);
         normalize(&mut map, Some(peer("127.0.0.1")), &trusted);
 
-        assert_eq!(text(&map, XFF), "203.0.113.9, 127.0.0.1");
+        assert_eq!(
+            text(&map, XFF),
+            "1.2.3.4, 203.0.113.9, 10.0.0.7, 127.0.0.1"
+        );
         assert_eq!(text(&map, XREAL), "203.0.113.9");
         assert_eq!(text(&map, XFP), "https");
         assert_eq!(text(&map, XFH), "fitness.example.test");
+    }
+
+    #[test]
+    fn client_spoofed_xff_is_ignored_in_favour_of_the_real_client() {
+        let trusted = TrustedProxies::from_networks(vec![IpNet::parse("127.0.0.1").unwrap()]);
+        let mut map = headers(&[
+            ("x-forwarded-for", "1.2.3.4, 203.0.113.9"),
+            ("x-forwarded-proto", "https"),
+        ]);
+        normalize(&mut map, Some(peer("127.0.0.1")), &trusted);
+
+        assert_eq!(text(&map, XFF), "1.2.3.4, 203.0.113.9, 127.0.0.1");
+        assert_eq!(
+            text(&map, XREAL),
+            "203.0.113.9",
+            "the right-most untrusted hop is the client; 1.2.3.4 was supplied by the client"
+        );
+        assert_eq!(text(&map, XFP), "https");
+    }
+
+    #[test]
+    fn fully_trusted_chain_falls_back_to_the_left_most_hop() {
+        let trusted = TrustedProxies::from_networks(vec![IpNet::parse("10.0.0.0/8").unwrap()]);
+        let mut map = headers(&[("x-forwarded-for", "10.0.0.1, 10.0.0.2")]);
+        normalize(&mut map, Some(peer("10.0.0.3")), &trusted);
+
+        assert_eq!(text(&map, XFF), "10.0.0.1, 10.0.0.2, 10.0.0.3");
+        assert_eq!(text(&map, XREAL), "10.0.0.1");
     }
 
     #[test]

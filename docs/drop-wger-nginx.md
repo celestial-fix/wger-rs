@@ -30,13 +30,17 @@ The implementation lives in:
 | `location / { proxy_pass http://django_ui; }` | Fallback forwards every other path (`/`, admin, UI pages). | `routing_matches_nginx_precedence` |
 | `location /ps/ { proxy_pass http://powersync/; }` | `/ps` is stripped before forwarding (`/ps/sync/stream` → `/sync/stream`, `/ps/` → `/`). | `powersync_prefix_is_stripped_like_proxy_pass`, `routing_matches_nginx_precedence` |
 | `proxy_set_header Host $http_host;` | The incoming `Host` is forwarded unchanged to every upstream, including `/ps/`; when absent, the fixed upstream authority is used. A spoofed `Host` cannot change the connection destination. | `host_spoofing_cannot_redirect_the_upstream` |
-| `proxy_set_header X-Real-IP $remote_addr;` (+ trusted chain) | Untrusted peer → peer IP. Trusted peer → left-most incoming `X-Forwarded-For` entry, else the peer. | `trusted_peer_appends_to_the_chain_and_keeps_the_scheme`, `trusted_peer_keeps_the_proxy_chain_and_untrusted_peer_is_overwritten` |
+| `proxy_set_header X-Real-IP $remote_addr;` (+ trusted chain) | Untrusted peer → peer IP. Trusted peer → walk the incoming chain plus the peer from right to left, skipping trusted proxies; the first untrusted hop is the client. If every hop is trusted, use the left-most entry. | `trusted_peer_appends_to_the_chain_and_keeps_the_scheme`, `client_spoofed_xff_is_ignored_in_favour_of_the_real_client`, `trusted_peer_keeps_the_proxy_chain_and_untrusted_peer_is_overwritten` |
 | `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;` | Trusted peer appends itself to the supplied chain; untrusted peer replaces the chain with its own address. | `untrusted_peer_cannot_spoof_forwarded_headers`, `trusted_peer_appends_to_the_chain_and_keeps_the_scheme` |
 | `proxy_set_header X-Forwarded-Proto $final_forwarded_proto;` | See the `final_forwarded_proto` row. | `untrusted_peer_cannot_spoof_forwarded_headers`, `trusted_peer_keeps_the_proxy_chain_and_untrusted_peer_is_overwritten` |
+| `proxy_connect_timeout 60s;` (default) | TCP connect to a fixed upstream is capped at 60s; a timeout answers `504 Gateway Timeout`. | `timeouts_match_nginx_defaults` |
+| `proxy_request_buffering on;` (default) | Deliberate difference: `wger-rs` streams request bodies to the upstream instead of buffering the whole body first. The 100 MiB limit and per-chunk body timeout still apply. | `streamed_overflow_is_413_on_a_proxied_route`, `stalled_request_body_is_timed_out` |
+| `client_header_timeout 60s;` (default) | A client that does not send a complete request head within 60s is disconnected (`hyper` `header_read_timeout`). | `slow_client_request_headers_are_closed` |
+| `client_body_timeout 60s;` (default) | Each request-body read may idle for at most 60s before the request is aborted. | `stalled_request_body_is_timed_out` |
 | `proxy_set_header X-Forwarded-Host $http_host;` | Always derived from the real `Host` header, never from a client-supplied `X-Forwarded-Host`. Removed from `/ps/` requests (nginx does not set it there). | `trusted_peer_appends_to_the_chain_and_keeps_the_scheme`, `routing_matches_nginx_precedence` |
 | `proxy_http_version 1.1;` | The hyper client sends HTTP/1.1 upstream for all three locations. | `routing_matches_nginx_precedence`, `websocket_upgrade_passes_through_ps_and_django` |
-| `proxy_read_timeout 86400s; proxy_send_timeout 86400s;` (`/`, `/api/`) | No read/send timeout is applied; the proxy waits as long as the upstream or client needs (≥ 86400s). | `powersync_streaming_flushes_the_first_chunk_immediately` (long-lived stream), `websocket_upgrade_passes_through_ps_and_django` |
-| `proxy_buffering off; proxy_read_timeout 1d; proxy_send_timeout 1d;` (`/ps/`) | Response bodies are relayed as `hyper::body::Incoming` with no collect/buffer step; no total or idle timeout is configured. | `powersync_streaming_flushes_the_first_chunk_immediately` |
+| `proxy_read_timeout 86400s; proxy_send_timeout 86400s;` (`/`, `/api/`) | Long-lived responses and WebSocket tunnels may idle for up to 86400s; the idle clock is reset by any byte in either direction. No shorter total read/send timeout is applied. | `websocket_upgrade_passes_through_ps_and_django`, `idle_websocket_tunnel_is_closed` |
+| `proxy_buffering off; proxy_read_timeout 1d; proxy_send_timeout 1d;` (`/ps/`) | Response bodies are relayed as `hyper::body::Incoming` with no collect/buffer step. HTTP streaming has no total timeout, and WebSocket/streaming tunnels are closed after 86400s with no bytes in either direction. | `powersync_streaming_flushes_the_first_chunk_immediately`, `idle_websocket_tunnel_is_closed` |
 | `add_header X-Accel-Buffering no always;` (`/ps/`) | Added to every `/ps/` response, including 502/413/404. | `every_ps_response_has_the_accel_header`, `missing_upstreams_are_502_and_ps_still_sets_accel_header` |
 | `proxy_set_header Upgrade $http_upgrade; proxy_set_header Connection "upgrade";` | A real upgrade (both `Upgrade` and `Connection: upgrade`) is forwarded and, after `101`, bytes are copied both ways with `copy_bidirectional`. Non-upgrade requests get `Connection: close`. | `websocket_upgrade_passes_through_ps_and_django`, `upgrade_requires_both_headers` |
 | `proxy_redirect off;` | `Location` is copied from the upstream response unchanged. | `cookies_and_location_pass_through_untouched` |
@@ -60,9 +64,17 @@ The implementation lives in:
   `public, max-age=86400`, matching nginx's default one-day freshness heuristic
   in a form clients can see.
 - **`X-Real-IP` behind a trusted proxy.** The live config sends
-  `$remote_addr` (the nginx-proxy address). `wger-rs` sends the left-most
-  `X-Forwarded-For` entry, as required by the drop-nginx contract, so Django
-  logs the real client.
+  `$remote_addr` (the nginx-proxy address). `wger-rs` walks the forwarded chain
+  from right to left, skips addresses that are trusted proxies, and sends the
+  first untrusted hop, so a client-supplied `X-Forwarded-For` prefix cannot
+  spoof the real client. If every hop in the chain is trusted, it sends the
+  left-most entry.
+- **Request body buffering.** nginx's default `proxy_request_buffering on`
+  reads the entire request body before opening the upstream connection.
+  `wger-rs` streams the body to the upstream while applying the 100 MiB limit
+  and the per-chunk `client_body_timeout`, so uploads start earlier and do not
+  need a temporary body buffer. The observable difference is limited to a
+  client that stalls mid-body or an upstream that fails partway through.
 - **`Host` on untrusted peers.** A direct client can still set `Host`; that is
   forwarded because nginx `$http_host` did the same. What it cannot do is
   change the upstream connection: the authority comes only from the two fixed
@@ -85,6 +97,10 @@ Empty is the default and trusts nobody.
   address and `http`.
 - The peer is appended to `X-Forwarded-For` for trusted peers, matching
   `$proxy_add_x_forwarded_for`.
+- `X-Real-IP` is chosen by walking that chain from right to left and skipping
+  trusted proxies; the first untrusted hop is the client. A client-sent
+  `X-Forwarded-For` prefix therefore cannot spoof the address Django logs. If
+  every hop is trusted, the left-most entry is used.
 - `Host` is always forwarded unchanged.
 
 ## PowerSync transport used by the wger mobile client
@@ -130,12 +146,22 @@ against `journeyapps/powersync-service:1.26.1`.
    ```
    `POWERSYNC_URL` stays the public URL returned to clients; the new
    `POWERSYNC_UPSTREAM_URL` is the internal origin only.
+
+   Production Django must also be told that it is served over HTTPS:
+   ```python
+   SESSION_COOKIE_SECURE = True
+   CSRF_COOKIE_SECURE = True
+   CSRF_TRUSTED_ORIGINS = ["https://fitness.example.com"]
+   ```
 3. **Attach the proxy network.** Create or reuse the network `nginx-proxy`
    watches (`proxy_network` by default here):
    ```sh
    docker network inspect proxy_network >/dev/null 2>&1 || \
      docker network create proxy_network
    ```
+   Set `TRUST_DOWNSTREAM_PROXY=false` on `nginx-proxy` (recommended). With its
+   default, nginx-proxy passes a client-supplied `X-Forwarded-Proto` through;
+   `wger-rs` trusts nginx-proxy and would preserve that spoofed scheme.
 4. **Mount the files.**
    ```yaml
    volumes:
@@ -145,12 +171,18 @@ against `journeyapps/powersync-service:1.26.1`.
 5. **Start the replacement and stop nginx.**
    ```sh
    docker compose -f deploy/compose.yml up -d --build web
-   curl -fsS http://127.0.0.1:8000/healthz        # if a loopback port is exposed
+   docker compose -f deploy/compose.yml ps
+   docker inspect --format '{{.State.Health.Status}}' \
+     "$(docker compose -f deploy/compose.yml ps -q web)"
    docker compose -f /path/to/app-wger/docker-compose.yml stop nginx
    ```
-   Start `web` before stopping nginx so the static/media mounts and health
-   check are ready. nginx-proxy will discover the new container through
-   `VIRTUAL_HOST`.
+   The loopback port is no longer published, so verify through the compose
+   healthcheck (`docker inspect` / `docker compose ps`) instead of
+   `curl 127.0.0.1:8000/healthz`. While both containers are up, `web` and
+   `wger-nginx` both advertise the same `VIRTUAL_HOST`; nginx-proxy
+   load-balances between them until nginx is stopped. `TRUSTED_PROXIES=nginx-proxy`
+   only works if that name resolves on `proxy_network` — use the container
+   name, or a network alias, of nginx-proxy on that network.
 6. **Verify the routes.**
    ```sh
    curl -fsS https://fitness.example.com/healthz
@@ -161,8 +193,11 @@ against `journeyapps/powersync-service:1.26.1`.
    ```
    The last request must return `X-Accel-Buffering: no`; the session cookie
    request must be answered by the Django UI.
-7. **Roll back.** Stop `web`, start `wger-nginx`, and restore the previous
-   `nginx` service. No database changes are made by this deployment.
+7. **Roll back.** Keep `web` running (the old nginx proxies to `web:8000`).
+   Remove `VIRTUAL_HOST` and `LETSENCRYPT_HOST` from the `web` service so
+   nginx-proxy stops sending it traffic, restore the previous compose file that
+   defines `wger-nginx`, and start `wger-nginx`. No database changes are made
+   by this deployment.
 
 ### Health check
 

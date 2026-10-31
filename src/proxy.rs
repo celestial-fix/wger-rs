@@ -6,14 +6,16 @@
 
 use std::collections::HashSet;
 use std::error::Error as StdError;
+use std::future::Future;
 use std::pin::Pin;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
+use std::time::Duration;
 
 use axum::async_trait;
 use axum::body::{Body, Bytes};
-use axum::extract::{ConnectInfo, DefaultBodyLimit, Extension, FromRequestParts, Request};
+use axum::extract::{ConnectInfo, DefaultBodyLimit, Extension, FromRequestParts, Request, State};
 use axum::http::request::Parts;
 use axum::http::{header, HeaderMap, HeaderName, HeaderValue, Method, StatusCode, Uri, Version};
 use axum::middleware::{self, Next};
@@ -24,6 +26,7 @@ use hyper::body::Incoming;
 use hyper::client::conn::http1;
 use hyper::upgrade::OnUpgrade;
 use hyper_util::rt::TokioIo;
+use tokio::io::{AsyncRead, AsyncWrite, ReadBuf};
 use tokio::net::TcpStream;
 
 use crate::config::UpstreamUrl;
@@ -34,6 +37,32 @@ pub const MAX_REQUEST_BODY: usize = 100 * 1024 * 1024;
 
 const X_ACCEL_BUFFERING: &str = "x-accel-buffering";
 const X_FORWARDED_HOST: &str = "x-forwarded-host";
+
+/// nginx-compatible timers for the proxy path.
+///
+/// `connect` matches `proxy_connect_timeout` (default 60s). `client_header`
+/// and `client_body` match `client_header_timeout` and `client_body_timeout`
+/// (also 60s by default). `tunnel_idle` is the day-long
+/// `proxy_read_timeout`/`proxy_send_timeout` for streaming and WebSocket
+/// tunnels, measured from the last byte in either direction.
+#[derive(Clone, Copy, Debug)]
+pub struct Timeouts {
+    pub connect: Duration,
+    pub client_header: Duration,
+    pub client_body: Duration,
+    pub tunnel_idle: Duration,
+}
+
+impl Default for Timeouts {
+    fn default() -> Self {
+        Self {
+            connect: Duration::from_secs(60),
+            client_header: Duration::from_secs(60),
+            client_body: Duration::from_secs(60),
+            tunnel_idle: Duration::from_secs(86_400),
+        }
+    }
+}
 
 /// Which fixed upstream a request belongs to.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -48,6 +77,7 @@ pub struct Proxy {
     django: Option<UpstreamUrl>,
     powersync: Option<UpstreamUrl>,
     trusted: Arc<TrustedProxies>,
+    timeouts: Timeouts,
 }
 
 impl Proxy {
@@ -60,7 +90,14 @@ impl Proxy {
             django,
             powersync,
             trusted,
+            timeouts: Timeouts::default(),
         }
+    }
+
+    /// Override the nginx-compatible timers (tests use short durations).
+    pub fn with_timeouts(mut self, timeouts: Timeouts) -> Self {
+        self.timeouts = timeouts;
+        self
     }
 
     fn upstream(&self, route: Route) -> Option<&UpstreamUrl> {
@@ -102,7 +139,7 @@ impl Proxy {
             }
         };
 
-        match forward_to(upstream, req, target, powersync).await {
+        match forward_to(upstream, req, target, powersync, self.timeouts).await {
             Ok(response) => response,
             Err(message) => {
                 tracing::warn!(upstream = %upstream.authority, error = %message, "upstream request failed");
@@ -119,6 +156,10 @@ pub fn app(local: Router, proxy: Proxy) -> Router {
     let proxy = Arc::new(proxy);
     local
         .fallback(fallback)
+        .layer(middleware::from_fn_with_state(
+            Arc::clone(&proxy),
+            client_body_timeout,
+        ))
         .layer(DefaultBodyLimit::max(MAX_REQUEST_BODY))
         .layer(middleware::from_fn(intercept_api_session))
         .layer(middleware::from_fn(normalize_forwarded))
@@ -157,6 +198,18 @@ async fn normalize_forwarded(
 ) -> Response {
     forwarded::normalize(req.headers_mut(), peer, &proxy.trusted);
     next.run(req).await
+}
+
+/// Apply nginx's `client_body_timeout`: each read may wait at most the
+/// configured idle time for the next chunk.
+async fn client_body_timeout(
+    State(proxy): State<Arc<Proxy>>,
+    req: Request,
+    next: Next,
+) -> Response {
+    let (parts, body) = req.into_parts();
+    let body = Body::new(TimeoutBody::new(body, proxy.timeouts.client_body));
+    next.run(Request::from_parts(parts, body)).await
 }
 
 async fn intercept_api_session(
@@ -306,14 +359,32 @@ async fn forward_to(
     mut req: Request,
     target: Uri,
     powersync: bool,
+    timeouts: Timeouts,
 ) -> Result<Response, String> {
     let upgrade = wants_upgrade(req.headers());
     let client_upgrade = extract_on_upgrade(&mut req).filter(|_| upgrade);
     let request = onward(upstream, req, target, powersync);
 
-    let stream = TcpStream::connect((upstream.host.as_str(), upstream.port))
-        .await
-        .map_err(|err| format!("connect {}: {err}", upstream.authority))?;
+    let stream = match tokio::time::timeout(
+        timeouts.connect,
+        TcpStream::connect((upstream.host.as_str(), upstream.port)),
+    )
+    .await
+    {
+        Ok(Ok(stream)) => stream,
+        Ok(Err(err)) => return Err(format!("connect {}: {err}", upstream.authority)),
+        Err(_) => {
+            tracing::warn!(
+                upstream = %upstream.authority,
+                "upstream connect timed out"
+            );
+            return Ok(text_error(
+                StatusCode::GATEWAY_TIMEOUT,
+                "Gateway Timeout",
+                powersync,
+            ));
+        }
+    };
     let _ = stream.set_nodelay(true);
     let io = TokioIo::new(stream);
     let (mut sender, conn) = http1::handshake(io)
@@ -347,7 +418,11 @@ async fn forward_to(
         let upstream_upgrade = hyper::upgrade::on(&mut upstream_response);
         let response = relay(upstream_response, powersync);
         if let Some(client_upgrade) = client_upgrade {
-            tokio::spawn(tunnel(client_upgrade, upstream_upgrade));
+            tokio::spawn(tunnel(
+                client_upgrade,
+                upstream_upgrade,
+                timeouts.tunnel_idle,
+            ));
         }
         return Ok(response);
     }
@@ -359,16 +434,140 @@ fn extract_on_upgrade(req: &mut Request) -> Option<OnUpgrade> {
     req.extensions_mut().remove::<OnUpgrade>()
 }
 
-async fn tunnel(client: OnUpgrade, upstream: OnUpgrade) {
+async fn tunnel(client: OnUpgrade, upstream: OnUpgrade, idle: Duration) {
     match tokio::try_join!(client, upstream) {
         Ok((client, upstream)) => {
-            let mut client = TokioIo::new(client);
-            let mut upstream = TokioIo::new(upstream);
-            if let Err(err) = tokio::io::copy_bidirectional(&mut client, &mut upstream).await {
-                tracing::debug!(error = %err, "WebSocket tunnel closed with an error");
+            let activity = Arc::new(Activity::new());
+            let mut client = ActiveIo::new(TokioIo::new(client), Arc::clone(&activity));
+            let mut upstream = ActiveIo::new(TokioIo::new(upstream), Arc::clone(&activity));
+            tokio::select! {
+                result = tokio::io::copy_bidirectional(&mut client, &mut upstream) => {
+                    if let Err(err) = result {
+                        tracing::debug!(error = %err, "WebSocket tunnel closed with an error");
+                    }
+                }
+                () = idle_watchdog(activity, idle) => {
+                    tracing::debug!(
+                        idle_seconds = idle.as_secs(),
+                        "WebSocket tunnel closed after idle timeout"
+                    );
+                }
             }
         }
         Err(err) => tracing::debug!(error = %err, "WebSocket upgrade failed"),
+    }
+}
+
+/// Last time a byte moved in either direction through a tunnel.
+struct Activity {
+    last: Mutex<tokio::time::Instant>,
+}
+
+impl Activity {
+    fn new() -> Self {
+        Self {
+            last: Mutex::new(tokio::time::Instant::now()),
+        }
+    }
+
+    fn touch(&self) {
+        let mut last = self.last.lock().unwrap_or_else(|e| e.into_inner());
+        *last = tokio::time::Instant::now();
+    }
+
+    fn touched_since(&self, since: tokio::time::Instant) -> bool {
+        let last = *self.last.lock().unwrap_or_else(|e| e.into_inner());
+        last > since
+    }
+
+    fn last(&self) -> tokio::time::Instant {
+        *self.last.lock().unwrap_or_else(|e| e.into_inner())
+    }
+}
+
+/// Returns once no byte has moved for `idle`. Sleeps until the current
+/// deadline and extends it whenever traffic arrived in the meantime.
+async fn idle_watchdog(activity: Arc<Activity>, idle: Duration) {
+    loop {
+        let last = activity.last();
+        tokio::time::sleep_until(last + idle).await;
+        if activity.touched_since(last) {
+            continue;
+        }
+        return;
+    }
+}
+
+/// An IO wrapper that records reads and writes so the tunnel watchdog can tell
+/// whether the connection is idle.
+struct ActiveIo<T> {
+    inner: T,
+    activity: Arc<Activity>,
+}
+
+impl<T> ActiveIo<T> {
+    fn new(inner: T, activity: Arc<Activity>) -> Self {
+        Self { inner, activity }
+    }
+}
+
+impl<T: AsyncRead + Unpin> AsyncRead for ActiveIo<T> {
+    fn poll_read(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        buf: &mut ReadBuf<'_>,
+    ) -> Poll<std::io::Result<()>> {
+        let this = self.get_mut();
+        let before = buf.filled().len();
+        let result = Pin::new(&mut this.inner).poll_read(cx, buf);
+        if matches!(result, Poll::Ready(Ok(()))) && buf.filled().len() > before {
+            this.activity.touch();
+        }
+        result
+    }
+}
+
+impl<T: AsyncWrite + Unpin> AsyncWrite for ActiveIo<T> {
+    fn poll_write(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        buf: &[u8],
+    ) -> Poll<std::io::Result<usize>> {
+        let this = self.get_mut();
+        let result = Pin::new(&mut this.inner).poll_write(cx, buf);
+        if let Poll::Ready(Ok(written)) = result {
+            if written > 0 {
+                this.activity.touch();
+            }
+        }
+        result
+    }
+
+    fn poll_flush(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
+        Pin::new(&mut self.get_mut().inner).poll_flush(cx)
+    }
+
+    fn poll_shutdown(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
+        Pin::new(&mut self.get_mut().inner).poll_shutdown(cx)
+    }
+
+    fn is_write_vectored(&self) -> bool {
+        self.inner.is_write_vectored()
+    }
+
+    fn poll_write_vectored(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        bufs: &[std::io::IoSlice<'_>],
+    ) -> Poll<std::io::Result<usize>> {
+        let this = self.get_mut();
+        let result = Pin::new(&mut this.inner).poll_write_vectored(cx, bufs);
+        if let Poll::Ready(Ok(written)) = result {
+            if written > 0 {
+                this.activity.touch();
+            }
+        }
+        result
     }
 }
 
@@ -474,6 +673,63 @@ fn insert_static(headers: &mut HeaderMap, name: &'static str, value: &'static st
 
 type BoxError = Box<dyn StdError + Send + Sync>;
 
+/// Fails a request body read that waits too long for the next frame. The
+/// deadline restarts after every frame, which is the per-chunk idle behaviour
+/// of nginx's `client_body_timeout`.
+struct TimeoutBody {
+    inner: Body,
+    timeout: Duration,
+    sleep: Option<Pin<Box<tokio::time::Sleep>>>,
+}
+
+impl TimeoutBody {
+    fn new(inner: Body, timeout: Duration) -> Self {
+        Self {
+            inner,
+            timeout,
+            sleep: None,
+        }
+    }
+}
+
+impl HttpBody for TimeoutBody {
+    type Data = Bytes;
+    type Error = BoxError;
+
+    fn poll_frame(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+    ) -> Poll<Option<Result<Frame<Self::Data>, Self::Error>>> {
+        let this = self.get_mut();
+        match Pin::new(&mut this.inner).poll_frame(cx) {
+            Poll::Ready(frame) => {
+                this.sleep = None;
+                Poll::Ready(
+                    frame.map(|result| result.map_err(|err| Box::new(err) as BoxError)),
+                )
+            }
+            Poll::Pending => {
+                let timeout = this.timeout;
+                let sleep = this
+                    .sleep
+                    .get_or_insert_with(|| Box::pin(tokio::time::sleep(timeout)));
+                if sleep.as_mut().poll(cx).is_ready() {
+                    return Poll::Ready(Some(Err("client request body timed out".into())));
+                }
+                Poll::Pending
+            }
+        }
+    }
+
+    fn is_end_stream(&self) -> bool {
+        self.inner.is_end_stream()
+    }
+
+    fn size_hint(&self) -> SizeHint {
+        self.inner.size_hint()
+    }
+}
+
 /// Streams the request body but fails once it exceeds the nginx limit. The
 /// shared flag lets the caller answer 413 instead of surfacing a 502.
 struct LimitedBody {
@@ -576,5 +832,14 @@ mod tests {
         assert!(!wants_upgrade(&headers));
         headers.insert(header::CONNECTION, HeaderValue::from_static("Upgrade"));
         assert!(wants_upgrade(&headers));
+    }
+
+    #[test]
+    fn timeouts_match_nginx_defaults() {
+        let timeouts = Timeouts::default();
+        assert_eq!(timeouts.connect, Duration::from_secs(60));
+        assert_eq!(timeouts.client_header, Duration::from_secs(60));
+        assert_eq!(timeouts.client_body, Duration::from_secs(60));
+        assert_eq!(timeouts.tunnel_idle, Duration::from_secs(86_400));
     }
 }

@@ -797,7 +797,7 @@ enum B {
     U(Uuid),
 }
 
-fn push_b(q: &mut QueryBuilder<sqlx::Postgres>, b: B) {
+fn push_b(q: &mut QueryBuilder<'_, sqlx::Postgres>, b: B) {
     match b {
         B::Null => {
             q.push("NULL");
@@ -1124,7 +1124,7 @@ fn parse_pk(res: &Res, id: &str) -> Option<B> {
     }
 }
 
-fn owner_where(q: &mut QueryBuilder<sqlx::Postgres>, res: &Res, user: i32) {
+fn owner_where(q: &mut QueryBuilder<'_, sqlx::Postgres>, res: &Res, user: i32) {
     let mut parts = res.owner.split("$U");
     q.push(parts.next().unwrap_or(""));
     for p in parts {
@@ -1666,7 +1666,7 @@ async fn create(st: &AppState, h: &HeaderMap, res: &'static Res, body: Bytes) ->
     q.push(cols.join(", "));
     q.push(") VALUES (");
     let mut first = true;
-    let mut sep = |q: &mut QueryBuilder<sqlx::Postgres>| {
+    let mut sep = |q: &mut QueryBuilder<'_, sqlx::Postgres>| {
         if !first {
             q.push(", ");
         }
@@ -1905,12 +1905,10 @@ async fn delete_cascade(pool: &PgPool, table: &str, pk: &B) -> Result<(), sqlx::
         "manager_slotentry" => entries.push(int_id),
         "manager_workoutlog" => logs.push(uuid_id),
         t if CONFIG_TABLES.contains(&t) => {
-            sqlx::query(sqlx::AssertSqlSafe(format!(
-                "DELETE FROM {t} WHERE id = $1"
-            )))
-            .bind(int_id)
-            .execute(&mut *tx)
-            .await?;
+            sqlx::query(&format!("DELETE FROM {t} WHERE id = $1"))
+                .bind(int_id)
+                .execute(&mut *tx)
+                .await?;
             return tx.commit().await;
         }
         t => {
@@ -1962,12 +1960,10 @@ async fn delete_cascade(pool: &PgPool, table: &str, pk: &B) -> Result<(), sqlx::
         .execute(&mut *tx)
         .await?;
     for t in CONFIG_TABLES {
-        sqlx::query(sqlx::AssertSqlSafe(format!(
-            "DELETE FROM {t} WHERE slot_entry_id = ANY($1)"
-        )))
-        .bind(ids(&entries))
-        .execute(&mut *tx)
-        .await?;
+        sqlx::query(&format!("DELETE FROM {t} WHERE slot_entry_id = ANY($1)"))
+            .bind(ids(&entries))
+            .execute(&mut *tx)
+            .await?;
     }
     sqlx::query("DELETE FROM manager_slotentry WHERE id = ANY($1)")
         .bind(ids(&entries))

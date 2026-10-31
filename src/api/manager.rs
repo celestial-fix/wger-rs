@@ -1178,7 +1178,7 @@ async fn config_one(
            JOIN manager_routine r ON r.id = d.routine_id
            WHERE r.user_id = $1 AND s.id = $2"#
     );
-    let row = match sqlx::query(sqlx::AssertSqlSafe(sql.clone()))
+    let row = match sqlx::query(&sql)
         .bind(user.id)
         .bind(id)
         .fetch_optional(&state.pool)

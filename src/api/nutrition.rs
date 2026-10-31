@@ -489,12 +489,12 @@ async fn ingredient_image(
     tz: chrono_tz::Tz,
 ) -> Option<Value> {
     let table = "nutrition_image";
-    let row = sqlx::query(sqlx::AssertSqlSafe(format!(
+    let row = sqlx::query(&format!(
         r#"SELECT id, uuid, ingredient_id, image, created, last_update, size, width, height,
                   license_id, license_title, license_object_url, license_author, license_author_url,
                   license_derivative_source_url
            FROM {table} WHERE ingredient_id = $1"#
-    )))
+    ))
     .bind(ingredient)
     .fetch_optional(pool)
     .await

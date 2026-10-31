@@ -450,28 +450,19 @@ async fn trophy_page(
         page.limit, page.offset
     );
     let count = match user {
-        Some(id) => sqlx::query(sqlx::AssertSqlSafe(count_sql.clone()))
+        Some(id) => sqlx::query(&count_sql)
             .bind(id)
             .fetch_one(&state.pool)
             .await
             .map(|r| r.get(0)),
-        None => sqlx::query(sqlx::AssertSqlSafe(count_sql.clone()))
+        None => sqlx::query(&count_sql)
             .fetch_one(&state.pool)
             .await
             .map(|r| r.get(0)),
     };
     let rows = match user {
-        Some(id) => {
-            sqlx::query(sqlx::AssertSqlSafe(data_sql.clone()))
-                .bind(id)
-                .fetch_all(&state.pool)
-                .await
-        }
-        None => {
-            sqlx::query(sqlx::AssertSqlSafe(data_sql.clone()))
-                .fetch_all(&state.pool)
-                .await
-        }
+        Some(id) => sqlx::query(&data_sql).bind(id).fetch_all(&state.pool).await,
+        None => sqlx::query(&data_sql).fetch_all(&state.pool).await,
     };
     (count, rows)
 }

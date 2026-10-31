@@ -30,7 +30,9 @@ pub async fn serve(
 ) -> std::io::Result<()> {
     loop {
         let (stream, remote_addr) = listener.accept().await?;
-        let app = app.clone().layer(Extension(ConnectInfo::<SocketAddr>(remote_addr)));
+        let app = app
+            .clone()
+            .layer(Extension(ConnectInfo::<SocketAddr>(remote_addr)));
         tokio::spawn(async move {
             if let Err(err) = stream.set_nodelay(true) {
                 tracing::debug!(error = %err, "could not set TCP_NODELAY");

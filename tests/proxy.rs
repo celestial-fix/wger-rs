@@ -824,13 +824,10 @@ async fn slow_client_request_headers_are_closed() {
         .unwrap();
 
     let mut buffer = Vec::new();
-    tokio::time::timeout(
-        Duration::from_secs(3),
-        stream.read_to_end(&mut buffer),
-    )
-    .await
-    .expect("client_header_timeout must close the connection")
-    .unwrap();
+    tokio::time::timeout(Duration::from_secs(3), stream.read_to_end(&mut buffer))
+        .await
+        .expect("client_header_timeout must close the connection")
+        .unwrap();
     assert!(
         !buffer.starts_with(b"HTTP/1.1 200"),
         "a partial request must not be answered successfully"
@@ -851,7 +848,10 @@ async fn idle_websocket_tunnel_is_closed() {
 
     let request = "GET /ps/sync/stream HTTP/1.1\r\nHost: localhost\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n";
     let (head, _leftover, mut stream) = raw_request(addr, request).await;
-    assert!(head.starts_with("HTTP/1.1 101 Switching Protocols"), "{head}");
+    assert!(
+        head.starts_with("HTTP/1.1 101 Switching Protocols"),
+        "{head}"
+    );
 
     let mut buffer = [0u8; 16];
     let read = tokio::time::timeout(Duration::from_secs(3), stream.read(&mut buffer))

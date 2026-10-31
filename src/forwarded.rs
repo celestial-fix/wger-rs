@@ -382,10 +382,7 @@ mod tests {
         ]);
         normalize(&mut map, Some(peer("127.0.0.1")), &trusted);
 
-        assert_eq!(
-            text(&map, XFF),
-            "1.2.3.4, 203.0.113.9, 10.0.0.7, 127.0.0.1"
-        );
+        assert_eq!(text(&map, XFF), "1.2.3.4, 203.0.113.9, 10.0.0.7, 127.0.0.1");
         assert_eq!(text(&map, XREAL), "203.0.113.9");
         assert_eq!(text(&map, XFP), "https");
         assert_eq!(text(&map, XFH), "fitness.example.test");

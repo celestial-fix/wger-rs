@@ -704,9 +704,7 @@ impl HttpBody for TimeoutBody {
         match Pin::new(&mut this.inner).poll_frame(cx) {
             Poll::Ready(frame) => {
                 this.sleep = None;
-                Poll::Ready(
-                    frame.map(|result| result.map_err(|err| Box::new(err) as BoxError)),
-                )
+                Poll::Ready(frame.map(|result| result.map_err(|err| Box::new(err) as BoxError)))
             }
             Poll::Pending => {
                 let timeout = this.timeout;

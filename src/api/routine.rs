@@ -320,7 +320,7 @@ where
         ORDER BY c.slot_entry_id, c.iteration, c.id
         "#
     );
-    let rows = sqlx::query(&sql).bind(routine_id).fetch_all(pool).await?;
+    let rows = sqlx::query(sqlx::AssertSqlSafe(sql.clone())).bind(routine_id).fetch_all(pool).await?;
     group_configs(rows, into, slot, |row| {
         let value: Decimal = row.get("value");
         (value, Value::String(dec_str(value, scale)))
@@ -349,7 +349,7 @@ where
         ORDER BY c.slot_entry_id, c.iteration, c.id
         "#
     );
-    let rows = sqlx::query(&sql).bind(routine_id).fetch_all(pool).await?;
+    let rows = sqlx::query(sqlx::AssertSqlSafe(sql.clone())).bind(routine_id).fetch_all(pool).await?;
     group_configs(rows, into, slot, |row| {
         let value: i32 = row.get("value");
         (Decimal::from(value), json!(value))

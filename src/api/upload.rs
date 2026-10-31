@@ -925,7 +925,7 @@ enum Cell {
     Raw(String),
 }
 
-fn push_bind(q: &mut QueryBuilder<'_, sqlx::Postgres>, bind: Bind) {
+fn push_bind(q: &mut QueryBuilder<sqlx::Postgres>, bind: Bind) {
     match bind {
         Bind::Uuid(v) => {
             q.push_bind(v);
@@ -1121,7 +1121,7 @@ fn parse_pk(spec: &TableSpec, value: &Value) -> Result<Bind, Response> {
     )
 }
 
-fn push_pk(q: &mut QueryBuilder<'_, sqlx::Postgres>, id: &Bind) {
+fn push_pk(q: &mut QueryBuilder<sqlx::Postgres>, id: &Bind) {
     match id {
         Bind::Uuid(v) => {
             q.push_bind(*v);
@@ -1160,7 +1160,7 @@ async fn owned_row(
 }
 
 fn push_owned_where(
-    q: &mut QueryBuilder<'_, sqlx::Postgres>,
+    q: &mut QueryBuilder<sqlx::Postgres>,
     spec: &TableSpec,
     id: &Bind,
     user_id: i32,

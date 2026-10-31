@@ -23,27 +23,27 @@ use super::get_both;
 pub fn routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
     let mut out = Vec::new();
     out.extend(get_both("/api/v2/ingredient", ingredients));
-    out.extend(get_both("/api/v2/ingredient/:id", ingredient_one));
+    out.extend(get_both("/api/v2/ingredient/{id}", ingredient_one));
     out.extend(get_both("/api/v2/ingredientinfo", ingredientinfo));
-    out.extend(get_both("/api/v2/ingredientinfo/:id", ingredientinfo_one));
+    out.extend(get_both("/api/v2/ingredientinfo/{id}", ingredientinfo_one));
     out.extend(get_both("/api/v2/ingredientweightunit", weight_units));
     out.extend(get_both(
-        "/api/v2/ingredientweightunit/:id",
+        "/api/v2/ingredientweightunit/{id}",
         weight_unit_one,
     ));
     out.extend(get_both("/api/v2/nutritionplan", plans));
-    out.extend(get_both("/api/v2/nutritionplan/:id", plan_one));
+    out.extend(get_both("/api/v2/nutritionplan/{id}", plan_one));
     out.extend(get_both(
-        "/api/v2/nutritionplan/:id/nutritional_values",
+        "/api/v2/nutritionplan/{id}/nutritional_values",
         plan_values,
     ));
-    out.extend(get_both("/api/v2/nutritionplaninfo/:id", plan_info));
+    out.extend(get_both("/api/v2/nutritionplaninfo/{id}", plan_info));
     out.extend(get_both("/api/v2/meal", meals));
-    out.extend(get_both("/api/v2/meal/:id", meal_one));
+    out.extend(get_both("/api/v2/meal/{id}", meal_one));
     out.extend(get_both("/api/v2/mealitem", meal_items));
-    out.extend(get_both("/api/v2/mealitem/:id", meal_item_one));
+    out.extend(get_both("/api/v2/mealitem/{id}", meal_item_one));
     out.extend(get_both("/api/v2/nutritiondiary", diary));
-    out.extend(get_both("/api/v2/nutritiondiary/:id", diary_one));
+    out.extend(get_both("/api/v2/nutritiondiary/{id}", diary_one));
     out
 }
 
@@ -489,12 +489,12 @@ async fn ingredient_image(
     tz: chrono_tz::Tz,
 ) -> Option<Value> {
     let table = "nutrition_image";
-    let row = sqlx::query(&format!(
+    let row = sqlx::query(sqlx::AssertSqlSafe(format!(
         r#"SELECT id, uuid, ingredient_id, image, created, last_update, size, width, height,
                   license_id, license_title, license_object_url, license_author, license_author_url,
                   license_derivative_source_url
            FROM {table} WHERE ingredient_id = $1"#
-    ))
+    )))
     .bind(ingredient)
     .fetch_optional(pool)
     .await

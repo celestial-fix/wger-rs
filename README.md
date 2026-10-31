@@ -43,10 +43,51 @@ The database URL must point to an existing wger database. The private key
 should be supplied as a single-line JWK JSON value in the format accepted by
 the application; the public key must be the matching JWK. Use the same key pair
 as the wger deployment if existing clients need token compatibility.
-The example compose file binds the API to `127.0.0.1:8000` for a local reverse
-proxy and mounts the static and media volumes read-only. It runs the container
-as `user: "65534:65534"`, the same numeric user as the `scratch` runtime image.
-See [Read-only mounts](#read-only-mounts) for the writable-media variant.
+The example compose file joins the external `proxy_network` used by
+`nginx-proxy` and mounts the static and media volumes read-only. It runs the
+container as `user: "65534:65534"`, the same numeric user as the `scratch`
+runtime image. See [Read-only mounts](#read-only-mounts) for the writable-media
+variant.
+
+## Running without `wger-nginx`
+
+`wger-rs` can be the only container behind `nginx-proxy`; the separate
+`wger-nginx` (`nginx:stable`) service is no longer required. It performs the
+same routing:
+
+| Request | Destination |
+| --- | --- |
+| `/healthz` | local, never proxied |
+| `/static/`, `/media/` | local file mounts |
+| `/ps/...` (HTTP stream or WebSocket) | `POWERSYNC_UPSTREAM_URL`, `/ps` stripped |
+| `/allauth/app/...` | local allauth-headless routes |
+| `/allauth/...` | `DJANGO_UI_URL` |
+| `/api/...` with a non-empty `sessionid` cookie | `DJANGO_UI_URL` |
+| `/api/...` without that cookie | local API router |
+| everything else, including UI WebSockets | `DJANGO_UI_URL` |
+
+Configuration:
+
+| Variable | Meaning |
+| --- | --- |
+| `DJANGO_UI_URL` | Internal Django UI origin, e.g. `http://django-ui:8000`. Unset → 502 on Django routes. Only `http://` origins with no path/query/userinfo are accepted. |
+| `POWERSYNC_UPSTREAM_URL` | Internal PowerSync origin, e.g. `http://powersync:8080`. Unset → 502 on `/ps/`. Distinct from the public `POWERSYNC_URL` handed to clients. |
+| `TRUSTED_PROXIES` | Comma-separated IPs, CIDRs, and DNS hostnames allowed to set `X-Forwarded-*`. Default empty trusts nobody. Hostnames are re-resolved every 30s; use `nginx-proxy`. |
+
+Request bodies are limited to 100 MiB (413 above) on local and proxied routes,
+no compression is added, `/ps/` responses are streamed without buffering and
+carry `X-Accel-Buffering: no`, and WebSocket upgrades are passed through on both
+the PowerSync and Django routes. Absolute-form request targets and `CONNECT`
+are rejected so the service cannot be used as an open proxy.
+
+The example compose file keeps the `web` network alias because PowerSync fetches
+JWKS from `http://web:8000/api/v2/powersync-keys`, and adds `VIRTUAL_HOST`,
+`VIRTUAL_PORT`, and `LETSENCRYPT_HOST` so `nginx-proxy` discovers the container.
+The health check calls `wger-rs healthcheck`.
+
+See [`docs/drop-wger-nginx.md`](docs/drop-wger-nginx.md) for the full
+directive-by-directive mapping, intended differences, and deploy/rollback
+steps.
 
 ## Static and media files
 

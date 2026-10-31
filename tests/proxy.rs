@@ -526,7 +526,7 @@ async fn trusted_peer_keeps_the_proxy_chain_and_untrusted_peer_is_overwritten() 
         ),
         "198.51.100.5",
     );
-    let response = app.oneshot(req).await.unwrap();
+    let response = app.clone().oneshot(req).await.unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     let seen = upstream.seen();
     assert_eq!(seen[1].header("x-forwarded-for"), Some("198.51.100.5"));

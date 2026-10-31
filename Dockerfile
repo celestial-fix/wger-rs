@@ -2,7 +2,7 @@
 # binary (rustls, no glibc or system OpenSSL). The runtime is scratch: the
 # binary needs nothing but CA certificates, and `wger-rs healthcheck` replaces
 # wget for the Docker health check.
-FROM rust:1.89-alpine AS build
+FROM rust:1.94-alpine AS build
 RUN apk add --no-cache musl-dev gcc make ca-certificates
 WORKDIR /src
 COPY Cargo.toml Cargo.lock ./

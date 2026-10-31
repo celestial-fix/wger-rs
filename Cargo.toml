@@ -2,7 +2,7 @@
 name = "wger-rs"
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.85"
+rust-version = "1.94"
 description = "API-only Rust replacement for a self-hosted wger 2.7 server"
 license = "AGPL-3.0-or-later"
 repository = "https://github.com/heavenly-tech/wger-rs"

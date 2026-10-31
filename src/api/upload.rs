@@ -520,7 +520,7 @@ const WORKOUTLOG_FKS: &[Fk] = &[
         field: "slot_entry",
         ty: Ty::I32,
         owner: Some(
-            "SELECT r.user_id FROM manager_slotentry se JOIN manager_slot s ON s.id = se.slot_id JOIN manager_routine r ON r.id = s.routine_id WHERE se.id = $1",
+            "SELECT r.user_id FROM manager_slotentry se JOIN manager_slot s ON s.id = se.slot_id JOIN manager_day d ON d.id = s.day_id JOIN manager_routine r ON r.id = d.routine_id WHERE se.id = $1",
         ),
         exists: None,
     },
@@ -1777,4 +1777,50 @@ pub(crate) async fn remove_media_file(root: &str, rel: &str) {
         return;
     }
     let _ = tokio::fs::remove_file(std::path::Path::new(root).join(rel)).await;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn owner_sql(field: &str) -> &'static str {
+        WORKOUTLOG_FKS
+            .iter()
+            .find(|fk| fk.field == field)
+            .and_then(|fk| fk.owner)
+            .unwrap_or_else(|| panic!("{field} must have an owner query"))
+    }
+
+    /// `manager_slot` has `day_id`, not `routine_id`: the workoutlog slot_entry
+    /// owner check must climb slot -> day -> routine. Using `s.routine_id`
+    /// raised Postgres 42703, which the upload handler maps to a transient 503,
+    /// so PowerSync retried the row forever.
+    #[test]
+    fn workoutlog_slot_entry_owner_joins_through_day() {
+        let sql = owner_sql("slot_entry");
+        assert!(
+            !sql.contains("s.routine_id"),
+            "manager_slot has no routine_id column: {sql}"
+        );
+        assert!(
+            !sql.contains("se.routine_id"),
+            "manager_slotentry has no routine_id column: {sql}"
+        );
+        assert!(
+            sql.contains("JOIN manager_day d ON d.id = s.day_id"),
+            "slot_entry owner must join manager_day through slot.day_id: {sql}"
+        );
+        assert!(
+            sql.contains("JOIN manager_routine r ON r.id = d.routine_id"),
+            "slot_entry owner must reach the routine through day.routine_id: {sql}"
+        );
+        assert!(
+            sql.contains("WHERE se.id = $1"),
+            "slot_entry owner must filter on the slot entry pk: {sql}"
+        );
+        assert!(
+            sql.contains("SELECT r.user_id"),
+            "slot_entry owner must select the routine owner: {sql}"
+        );
+    }
 }

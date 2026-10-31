@@ -273,6 +273,8 @@ def rest_write_checks():
         patch_both("/api/v2/day/", d_l, d_r, {"name": "d2", "type": "hiit"}, remove_keys=["routine"])
         patch_both("/api/v2/slot/", s_l, s_r, {"comment": "c"}, remove_keys=["day"])
         patch_both("/api/v2/slot-entry/", e_l, e_r, {"comment": "x", "weight_rounding": "2.50"}, remove_keys=["slot"])
+        if e_l and e_r:
+            upload_workoutlog_slot_entry_check(e_l, e_r)
         compare_validation("/api/v2/day/", "POST", {"routine": rid_l, "type": "nope", "name": "x" * 30}, "day bad choice + long name")
         compare_validation("/api/v2/slot-entry/", "POST", {"slot": s_l["id"]}, "slot-entry missing exercise")
         for cfg in ("weight-config", "max-weight-config", "repetitions-config", "max-repetitions-config",
@@ -410,6 +412,47 @@ def rest_write_checks():
             "gallery/harness-l.jpg"
         )
     record("write gallery delete via upload", ok, f"django={ds} rust={rs}")
+
+
+def upload_workoutlog_slot_entry_check(entry_l, entry_r):
+    """Upload a workoutlog that references a slot_entry on both sides.
+
+    The slot_entry owner check climbs slotentry -> slot -> day -> routine;
+    manager_slot has no routine_id, so a bad join surfaced as a transient 503
+    and PowerSync retried the queued row forever.
+    """
+    import uuid
+
+    body_l = {
+        "table": "workoutlog",
+        "data": {
+            "id": str(uuid.uuid4()),
+            "date": "2030-04-01T10:00:00Z",
+            "exercise": IDS["exercise_id"],
+            "repetitions": 5,
+            "slot_entry": entry_l["id"],
+        },
+    }
+    body_r = json.loads(json.dumps(body_l))
+    body_r["data"]["id"] = str(uuid.uuid4())
+    body_r["data"]["slot_entry"] = entry_r["id"]
+    ds, draw, _ = fetch(DJANGO, "PUT", "/api/v2/upload-powersync-data", auth, body_l)
+    rs, rraw, _ = fetch(RUST, "PUT", "/api/v2/upload-powersync-data", auth, body_r)
+    if ds != rs or ds != 200:
+        record(
+            "write upload workoutlog slot_entry",
+            False,
+            f"django={ds} rust={rs} {draw[:200]!r} | {rraw[:200]!r}",
+        )
+        return
+    try:
+        pd = parse(draw)
+        pr = parse(rraw)
+    except Exception as e:
+        record("write upload workoutlog slot_entry json", False, str(e))
+        return
+    found = diff(pd, pr)
+    record("write upload workoutlog slot_entry", not found, "\n".join(found[:12]))
 
 
 if __name__ == "__main__":

@@ -3,8 +3,7 @@
 //! Mirrors wger 2.7's `upload_powersync_data` view and `PowerSyncHandler`
 //! dispatch: permanent refusals are 200 `{error, details?}` because PowerSync
 //! treats non-2xx as retry; only transient infrastructure errors are 503 and
-//! unexpected ones 500. Broken SQL (Postgres class 42) is answered with 200
-//! and an error body so PowerSync does not retry forever. Unauthenticated is 403.
+//! unexpected ones 500. Unauthenticated is 403.
 
 use axum::extract::{Json, State};
 use axum::http::{HeaderMap, Method, StatusCode};
@@ -878,25 +877,11 @@ fn transient() -> Response {
     )
 }
 
-/// Postgres SQLSTATE class 42 — syntax/access errors such as undefined_column
-/// (42703). These are permanent for a given upload payload; answering 503 would
-/// stall the PowerSync queue on endless retries.
-fn sqlstate_permanent(code: &str) -> bool {
-    code.starts_with("42")
-}
-
 fn db_response(err: sqlx::Error) -> Response {
     match &err {
         sqlx::Error::Database(db) => match db.code().as_deref() {
             Some(code) if code.starts_with("23") || code.starts_with("22") => {
                 validation(Value::String(db.message().to_string()))
-            }
-            Some(code) if sqlstate_permanent(code) => {
-                tracing::error!(error = %err, "upload permanent db sql error");
-                ok_json(json!({
-                    "error": "Server error",
-                    "details": db.message().to_string(),
-                }))
             }
             _ => {
                 tracing::error!(error = %err, "upload transient db");
@@ -1797,6 +1782,50 @@ pub(crate) async fn remove_media_file(root: &str, rel: &str) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use axum::http::StatusCode;
+    use std::borrow::Cow;
+    use std::error::Error as StdError;
+    use std::fmt::{self, Display, Formatter};
+
+    #[derive(Debug)]
+    struct StubDbError {
+        code: &'static str,
+        message: &'static str,
+    }
+
+    impl Display for StubDbError {
+        fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+            self.message.fmt(f)
+        }
+    }
+
+    impl StdError for StubDbError {}
+
+    impl sqlx::error::DatabaseError for StubDbError {
+        fn message(&self) -> &str {
+            self.message
+        }
+
+        fn code(&self) -> Option<Cow<'_, str>> {
+            Some(Cow::Borrowed(self.code))
+        }
+
+        fn as_error(&self) -> &(dyn StdError + Send + Sync + 'static) {
+            self
+        }
+
+        fn as_error_mut(&mut self) -> &mut (dyn StdError + Send + Sync + 'static) {
+            self
+        }
+
+        fn into_error(self: Box<Self>) -> Box<dyn StdError + Send + Sync + 'static> {
+            self
+        }
+
+        fn kind(&self) -> sqlx::error::ErrorKind {
+            sqlx::error::ErrorKind::Other
+        }
+    }
 
     fn owner_sql(field: &str) -> &'static str {
         WORKOUTLOG_FKS
@@ -1840,10 +1869,12 @@ mod tests {
     }
 
     #[test]
-    fn sqlstate_class_42_is_permanent_not_transient() {
-        assert!(sqlstate_permanent("42703"));
-        assert!(sqlstate_permanent("42P01"));
-        assert!(!sqlstate_permanent("23503"));
-        assert!(!sqlstate_permanent("53300"));
+    fn db_response_unknown_database_error_returns_503() {
+        let err = sqlx::Error::Database(Box::new(StubDbError {
+            code: "42703",
+            message: "column s.routine_id does not exist",
+        }));
+        let resp = db_response(err);
+        assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 }

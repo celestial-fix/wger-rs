@@ -21,7 +21,7 @@ jobs:
     # Queued jobs never fail over, so flip it when omarchibald is offline:
     #   gh variable set RUST_RUNNER --body macmini -R heavenly-tech/wger-rs   (or heavenly-vps)
     #   gh variable delete RUST_RUNNER -R heavenly-tech/wger-rs               (back to omarchibald)
-    runs-on: ${{ fromJSON(vars.RUST_RUNNER == 'heavenly-vps' && '["self-hosted","heavenly"]' || vars.RUST_RUNNER == 'macmini' && '["self-hosted","macOS","ARM64","macmini","rust-builder"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
+    runs-on: ${{ fromJSON('macmini' == 'heavenly-vps' && '["self-hosted","heavenly"]' || 'macmini' == 'macmini' && '["self-hosted","macOS","ARM64","macmini","rust-builder"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
     steps:
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
@@ -36,7 +36,7 @@ jobs:
   image:
     name: Container image build
     needs: rust
-    runs-on: ${{ fromJSON(vars.RUST_RUNNER == 'heavenly-vps' && '["self-hosted","heavenly"]' || vars.RUST_RUNNER == 'macmini' && '["self-hosted","macOS","ARM64","macmini","rust-builder"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
+    runs-on: ${{ fromJSON('macmini' == 'heavenly-vps' && '["self-hosted","heavenly"]' || 'macmini' == 'macmini' && '["self-hosted","macOS","ARM64","macmini","rust-builder"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
     steps:
       - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4

@@ -14,7 +14,7 @@ jobs:
   api-contract:
     name: Django API compatibility
     # Runner via repo var RUST_RUNNER (unset=omarchibald | macmini | heavenly-vps); see ci.yml.
-    runs-on: ${{ fromJSON(vars.RUST_RUNNER == 'heavenly-vps' && '["self-hosted","heavenly"]' || vars.RUST_RUNNER == 'macmini' && '["self-hosted","macOS","ARM64","macmini","rust-builder"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
+    runs-on: ${{ fromJSON('macmini' == 'heavenly-vps' && '["self-hosted","heavenly"]' || 'macmini' == 'macmini' && '["self-hosted","macOS","ARM64","macmini","rust-builder"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
     env:
       HARNESS_NAME: wger-rs-ci-${{ github.run_id }}-${{ github.run_attempt }}
       WGER_RS_BIN: ${{ github.workspace }}/target/release/wger-rs

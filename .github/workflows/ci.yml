@@ -44,6 +44,8 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
+          # image is x86_64 musl; built under emulation on macmini (ARM64)
+          platforms: linux/amd64
           push: false
           load: true
           tags: wger-rs:ci

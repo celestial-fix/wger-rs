@@ -13,9 +13,9 @@ name = "wger-rs"
 path = "src/main.rs"
 
 [dependencies]
-argon2 = "0.5"
-axum = { version = "0.7", features = ["macros"] }
-base64 = "0.22"
+argon2 = "0.6"
+axum = { version = "0.8", features = ["macros"] }
+base64 = "0.23"
 chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 chrono-tz = "0.10"
 hex = "0.4"
@@ -23,22 +23,22 @@ http-body = "1"
 http-body-util = "0.1"
 hyper = { version = "1", features = ["client", "http1", "server"] }
 hyper-util = { version = "0.1", features = ["tokio", "server", "http1"] }
-jsonwebtoken = "9"
+jsonwebtoken = "11"
 mimalloc = "0.1"
-pbkdf2 = { version = "0.12", default-features = false, features = ["hmac"] }
-rand = "0.8"
+pbkdf2 = { version = "0.13", default-features = false, features = ["hmac"] }
+rand = "0.9"
 rsa = { version = "0.9", default-features = false, features = ["std", "pem"] }
 rust_decimal = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 serde_urlencoded = "0.7"
-sha2 = "0.10"
-sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "uuid", "chrono", "json", "rust_decimal"] }
+sha2 = "0.11"
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "uuid", "chrono", "json", "rust_decimal"] }
 subtle = "2"
-thiserror = "1"
+thiserror = "2"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal", "fs", "io-util", "net", "time"] }
 tower = { version = "0.5", features = ["util"] }
-tower-http = { version = "0.6", features = ["trace", "fs", "set-header"] }
+tower-http = { version = "0.7", features = ["trace", "fs", "set-header"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 uuid = { version = "1", features = ["v4", "v5", "v7", "serde"] }

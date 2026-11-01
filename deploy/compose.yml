@@ -1,10 +1,10 @@
-# Standalone API service. Bound to loopback for use behind a local reverse proxy.
+# Standalone service behind nginx-proxy. wger-rs replaces the former
+# wger-nginx container: it serves the Django static build and uploaded media,
+# proxies the UI to django-ui, proxies `/ps/` to PowerSync, and keeps the JSON
+# API on its own router.
+#
 # PowerSync fetches JWKS at http://web:8000/api/v2/powersync-keys, so this
 # service keeps the `web` alias and listens on 8000 inside the network.
-#
-# The service also serves the Django static build and uploaded media itself, so
-# the reverse proxy needs no file mounts. Mount the same volumes the wger
-# deployment already uses.
 services:
   web:
     build: ..
@@ -17,11 +17,11 @@ services:
     networks:
       default:
         aliases:
+          # PowerSync's JWKS fetch uses this name.
           - web
+      proxy_network: {}
     expose:
       - "8000"
-    ports:
-      - "127.0.0.1:8000:8000"
     environment:
       BIND: 0.0.0.0:8000
       DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL to an existing wger database}
@@ -31,8 +31,20 @@ services:
       MEDIA_ROOT: /media
       JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
       JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      # Public URL handed to mobile clients (not the internal /ps/ upstream).
       POWERSYNC_URL: ${POWERSYNC_URL:-}
       POWERSYNC_URL_PATH: ps
+      # Internal destinations. Unset means that route answers 502.
+      DJANGO_UI_URL: ${DJANGO_UI_URL:-http://django-ui:8000}
+      POWERSYNC_UPSTREAM_URL: ${POWERSYNC_UPSTREAM_URL:-http://powersync:8080}
+      # Only nginx-proxy may assert X-Forwarded-*. DNS names are re-resolved
+      # every 30s because container addresses change.
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-nginx-proxy}
+      # nginx-proxy discovery. Replace the example host before deploying.
+      VIRTUAL_HOST: ${VIRTUAL_HOST:-fitness.example.test}
+      VIRTUAL_PORT: "8000"
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST:-fitness.example.test}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL:-admin@example.test}
     volumes:
       # Both mounts are read-only by default: serving needs no write access.
       # If media deletion (DELETE of image records) or uploads into the shared
@@ -41,8 +53,20 @@ services:
       # writes as 1000).
       - wger-static:/static:ro
       - wger-media:/media:ro
+    healthcheck:
+      test: ["CMD", "/wger-rs", "healthcheck"]
+      interval: 30s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
     restart: unless-stopped
 
 volumes:
   wger-static:
   wger-media:
+
+networks:
+  # Created by nginx-proxy. This service is reached by name over it.
+  proxy_network:
+    external: true
+    name: ${PROXY_NETWORK:-proxy_network}

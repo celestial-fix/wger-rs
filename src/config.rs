@@ -2,7 +2,70 @@
 
 use std::env;
 
+use axum::http::Uri;
 use chrono_tz::Tz;
+
+/// A fixed upstream destination. Only `http` origins with no path, query, or
+/// userinfo are accepted, so the proxy can never be pointed somewhere else by
+/// a request.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct UpstreamUrl {
+    pub host: String,
+    pub port: u16,
+    /// `host[:port]` exactly as configured, used only as a last-resort Host.
+    pub authority: String,
+}
+
+impl UpstreamUrl {
+    pub fn parse(var: &str, raw: &str) -> Result<Self, String> {
+        let raw = raw.trim();
+        let uri: Uri = raw
+            .parse()
+            .map_err(|_| format!("{var} is not a valid URL: {raw}"))?;
+        match uri.scheme_str() {
+            Some("http") => {}
+            Some("https") => {
+                return Err(format!(
+                    "{var} must use http, not https (TLS terminates at nginx-proxy)"
+                ))
+            }
+            Some(other) => return Err(format!("{var} uses unsupported scheme {other}")),
+            None => return Err(format!("{var} must be an absolute http:// URL")),
+        }
+        let authority = uri
+            .authority()
+            .ok_or_else(|| format!("{var} has no host"))?;
+        if authority.as_str().contains('@') {
+            return Err(format!("{var} must not contain userinfo"));
+        }
+        if authority.host().is_empty() {
+            return Err(format!("{var} has no host"));
+        }
+        if let Some(query) = uri.query() {
+            return Err(format!("{var} must not contain a query ({query})"));
+        }
+        let path = uri.path();
+        if !(path.is_empty() || path == "/") {
+            return Err(format!("{var} must not contain a path ({path})"));
+        }
+        Ok(Self {
+            host: authority
+                .host()
+                .trim_start_matches('[')
+                .trim_end_matches(']')
+                .to_string(),
+            port: authority.port_u16().unwrap_or(80),
+            authority: authority.as_str().to_string(),
+        })
+    }
+
+    fn optional(var: &str) -> Result<Option<Self>, String> {
+        match env::var(var).ok().filter(|value| !value.is_empty()) {
+            Some(raw) => Self::parse(var, &raw).map(Some),
+            None => Ok(None),
+        }
+    }
+}
 
 #[derive(Clone, Debug)]
 pub struct Config {
@@ -16,6 +79,14 @@ pub struct Config {
     pub jwt_public_key: String,
     pub powersync_url: Option<String>,
     pub powersync_url_path: String,
+    /// Internal PowerSync address used by the `/ps/` proxy. Distinct from the
+    /// public `POWERSYNC_URL` handed to clients.
+    pub powersync_upstream_url: Option<UpstreamUrl>,
+    /// Internal Django UI address. Unset means every Django route is 502.
+    pub django_ui_url: Option<UpstreamUrl>,
+    /// Comma-separated IPs, CIDRs, and DNS hostnames allowed to set
+    /// `X-Forwarded-*`. Empty trusts nobody.
+    pub trusted_proxies: Vec<String>,
     pub powersync_token_lifetime: i64,
     pub access_token_lifetime: i64,
     pub refresh_token_lifetime: i64,
@@ -55,6 +126,19 @@ impl Config {
                 .map_err(|_| "JWT_PUBLIC_KEY is required".to_string())?,
             powersync_url: env::var("POWERSYNC_URL").ok().filter(|s| !s.is_empty()),
             powersync_url_path: env_or("POWERSYNC_URL_PATH", "ps"),
+            powersync_upstream_url: UpstreamUrl::optional("POWERSYNC_UPSTREAM_URL")?,
+            django_ui_url: UpstreamUrl::optional("DJANGO_UI_URL")?,
+            trusted_proxies: env::var("TRUSTED_PROXIES")
+                .ok()
+                .map(|value| {
+                    value
+                        .split(',')
+                        .map(str::trim)
+                        .filter(|item| !item.is_empty())
+                        .map(str::to_owned)
+                        .collect()
+                })
+                .unwrap_or_default(),
             powersync_token_lifetime: env_i64("POWERSYNC_TOKEN_LIFETIME", 600),
             access_token_lifetime: env_i64("JWT_ACCESS_TOKEN_LIFETIME", 300),
             refresh_token_lifetime: env_i64("JWT_REFRESH_TOKEN_LIFETIME", 86400),
@@ -95,4 +179,40 @@ fn env_i64(key: &str, default: i64) -> i64 {
         .ok()
         .and_then(|s| s.parse().ok())
         .unwrap_or(default)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn upstream_accepts_plain_http_origins() {
+        let upstream = UpstreamUrl::parse("DJANGO_UI_URL", "http://django-ui:8000").unwrap();
+        assert_eq!(upstream.host, "django-ui");
+        assert_eq!(upstream.port, 8000);
+        assert_eq!(upstream.authority, "django-ui:8000");
+
+        let local = UpstreamUrl::parse("POWERSYNC_UPSTREAM_URL", "http://127.0.0.1").unwrap();
+        assert_eq!(local.port, 80);
+
+        let v6 = UpstreamUrl::parse("X", "http://[::1]:8080/").unwrap();
+        assert_eq!(v6.host, "::1");
+        assert_eq!(v6.port, 8080);
+    }
+
+    #[test]
+    fn upstream_rejects_anything_but_a_bare_http_origin() {
+        for (value, needle) in [
+            ("https://django-ui:8000", "http"),
+            ("ftp://django-ui", "scheme"),
+            ("django-ui:8000", "absolute"),
+            ("http://django-ui:8000/prefix", "path"),
+            ("http://django-ui:8000/?x=1", "query"),
+            ("http://user:pass@django-ui:8000", "userinfo"),
+            ("http:///missing-host", "host"),
+        ] {
+            let err = UpstreamUrl::parse("DJANGO_UI_URL", value).unwrap_err();
+            assert!(err.contains(needle), "{value}: {err}");
+        }
+    }
 }

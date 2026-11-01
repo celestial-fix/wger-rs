@@ -428,6 +428,18 @@ def upload_checks():
         "manager_workoutlog",
         {"id": uid(), "date": now, "exercise": 99999999},
     )
+    compare_upload(
+        "workoutlog foreign slot_entry",
+        "PUT",
+        "manager_workoutlog",
+        {
+            "id": uid(),
+            "date": now,
+            "exercise": IDS["exercise_id"],
+            "repetitions": 5,
+            "slot_entry": IDS["foreign_entry_id"],
+        },
+    )
     compare_upload("workoutlog delete", "DELETE", "manager_workoutlog", {"id": logl_l}, {"id": logl_r})
     compare_upload("session delete", "DELETE", "manager_workoutsession", {"id": sess_l}, {"id": sess_r})
 

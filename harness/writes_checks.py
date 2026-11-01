@@ -424,7 +424,7 @@ def upload_workoutlog_slot_entry_check(entry_l, entry_r):
     import uuid
 
     body_l = {
-        "table": "workoutlog",
+        "table": "manager_workoutlog",
         "data": {
             "id": str(uuid.uuid4()),
             "date": "2030-04-01T10:00:00Z",

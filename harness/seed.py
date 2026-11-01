@@ -291,6 +291,26 @@ def main():
         repetition_unit_id=1,
         weight_unit_id=1,
     )
+    other = User.objects.create_user(username="other", email="other@example.com", password="unused")
+    other.password = PBKDF2
+    other.save()
+    other_routine = Routine.objects.create(
+        user=other,
+        name="Other routine",
+        start=date(2024, 3, 1),
+        end=date(2024, 3, 14),
+        fit_in_week=True,
+    )
+    other_day = Day.objects.create(routine=other_routine, order=1, name="Other day", type="custom")
+    other_slot = Slot.objects.create(day=other_day, order=1)
+    foreign_entry = SlotEntry.objects.create(
+        slot=other_slot,
+        exercise=bench,
+        order=1,
+        type="normal",
+        repetition_unit_id=1,
+        weight_unit_id=1,
+    )
     sets = SetsConfig.objects.create(slot_entry=entry, iteration=1, value=3)
     reps = RepetitionsConfig.objects.create(slot_entry=entry, iteration=1, value=Decimal("8.00"))
     weight = WeightConfig.objects.create(slot_entry=entry, iteration=1, value=Decimal("40.00"))
@@ -387,6 +407,7 @@ def main():
         "day_id": day.id,
         "slot_id": slot.id,
         "entry_id": entry.id,
+        "foreign_entry_id": foreign_entry.id,
         "sets_id": sets.id,
         "reps_id": reps.id,
         "weight_config_id": weight.id,

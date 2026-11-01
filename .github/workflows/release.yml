@@ -11,7 +11,7 @@ jobs:
   validate:
     name: Validate release
     # Runner via repo var RUST_RUNNER (unset=omarchibald | macmini | heavenly-vps); see ci.yml.
-    runs-on: ${{ fromJSON((vars.RUST_RUNNER == 'heavenly-vps' || vars.RUST_RUNNER == 'macmini') && '["self-hosted","heavenly"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
+    runs-on: ${{ fromJSON(vars.RUST_RUNNER == 'heavenly-vps' && '["self-hosted","heavenly"]' || vars.RUST_RUNNER == 'macmini' && '["self-hosted","macOS","ARM64","macmini","rust-builder"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
     env:
       HARNESS_NAME: wger-rs-release-${{ github.run_id }}-${{ github.run_attempt }}
       WGER_RS_BIN: ${{ github.workspace }}/target/release/wger-rs
@@ -54,7 +54,7 @@ jobs:
   publish:
     name: Publish container and GitHub release
     needs: validate
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, omarchibald, rust-builder-x64]
     permissions:
       contents: write
       packages: write

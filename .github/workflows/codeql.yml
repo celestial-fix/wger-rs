@@ -20,7 +20,7 @@ jobs:
     # The workflow activates automatically once this repository is public.
     if: github.event.repository.private == false
     name: Analyze Rust
-    runs-on: [self-hosted, heavenly]
+    runs-on: [self-hosted, Linux, X64, omarchibald, rust-builder-x64]
     steps:
       - uses: actions/checkout@v7
       - uses: github/codeql-action/init@v4

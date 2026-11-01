@@ -23,33 +23,36 @@ use super::routine::load_routine;
 pub fn routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
     let mut out = Vec::new();
     out.extend(get_both("/api/v2/routine", routines));
-    out.extend(get_both("/api/v2/routine/:id", routine_detail));
-    out.extend(get_both("/api/v2/routine/:id/structure", routine_structure));
+    out.extend(get_both("/api/v2/routine/{id}", routine_detail));
     out.extend(get_both(
-        "/api/v2/routine/:id/date-sequence-display",
+        "/api/v2/routine/{id}/structure",
+        routine_structure,
+    ));
+    out.extend(get_both(
+        "/api/v2/routine/{id}/date-sequence-display",
         routine_display,
     ));
     out.extend(get_both(
-        "/api/v2/routine/:id/date-sequence-gym",
+        "/api/v2/routine/{id}/date-sequence-gym",
         routine_gym,
     ));
     out.extend(get_both("/api/v2/templates", templates));
-    out.extend(get_both("/api/v2/templates/:id", template_detail));
+    out.extend(get_both("/api/v2/templates/{id}", template_detail));
     out.extend(get_both("/api/v2/public-templates", public_templates));
     out.extend(get_both(
-        "/api/v2/public-templates/:id",
+        "/api/v2/public-templates/{id}",
         public_template_detail,
     ));
     out.extend(get_both("/api/v2/workoutsession", sessions));
-    out.extend(get_both("/api/v2/workoutsession/:id", session_detail));
+    out.extend(get_both("/api/v2/workoutsession/{id}", session_detail));
     out.extend(get_both("/api/v2/workoutlog", logs));
-    out.extend(get_both("/api/v2/workoutlog/:id", log_detail));
+    out.extend(get_both("/api/v2/workoutlog/{id}", log_detail));
     out.extend(get_both("/api/v2/day", days));
-    out.extend(get_both("/api/v2/day/:id", day_detail));
+    out.extend(get_both("/api/v2/day/{id}", day_detail));
     out.extend(get_both("/api/v2/slot", slots));
-    out.extend(get_both("/api/v2/slot/:id", slot_detail));
+    out.extend(get_both("/api/v2/slot/{id}", slot_detail));
     out.extend(get_both("/api/v2/slot-entry", entries));
-    out.extend(get_both("/api/v2/slot-entry/:id", entry_detail));
+    out.extend(get_both("/api/v2/slot-entry/{id}", entry_detail));
     out.extend(config_routes());
     out
 }
@@ -63,31 +66,37 @@ enum ConfigKind {
 fn config_routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
     let mut out = Vec::new();
     out.extend(get_both("/api/v2/weight-config", weight_config));
-    out.extend(get_both("/api/v2/weight-config/:id", weight_config_one));
+    out.extend(get_both("/api/v2/weight-config/{id}", weight_config_one));
     out.extend(get_both("/api/v2/max-weight-config", max_weight_config));
     out.extend(get_both(
-        "/api/v2/max-weight-config/:id",
+        "/api/v2/max-weight-config/{id}",
         max_weight_config_one,
     ));
     out.extend(get_both("/api/v2/repetitions-config", reps_config));
-    out.extend(get_both("/api/v2/repetitions-config/:id", reps_config_one));
+    out.extend(get_both("/api/v2/repetitions-config/{id}", reps_config_one));
     out.extend(get_both("/api/v2/max-repetitions-config", max_reps_config));
     out.extend(get_both(
-        "/api/v2/max-repetitions-config/:id",
+        "/api/v2/max-repetitions-config/{id}",
         max_reps_config_one,
     ));
     out.extend(get_both("/api/v2/sets-config", sets_config));
-    out.extend(get_both("/api/v2/sets-config/:id", sets_config_one));
+    out.extend(get_both("/api/v2/sets-config/{id}", sets_config_one));
     out.extend(get_both("/api/v2/max-sets-config", max_sets_config));
-    out.extend(get_both("/api/v2/max-sets-config/:id", max_sets_config_one));
+    out.extend(get_both(
+        "/api/v2/max-sets-config/{id}",
+        max_sets_config_one,
+    ));
     out.extend(get_both("/api/v2/rest-config", rest_config));
-    out.extend(get_both("/api/v2/rest-config/:id", rest_config_one));
+    out.extend(get_both("/api/v2/rest-config/{id}", rest_config_one));
     out.extend(get_both("/api/v2/max-rest-config", max_rest_config));
-    out.extend(get_both("/api/v2/max-rest-config/:id", max_rest_config_one));
+    out.extend(get_both(
+        "/api/v2/max-rest-config/{id}",
+        max_rest_config_one,
+    ));
     out.extend(get_both("/api/v2/rir-config", rir_config));
-    out.extend(get_both("/api/v2/rir-config/:id", rir_config_one));
+    out.extend(get_both("/api/v2/rir-config/{id}", rir_config_one));
     out.extend(get_both("/api/v2/max-rir-config", max_rir_config));
-    out.extend(get_both("/api/v2/max-rir-config/:id", max_rir_config_one));
+    out.extend(get_both("/api/v2/max-rir-config/{id}", max_rir_config_one));
     out
 }
 

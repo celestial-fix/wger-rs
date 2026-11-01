@@ -13,7 +13,6 @@ use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
 use std::time::Duration;
 
-use axum::async_trait;
 use axum::body::{Body, Bytes};
 use axum::extract::{ConnectInfo, DefaultBodyLimit, Extension, FromRequestParts, Request, State};
 use axum::http::request::Parts;
@@ -173,7 +172,6 @@ pub fn app(local: Router, proxy: Proxy) -> Router {
 #[derive(Clone, Copy, Debug)]
 pub struct PeerAddr(pub Option<std::net::SocketAddr>);
 
-#[async_trait]
 impl<S> FromRequestParts<S> for PeerAddr
 where
     S: Send + Sync,

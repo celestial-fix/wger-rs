@@ -19,7 +19,7 @@ jobs:
       HARNESS_NAME: wger-rs-ci-${{ github.run_id }}-${{ github.run_attempt }}
       WGER_RS_BIN: ${{ github.workspace }}/target/release/wger-rs
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Allocate per-run loopback ports
         run: |
           python3 - >> "$GITHUB_ENV" <<PY

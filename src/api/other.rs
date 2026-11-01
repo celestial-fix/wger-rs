@@ -23,20 +23,20 @@ const KG_IN_LBS: &str = "2.20462262";
 pub fn routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
     let mut out = Vec::new();
     out.extend(get_both("/api/v2/weightentry", weights));
-    out.extend(get_both("/api/v2/weightentry/:id", weight_one));
+    out.extend(get_both("/api/v2/weightentry/{id}", weight_one));
     out.extend(get_both("/api/v2/measurement", measurements));
-    out.extend(get_both("/api/v2/measurement/:id", measurement_one));
+    out.extend(get_both("/api/v2/measurement/{id}", measurement_one));
     out.extend(get_both("/api/v2/measurement-category", categories));
-    out.extend(get_both("/api/v2/measurement-category/:id", category_one));
+    out.extend(get_both("/api/v2/measurement-category/{id}", category_one));
     out.extend(get_both("/api/v2/trophy", trophies));
     out.extend(get_both("/api/v2/trophy/progress", trophy_progress));
-    out.extend(get_both("/api/v2/trophy/:id", trophy_one));
+    out.extend(get_both("/api/v2/trophy/{id}", trophy_one));
     out.extend(get_both("/api/v2/user-trophy", user_trophies));
-    out.extend(get_both("/api/v2/user-trophy/:id", user_trophy_one));
+    out.extend(get_both("/api/v2/user-trophy/{id}", user_trophy_one));
     out.extend(get_both("/api/v2/user-statistics", stats));
-    out.extend(get_both("/api/v2/user-statistics/:id", stats_one));
+    out.extend(get_both("/api/v2/user-statistics/{id}", stats_one));
     out.extend(get_both("/api/v2/gallery", gallery));
-    out.extend(get_both("/api/v2/gallery/:id", gallery_one));
+    out.extend(get_both("/api/v2/gallery/{id}", gallery_one));
     out
 }
 

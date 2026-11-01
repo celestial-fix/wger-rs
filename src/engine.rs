@@ -838,7 +838,7 @@ pub fn date_sequence(routine: &Routine, today: NaiveDate, mode: SequenceMode) ->
             wrapped = day_index == 0;
             current_day = &days[day_index];
         }
-        if routine.fit_in_week && nr % 7 != 0 && wrapped {
+        if routine.fit_in_week && !nr.is_multiple_of(7) && wrapped {
             let days_to_monday = 7 - current_date.weekday().num_days_from_monday();
             for i in 0..days_to_monday {
                 let placeholder_date = current_date + chrono::Duration::days(i as i64);

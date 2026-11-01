@@ -17,6 +17,7 @@ DJANGO_CONTAINER="${HARNESS_NAME}-django"
 COMPOSE=(docker compose --project-directory "$DIR" -f "$DIR/docker-compose.yml" --project-name "${HARNESS_NAME}-harness")
 
 if [ "${1:-}" = "--down" ]; then
+  "$DIR/proxy-check.sh" --down || true
   exec "$DIR/down.sh" --purge
 fi
 
@@ -116,3 +117,6 @@ if [ "$rc" -ne 0 ]; then
   echo "FAIL: contract harness reported failures (compare.py exit $rc)" >&2
   exit "$rc"
 fi
+
+# Proxy, production-like Django/TLS, and real PowerSync transport checks.
+"$DIR/proxy-check.sh"

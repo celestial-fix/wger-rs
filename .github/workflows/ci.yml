@@ -12,8 +12,16 @@ permissions:
 
 jobs:
   rust:
-    name: Rust checks and image build
-    runs-on: [self-hosted, heavenly]
+    name: Rust checks
+    # Runner selection via repo variable RUST_RUNNER (unset = omarchibald):
+    #   omarchibald (default): all Rust jobs on [self-hosted, Linux, X64, omarchibald, rust-builder-x64]
+    #   macmini: fmt/tests here on [self-hosted, macOS, ARM64, macmini, rust-builder];
+    #            image build, contract harness, release validate (Linux x64 + docker) on heavenly-vps
+    #   heavenly-vps: everything on [self-hosted, heavenly] (last resort)
+    # Queued jobs never fail over, so flip it when omarchibald is offline:
+    #   gh variable set RUST_RUNNER --body macmini -R heavenly-tech/wger-rs   (or heavenly-vps)
+    #   gh variable delete RUST_RUNNER -R heavenly-tech/wger-rs               (back to omarchibald)
+    runs-on: ${{ fromJSON(vars.RUST_RUNNER == 'heavenly-vps' && '["self-hosted","heavenly"]' || vars.RUST_RUNNER == 'macmini' && '["self-hosted","macOS","ARM64","macmini","rust-builder"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
     steps:
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
@@ -24,6 +32,13 @@ jobs:
         run: cargo fmt --all --check
       - name: Run unit tests
         run: cargo test --locked --all-targets
+
+  image:
+    name: Container image build
+    needs: rust
+    runs-on: ${{ fromJSON((vars.RUST_RUNNER == 'heavenly-vps' || vars.RUST_RUNNER == 'macmini') && '["self-hosted","heavenly"]' || '["self-hosted","Linux","X64","omarchibald","rust-builder-x64"]') }}
+    steps:
+      - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4
       - name: Build container image
         uses: docker/build-push-action@v7

@@ -13,7 +13,7 @@ jobs:
     # repositories need an eligible GitHub Advanced Security plan.
     if: github.event.repository.private == false
     name: Review dependency changes
-    runs-on: [self-hosted, heavenly]
+    runs-on: [self-hosted, Linux, X64, omarchibald, rust-builder-x64]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/dependency-review-action@v5

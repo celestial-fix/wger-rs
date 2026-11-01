@@ -743,7 +743,7 @@ pub fn routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
     for (idx, _res) in RESOURCES.iter().enumerate() {
         let res = &RESOURCES[idx];
         let list = format!("/api/v2/{}", res.path);
-        let detail = format!("/api/v2/{}/:id", res.path);
+        let detail = format!("/api/v2/{}/{{id}}", res.path);
         for p in [list.clone(), format!("{list}/")] {
             let p: &'static str = Box::leak(p.into_boxed_str());
             out.push((

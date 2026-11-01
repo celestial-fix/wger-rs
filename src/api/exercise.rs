@@ -21,28 +21,28 @@ use super::get_both;
 pub fn routes() -> Vec<(&'static str, MethodRouter<AppState>)> {
     let mut out = Vec::new();
     out.extend(get_both("/api/v2/exerciseinfo", exerciseinfo));
-    out.extend(get_both("/api/v2/exerciseinfo/:id", exerciseinfo_one));
+    out.extend(get_both("/api/v2/exerciseinfo/{id}", exerciseinfo_one));
     out.extend(get_both("/api/v2/exercise", exercises));
-    out.extend(get_both("/api/v2/exercise/:id", exercise_one));
+    out.extend(get_both("/api/v2/exercise/{id}", exercise_one));
     out.extend(get_both("/api/v2/exercise-translation", translations));
     out.extend(get_both(
-        "/api/v2/exercise-translation/:id",
+        "/api/v2/exercise-translation/{id}",
         translation_one,
     ));
     out.extend(get_both("/api/v2/equipment", equipment));
-    out.extend(get_both("/api/v2/equipment/:id", equipment_one));
+    out.extend(get_both("/api/v2/equipment/{id}", equipment_one));
     out.extend(get_both("/api/v2/exercisecategory", categories));
-    out.extend(get_both("/api/v2/exercisecategory/:id", category_one));
+    out.extend(get_both("/api/v2/exercisecategory/{id}", category_one));
     out.extend(get_both("/api/v2/muscle", muscles));
-    out.extend(get_both("/api/v2/muscle/:id", muscle_one));
+    out.extend(get_both("/api/v2/muscle/{id}", muscle_one));
     out.extend(get_both("/api/v2/exerciseimage", images));
-    out.extend(get_both("/api/v2/exerciseimage/:id", image_one));
+    out.extend(get_both("/api/v2/exerciseimage/{id}", image_one));
     out.extend(get_both("/api/v2/video", videos));
-    out.extend(get_both("/api/v2/video/:id", video_one));
+    out.extend(get_both("/api/v2/video/{id}", video_one));
     out.extend(get_both("/api/v2/exercisecomment", comments));
-    out.extend(get_both("/api/v2/exercisecomment/:id", comment_one));
+    out.extend(get_both("/api/v2/exercisecomment/{id}", comment_one));
     out.extend(get_both("/api/v2/exercisealias", aliases));
-    out.extend(get_both("/api/v2/exercisealias/:id", alias_one));
+    out.extend(get_both("/api/v2/exercisealias/{id}", alias_one));
     out.extend(get_both("/api/v2/deletion-log", deletions));
     out
 }

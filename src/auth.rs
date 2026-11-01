@@ -9,7 +9,6 @@
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use argon2::password_hash::{rand_core::OsRng, SaltString};
 use argon2::{Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version};
 use base64::engine::general_purpose::{STANDARD, URL_SAFE, URL_SAFE_NO_PAD};
 use base64::Engine;
@@ -247,9 +246,8 @@ pub fn hash_argon2(password: &str) -> Result<String, String> {
     )
     .map_err(|err| format!("argon2 params: {err}"))?;
     let argon = Argon2::new(Algorithm::Argon2id, Version::V0x13, params);
-    let salt = SaltString::generate(&mut OsRng);
     let hash = argon
-        .hash_password(password.as_bytes(), &salt)
+        .hash_password(password.as_bytes())
         .map_err(|err| format!("argon2: {err}"))?;
     Ok(format!("argon2{hash}"))
 }
@@ -283,7 +281,6 @@ fn verify_argon2(phc: &str, password: &str) -> Result<bool, String> {
     let parsed = PasswordHash::new(phc).map_err(|err| format!("argon2 phc: {err}"))?;
     match Argon2::default().verify_password(password.as_bytes(), &parsed) {
         Ok(()) => Ok(true),
-        Err(argon2::password_hash::Error::Password) => Ok(false),
         Err(_) => Ok(false),
     }
 }

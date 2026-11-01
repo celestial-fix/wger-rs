@@ -18,6 +18,9 @@ services:
       interval: 5s
       timeout: 3s
       retries: 30
+    # PowerSync needs logical decoding; this is a runtime parameter, so it also
+    # applies to a pgdata volume created before this line was added.
+    command: ["postgres", "-c", "wal_level=logical"]
     networks: [harness]
 
   django:
@@ -73,6 +76,68 @@ services:
         python3 manage.py migrate --noinput
         mkdir -p /tmp/wger-media
         exec python3 manage.py runserver 0.0.0.0:8000
+
+  # Second Django instance used only by proxy-check.sh. It shares the seeded
+  # database but simulates production behind nginx-proxy: TLS terminated
+  # upstream, forwarded host honoured, CSRF trusted origin, Secure cookies.
+  # It is behind a compose profile so the existing contract checks keep their
+  # current settings.
+  django-proxy:
+    image: wger/server:2.7
+    container_name: "${HARNESS_NAME:-wger-rs-contract}-django-proxy"
+    mem_limit: 512m
+    profiles: ["proxy"]
+    depends_on:
+      pg:
+        condition: service_healthy
+    env_file:
+      - path: ${HARNESS_JWT_ENV}
+        required: false
+    environment:
+      SECRET_KEY: contract-harness
+      DJANGO_DEBUG: "False"
+      DJANGO_PERFORM_MIGRATIONS: "False"
+      DJANGO_SETTINGS_MODULE: proxycheck_settings
+      SITE_URL: https://fitness.example.test
+      TIME_ZONE: America/Santiago
+      TZ: America/Santiago
+      PS_DATABASE_URI: postgres://wger:wger@pg:5432/wger
+      DJANGO_DB_ENGINE: django.db.backends.postgresql
+      DJANGO_DB_DATABASE: wger
+      DJANGO_DB_USER: wger
+      DJANGO_DB_PASSWORD: wger
+      DJANGO_DB_HOST: pg
+      DJANGO_DB_PORT: "5432"
+      DJANGO_CACHE_BACKEND: django.core.cache.backends.locmem.LocMemCache
+      DJANGO_CACHE_LOCATION: harness-proxy
+      AXES_ENABLED: "False"
+      USE_CELERY: "False"
+      WGER_USE_GUNICORN: "False"
+      DJANGO_COLLECTSTATIC_ON_STARTUP: "False"
+      ALLOW_REGISTRATION: "False"
+      ALLOW_GUEST_USERS: "False"
+      MEDIA_ROOT: /tmp/wger-media
+      DJANGO_MEDIA_ROOT: /tmp/wger-media
+      # Real settings names read by wger/server:2.7's settings.main.
+      CSRF_TRUSTED_ORIGINS: https://fitness.example.test
+      X_FORWARDED_PROTO_HEADER_SET: "True"
+      SECURE_PROXY_SSL_HEADER: HTTP_X_FORWARDED_PROTO
+      USE_X_FORWARDED_HOST: "True"
+      # The image has no env switch for cookie security; proxycheck_settings.py
+      # reads these two names and applies CSRF_COOKIE_SECURE/SESSION_COOKIE_SECURE.
+      DJANGO_CSRF_COOKIE_SECURE: "True"
+      DJANGO_SESSION_COOKIE_SECURE: "True"
+    ports:
+      - "127.0.0.1:${HARNESS_DJANGO_PROXY_PORT:-8002}:8000"
+    networks: [harness]
+    command:
+      - bash
+      - -c
+      - |
+        set -e
+        cd /home/wger/src
+        mkdir -p /tmp/wger-media
+        exec python3 manage.py runserver --noreload 0.0.0.0:8000
 
 networks:
   harness:

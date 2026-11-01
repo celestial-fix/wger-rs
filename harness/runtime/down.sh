@@ -30,4 +30,4 @@ if [ "$PURGE" = 1 ]; then
 fi
 
 echo "Harness torn down."
-free -h | head -2
+command -v free >/dev/null && free -h | head -2 || true

@@ -23,7 +23,7 @@ http-body = "1"
 http-body-util = "0.1"
 hyper = { version = "1", features = ["client", "http1", "server"] }
 hyper-util = { version = "0.1", features = ["tokio", "server", "http1"] }
-jsonwebtoken = "9"
+jsonwebtoken = "10"
 mimalloc = "0.1"
 pbkdf2 = { version = "0.12", default-features = false, features = ["hmac"] }
 rand = "0.8"

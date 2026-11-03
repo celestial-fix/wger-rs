@@ -13,6 +13,7 @@ use sqlx::Row;
 
 use crate::auth::{self, needs_rehash};
 use crate::httpx::{self, head_or_json, ok_json, page_from, paginated, qmap, query_pairs};
+use crate::sqlquery;
 use crate::state::AppState;
 use crate::timefmt::{fmt_date, fmt_dt};
 
@@ -586,7 +587,7 @@ where
         default_order,
     );
     let count_sql = format!("SELECT COUNT(*) FROM ({select}) t");
-    let count: i64 = match sqlx::query(&count_sql).fetch_one(&state.pool).await {
+    let count: i64 = match sqlquery::query(&count_sql).fetch_one(&state.pool).await {
         Ok(row) => row.get(0),
         Err(err) => return httpx::db_error(err),
     };
@@ -594,7 +595,7 @@ where
         "{select} ORDER BY {order} LIMIT {} OFFSET {}",
         page.limit, page.offset
     );
-    let rows = match sqlx::query(&data_sql).fetch_all(&state.pool).await {
+    let rows = match sqlquery::query(&data_sql).fetch_all(&state.pool).await {
         Ok(rows) => rows,
         Err(err) => return httpx::db_error(err),
     };

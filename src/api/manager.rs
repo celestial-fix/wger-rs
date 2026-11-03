@@ -14,6 +14,7 @@ use uuid::Uuid;
 use crate::engine::{date_sequence, structure_json, SequenceMode};
 use crate::httpx::{self, head_or_json, page_from, paginated, qmap, query_pairs, CurrentUser};
 use crate::jsonutil::{dec_str, opt_dec_str};
+use crate::sqlquery;
 use crate::state::AppState;
 use crate::timefmt::{fmt_date, fmt_dt};
 
@@ -1178,7 +1179,7 @@ async fn config_one(
            JOIN manager_routine r ON r.id = d.routine_id
            WHERE r.user_id = $1 AND s.id = $2"#
     );
-    let row = match sqlx::query(&sql)
+    let row = match sqlquery::query(&sql)
         .bind(user.id)
         .bind(id)
         .fetch_optional(&state.pool)

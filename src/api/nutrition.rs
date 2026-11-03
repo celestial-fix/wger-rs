@@ -15,6 +15,7 @@ use uuid::Uuid;
 
 use crate::httpx::{self, head_or_json, page_from, paginated, public_origin, qmap, query_pairs};
 use crate::jsonutil::{dec_str, f64_from_dec, json_f64, opt_dec_str};
+use crate::sqlquery;
 use crate::state::AppState;
 use crate::timefmt::{fmt_date, fmt_dt, fmt_time};
 
@@ -489,7 +490,7 @@ async fn ingredient_image(
     tz: chrono_tz::Tz,
 ) -> Option<Value> {
     let table = "nutrition_image";
-    let row = sqlx::query(&format!(
+    let row = sqlquery::query_string(format!(
         r#"SELECT id, uuid, ingredient_id, image, created, last_update, size, width, height,
                   license_id, license_title, license_object_url, license_author, license_author_url,
                   license_derivative_source_url

@@ -11,6 +11,7 @@ use sqlx::{PgPool, Row};
 
 use crate::engine::{ChangeConfig, Day, LogSnap, Routine, Slot, SlotEntry};
 use crate::jsonutil::dec_str;
+use crate::sqlquery;
 use crate::timefmt::{fmt_dt, local_date};
 
 pub async fn load_routine(
@@ -320,7 +321,10 @@ where
         ORDER BY c.slot_entry_id, c.iteration, c.id
         "#
     );
-    let rows = sqlx::query(&sql).bind(routine_id).fetch_all(pool).await?;
+    let rows = sqlquery::query(&sql)
+        .bind(routine_id)
+        .fetch_all(pool)
+        .await?;
     group_configs(rows, into, slot, |row| {
         let value: Decimal = row.get("value");
         (value, Value::String(dec_str(value, scale)))
@@ -349,7 +353,10 @@ where
         ORDER BY c.slot_entry_id, c.iteration, c.id
         "#
     );
-    let rows = sqlx::query(&sql).bind(routine_id).fetch_all(pool).await?;
+    let rows = sqlquery::query(&sql)
+        .bind(routine_id)
+        .fetch_all(pool)
+        .await?;
     group_configs(rows, into, slot, |row| {
         let value: i32 = row.get("value");
         (Decimal::from(value), json!(value))

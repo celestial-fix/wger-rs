@@ -13,6 +13,7 @@ use sqlx::{PgPool, QueryBuilder, Row};
 use uuid::Uuid;
 
 use crate::httpx::{self, head_or_json, page_from, paginated, public_origin, qmap, query_pairs};
+use crate::sqlquery;
 use crate::state::AppState;
 use crate::timefmt::fmt_dt;
 
@@ -68,7 +69,7 @@ async fn exerciseinfo(
     let (where_sql, _binds, order_sql) = exercise_filter(&map, true).await;
     let _english = english_id(&state.pool).await.unwrap_or(0);
     let count_sql = format!("SELECT COUNT(*) FROM exercises_exercise e WHERE {where_sql}");
-    let count = match sqlx::query(&count_sql).fetch_one(&state.pool).await {
+    let count = match sqlquery::query(&count_sql).fetch_one(&state.pool).await {
         Ok(row) => row.get::<i64, _>(0),
         Err(err) => return httpx::db_error(err),
     };
@@ -85,7 +86,7 @@ async fn exerciseinfo(
         "SELECT e.id FROM exercises_exercise e WHERE {where_sql} ORDER BY {order} LIMIT {} OFFSET {}",
         page.limit, page.offset
     );
-    let rows = match sqlx::query(&data_sql).fetch_all(&state.pool).await {
+    let rows = match sqlquery::query(&data_sql).fetch_all(&state.pool).await {
         Ok(rows) => rows,
         Err(err) => return httpx::db_error(err),
     };
@@ -422,7 +423,7 @@ async fn exercise_brief(pool: &PgPool, row: &PgRow, tz: chrono_tz::Tz) -> Value 
 }
 
 async fn id_list(pool: &PgPool, sql: &str, id: i32) -> Vec<i32> {
-    sqlx::query(sql)
+    sqlquery::query(sql)
         .bind(id)
         .fetch_all(pool)
         .await
@@ -534,7 +535,7 @@ async fn authors(pool: &PgPool, table: &str, col: &str, id: i32) -> Vec<String> 
     let sql = format!(
         "SELECT DISTINCT license_author FROM {table} WHERE {col} = $1 AND license_author <> '' ORDER BY license_author"
     );
-    sqlx::query(&sql)
+    sqlquery::query(&sql)
         .bind(id)
         .fetch_all(pool)
         .await
@@ -546,7 +547,7 @@ async fn muscles_json(pool: &PgPool, origin: &str, table: &str, id: i32) -> Vec<
     let sql = format!(
         "SELECT m.id, m.name, m.name_en, m.is_front FROM exercises_muscle m JOIN {table} em ON em.muscle_id = m.id WHERE em.exercise_id = $1 ORDER BY m.name, m.id"
     );
-    sqlx::query(&sql)
+    sqlquery::query(&sql)
         .bind(id)
         .fetch_all(pool)
         .await
@@ -939,14 +940,14 @@ async fn name_list(
     let _ = httpx::authenticate(state, headers).await;
     let pairs = query_pairs(uri);
     let page = page_from(&pairs);
-    let count: i64 = match sqlx::query(&format!("SELECT COUNT(*) FROM {table}"))
+    let count: i64 = match sqlquery::query_string(format!("SELECT COUNT(*) FROM {table}"))
         .fetch_one(&state.pool)
         .await
     {
         Ok(row) => row.get(0),
         Err(err) => return httpx::db_error(err),
     };
-    let rows = match sqlx::query(&format!(
+    let rows = match sqlquery::query_string(format!(
         "SELECT id, name FROM {table} ORDER BY {order} LIMIT $1 OFFSET $2"
     ))
     .bind(page.limit)
@@ -968,7 +969,7 @@ async fn name_list(
 }
 
 async fn name_one(state: &AppState, table: &str, id: i32, method: &Method) -> Response {
-    let row = match sqlx::query(&format!("SELECT id, name FROM {table} WHERE id = $1"))
+    let row = match sqlquery::query_string(format!("SELECT id, name FROM {table} WHERE id = $1"))
         .bind(id)
         .fetch_optional(&state.pool)
         .await
@@ -1301,14 +1302,14 @@ where
     let _ = httpx::authenticate(state, headers).await;
     let pairs = query_pairs(uri);
     let page = page_from(&pairs);
-    let count: i64 = match sqlx::query(&format!("SELECT COUNT(*) FROM {table}"))
+    let count: i64 = match sqlquery::query_string(format!("SELECT COUNT(*) FROM {table}"))
         .fetch_one(&state.pool)
         .await
     {
         Ok(row) => row.get(0),
         Err(err) => return httpx::db_error(err),
     };
-    let rows = match sqlx::query(&format!(
+    let rows = match sqlquery::query_string(format!(
         "SELECT {cols} FROM {table} ORDER BY {order} LIMIT $1 OFFSET $2"
     ))
     .bind(page.limit)
@@ -1335,7 +1336,7 @@ where
     } else {
         "id, uuid, translation_id, alias"
     };
-    let row = match sqlx::query(&format!("SELECT {cols} FROM {table} WHERE id = $1"))
+    let row = match sqlquery::query_string(format!("SELECT {cols} FROM {table} WHERE id = $1"))
         .bind(id)
         .fetch_optional(&state.pool)
         .await

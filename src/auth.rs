@@ -321,4 +321,60 @@ mod tests {
         assert!(verify_password(&encoded, "s3cret-pass").unwrap());
         assert!(!verify_password(&encoded, "other").unwrap());
     }
+
+    fn b64url_be(n: &BigUint) -> String {
+        URL_SAFE_NO_PAD.encode(n.to_bytes_be())
+    }
+
+    fn b64_json(doc: &Value) -> String {
+        STANDARD.encode(serde_json::to_vec(doc).unwrap())
+    }
+
+    fn synthetic_keys() -> JwtKeys {
+        use rsa::rand_core::OsRng;
+        use rsa::traits::{PrivateKeyParts, PublicKeyParts};
+        let private = RsaPrivateKey::new(&mut OsRng, 2048).expect("rsa key");
+        let primes = private.primes();
+        let private_jwk = json!({
+            "kty": "RSA",
+            "n": b64url_be(private.n()),
+            "e": b64url_be(private.e()),
+            "d": b64url_be(private.d()),
+            "p": b64url_be(&primes[0]),
+            "q": b64url_be(&primes[1]),
+        });
+        let public_jwk = json!({
+            "kty": "RSA",
+            "n": b64url_be(private.n()),
+            "e": b64url_be(private.e()),
+            "alg": "RS256",
+            "kid": "wger-rs-test",
+        });
+        load_keys(&b64_json(&private_jwk), &b64_json(&public_jwk)).expect("jwt keys")
+    }
+
+    #[test]
+    fn jwt_access_roundtrip() {
+        let keys = synthetic_keys();
+        let sid = new_sid();
+        let token = mint_access(&keys, 42, &sid, 300).expect("sign access");
+        let claims = read_access(&keys, &token).expect("verify access");
+        assert_eq!(claims.sub, "42");
+        assert_eq!(claims.sid, sid);
+        assert_eq!(claims.token_use, "access");
+        assert!(claims.exp > claims.iat);
+        assert!(!claims.jti.is_empty());
+        assert!(read_refresh(&keys, &token).is_err());
+    }
+
+    #[test]
+    fn jwt_refresh_roundtrip() {
+        let keys = synthetic_keys();
+        let sid = new_sid();
+        let token = mint_refresh(&keys, 7, &sid, 3600).expect("sign refresh");
+        let claims = read_refresh(&keys, &token).expect("verify refresh");
+        assert_eq!(claims.sub, "7");
+        assert_eq!(claims.token_use, "refresh");
+        assert!(read_access(&keys, &token).is_err());
+    }
 }

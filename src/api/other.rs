@@ -12,6 +12,7 @@ use uuid::Uuid;
 
 use crate::httpx::{self, head_or_json, page_from, paginated, public_origin, qmap, query_pairs};
 use crate::jsonutil::{dec_number, dec_str, json_f64};
+use crate::sqlquery;
 use crate::state::AppState;
 use crate::timefmt::{fmt_date, fmt_dt, fmt_time};
 
@@ -450,19 +451,24 @@ async fn trophy_page(
         page.limit, page.offset
     );
     let count = match user {
-        Some(id) => sqlx::query(&count_sql)
+        Some(id) => sqlquery::query(&count_sql)
             .bind(id)
             .fetch_one(&state.pool)
             .await
             .map(|r| r.get(0)),
-        None => sqlx::query(&count_sql)
+        None => sqlquery::query(&count_sql)
             .fetch_one(&state.pool)
             .await
             .map(|r| r.get(0)),
     };
     let rows = match user {
-        Some(id) => sqlx::query(&data_sql).bind(id).fetch_all(&state.pool).await,
-        None => sqlx::query(&data_sql).fetch_all(&state.pool).await,
+        Some(id) => {
+            sqlquery::query(&data_sql)
+                .bind(id)
+                .fetch_all(&state.pool)
+                .await
+        }
+        None => sqlquery::query(&data_sql).fetch_all(&state.pool).await,
     };
     (count, rows)
 }
